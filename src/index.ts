@@ -75,3 +75,8 @@ for (let i = 1; i <= 10; i++){
 
 <html>
 `);
+
+
+window["makeBot"] = () => {
+    return new Bot(window["connection"]);
+};

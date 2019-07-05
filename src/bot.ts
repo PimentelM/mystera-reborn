@@ -8,8 +8,9 @@ export class Bot{
 
     constructor(ws : WebSocket){
       this.connection = new Connection(ws);
-      let gameWindow = eval(`window`);
-      this.game = new Game(this.connection, gameWindow)
+      let gameWindow = window;
+      // @ts-ignore
+        this.game = new Game(this.connection, gameWindow)
     }
 
     doLogin(login,password) {

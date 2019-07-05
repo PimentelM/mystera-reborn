@@ -3,13 +3,14 @@ import {Player} from "./Player";
 
 
 export class Game{
-    public window : GameWindow
+    public window : GameWindow;
     public con : Connection;
   
-    public player : Player
+    public player : Player;
   
     public constructor(con : Connection, window : GameWindow){
-      this.con = con
+      this.con = con;
+      this.window = window;
       this.player = new Player(this);
     }
   
