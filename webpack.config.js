@@ -4,14 +4,15 @@ const proxy = require('http-proxy-middleware');
 
 var getWsProxy = (srv) =>  proxy('/ws/' + srv, {
   target: `wss://${srv}.mysteralegacy.com`,
-  // pathRewrite: {
-  //  '^/websocket' : '/socket',        // rewrite path.
-  //  '^/removepath' : ''               // remove path.
-  // },
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   ws: true, // enable websocket proxy
-  logLevel: 'debug'
+  logLevel: 'debug',
+  headers : {
+    Host: "br.mysteralegacy.com",
+    Origin: "http://www.mysteralegacy.com"
+  }
 });
+
 
 
 
@@ -34,8 +35,6 @@ module.exports = {
 
   devServer: {
     setup: function(app) {
-
-      console.log("setup web-dev-server")
 
       app.use(getWsProxy("br"));
 

@@ -16,8 +16,10 @@ document.write(`
 <script>document.write('<script src="/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>');</script>
 <script>if(typeof(mlmeta) === 'undefined') {document.write('<script src="http://50.116.42.127/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>')}</script>
 <script>
-    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>')}
-    else document.write('<script src="/play/ml.min.js"><\\/script>');
+    let p = '<script>window.jv_initDialogs = jv.init_dialogs;jv.init_dialogs = ()=>{jv_initDialogs();patch()}<\\/script>'  
+    
+    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + p)}
+    else document.write('<script src="/play/ml.min.js"><\\/script>'+p);
 </script>
 <script src="/ph/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
