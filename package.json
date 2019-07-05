@@ -14,5 +14,9 @@
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "expressjs": "^1.0.1"
   }
 }
