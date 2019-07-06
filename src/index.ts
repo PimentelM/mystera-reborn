@@ -2,16 +2,33 @@ import {Bot} from "./Bot";
 import axios from "axios";
 
 // @ts-ignore
-if(module.hot){
+if (module.hot) {
     // @ts-ignore
-    module.hot.accept("./Bot",()=>{
-        // @ts-ignore
-        window.bot = new Bot(window.connection);
-        console.log("Updating bot instance...");
-    })
+    module.hot.accept();
+
+    updateBotInstance();
 }
 
-document.write(`
+function updateBotInstance() {
+    if (!window['connection']) {
+        console.log("No mystera websocket.");
+        return;
+    }
+    window["bot"] = new Bot(window["connection"]);
+    console.log("window.bot instance updated.")
+}
+
+window["updateBotInstance"] = updateBotInstance;
+
+window["makeBot"] = () => {
+    return new Bot(window["connection"]);
+    //window.console.clear()
+};
+
+
+
+function renderGame(){
+    document.write(`
 <!DOCTYPE html>
 <html lang="en-US" style="height:100%;margin:0;padding:0;overflow:hidden;">
 <head>
@@ -27,7 +44,7 @@ document.write(`
 <script>
     let init_dialogs_hook = '<script>window.jv_initDialogs = jv.init_dialogs;jv.init_dialogs = ()=>{jv_initDialogs();patch()}<\\/script>';  
     let on_login_hook = '<script>window._init_network = window.init_network; window.init_network = ()=>{_init_network(); window.bot = makeBot();}<\\/script>';
-    let clearConsole = '<script>window.console.clear()<\\/script>'
+    let clearConsole = ''||  '<script>window.console.clear()<\\/script>'
     if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + init_dialogs_hook + on_login_hook + clearConsole)}
     else document.write('<script src="/play/ml.min.js"><\\/script>');
 </script>
@@ -46,13 +63,6 @@ do_resize = function()
 		alc.style.height = h+"px"//"100%";
 	else if(h / w > 0.562)
 		alc.style.height = (alc.clientWidth*0.562) + "px";
-
-	//console.log(Math.max(window.innerWidth, document.documentElement.clientWidth));
-	//console.log();
-	//var new_width = cnv.height() * 1.7788461538;
-	//var new_con = alc.width()-new_width;
-	//cns.width(new_con);
-	//cnv.width(new_width);
 }
 window.addEventListener("resize", function(e) {
 	do_resize();
@@ -64,9 +74,19 @@ window.addEventListener("orientationchange",function(){
 </script>
 </head>
 <body>
-<div style="width:100%;height:100%;margin:0;padding:0;" id="all_container">
+
+
+
+<div style="width:80%;height:100%;margin:0;padding:0;" id="all_container">
 	<canvas tabindex=0 id='jv' style="background-color:black;width:100%;height:100%;margin:0;min-width:740px;min-height:416px;"></canvas>
 </div>
+
+<div>
+<h2 style="color: rgb(255,255,255);">Hi</h2>
+</div>
+
+
+
 <input type="text" id="script_name" value="" style="margin:0;display:none;">
 <div id="script_code" style="margin:0;width:100%;height:600px;display:none;"></div>
 </body>
@@ -85,9 +105,7 @@ for (let i = 1; i <= 10; i++){
 
 <html>
 `);
+    window['game-is-rendered'] = true;
+}
 
-
-window["makeBot"] = () => {
-    return new Bot(window["connection"]);
-    window.console.clear()
-};
+if(!window['game-is-rendered']) renderGame();
