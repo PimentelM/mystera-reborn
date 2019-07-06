@@ -15,7 +15,28 @@ export class Map {
         return tile;
     }
 
-    public getWalkableMap( considerMobs = true) {
+    public getTileByOffset(oX,oY){
+        let x = this.game.player.data.x + oX;
+        let y = this.game.player.data.y + oY;
+        let tile = this.game.window.map_index[x * 1e4 + y];
+        return tile;
+    }
+
+    public getTilesAround(radius = 1){
+        let tiles = [];
+        for(let oX = -radius; oX <= radius; oX++) {
+            for (let oY = -radius; oY <= radius; oY++) {
+                let x = this.game.player.data.x + oX;
+                let y = this.game.player.data.y + oY;
+                let tile = this.game.window.map_index[x * 1e4 + y];
+                tiles.push(tile);
+            }
+        }
+        return tiles;
+    }
+
+
+    public getWalkableTileMap(considerMobs = true) {
         let tileMap = [];
         let mobs = {};
 
