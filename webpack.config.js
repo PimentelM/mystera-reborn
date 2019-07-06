@@ -80,7 +80,7 @@ module.exports = {
 
     devServer: {
         hot: true,
-        overlay: true,
+        overlay: false,
         compress: true,
         port: 8000,
 
