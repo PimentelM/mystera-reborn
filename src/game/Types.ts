@@ -1,8 +1,8 @@
 export type Mob = {
-    x : Number,
-    y : Number,
-    z : Number,
-    name : String,
+    x : number,
+    y : number,
+    z : number,
+    name : string,
     hpbar : {val},
 }
 
@@ -20,5 +20,5 @@ export type Item = {
 }
 export type Tile = {
     block : boolean,
-    items : Array<Item>
+    o : Array<Item>
 }
