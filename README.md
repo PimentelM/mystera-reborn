@@ -2,22 +2,14 @@
 
 ## General info
 
-Sample accounts for testing:
+- Setup:
 
-- Usernames:
-
-```text
-Mlo
-DonoDosBot
-PsadeloDoDev
-BotTop
+```
+npm install
+npm start
 ```
 
-- Password (all accounts):
-
-```text
-batata
-```
+The modified version of the game will be avaliable at `http://localhot:8000`
 
 ## Website
 
