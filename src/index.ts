@@ -1,16 +1,13 @@
 import {Bot} from "./Bot";
 import axios from "axios";
 import { setLogLevel as hmrLogLevel} from 'webpack/hot/log';
-import { setLogLevel as wdsLogLevel } from 'webpack-log';
 
 hmrLogLevel('error');
-wdsLogLevel('error');
 
 // @ts-ignore
 if (module.hot) {
     // @ts-ignore
     module.hot.accept();
-
     updateBotInstance();
 }
 
@@ -23,12 +20,14 @@ function updateBotInstance() {
     //console.log("window.bot instance updated.")
 }
 
+
 window["updateBotInstance"] = updateBotInstance;
 
 window["makeBot"] = () => {
     return new Bot(window["connection"]);
     //window.console.clear()
 };
+
 
 
 
