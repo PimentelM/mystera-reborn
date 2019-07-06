@@ -1,6 +1,7 @@
 const path = require('path');
 const HTMLPlugin = require('html-webpack-plugin');
 const proxy = require('http-proxy-middleware');
+const webpack = require('webpack');
 
 var getWsProxy = (srv) =>  proxy('/ws/' + srv, {
   target: `wss://${srv}.mysteralegacy.com`,
@@ -34,6 +35,7 @@ module.exports = {
   },
 
   devServer: {
+    hot: true,
     setup: function(app) {
 
       app.use(getWsProxy("br"));
@@ -62,7 +64,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
-    new HTMLPlugin()
+    new HTMLPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ]
 };
 

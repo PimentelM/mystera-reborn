@@ -1,6 +1,15 @@
 import {Bot} from "./Bot";
 import axios from "axios";
 
+// @ts-ignore
+if(module.hot){
+    // @ts-ignore
+    module.hot.accept("./Bot",()=>{
+        // @ts-ignore
+        window.bot = new Bot(window.connection);
+        console.log("Updating bot instance...");
+    })
+}
 
 document.write(`
 <!DOCTYPE html>
@@ -16,10 +25,11 @@ document.write(`
 <script>document.write('<script src="/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>');</script>
 <script>if(typeof(mlmeta) === 'undefined') {document.write('<script src="http://50.116.42.127/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>')}</script>
 <script>
-    let p = '<script>window.jv_initDialogs = jv.init_dialogs;jv.init_dialogs = ()=>{jv_initDialogs();patch()}<\\/script>'  
-    
-    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + p)}
-    else document.write('<script src="/play/ml.min.js"><\\/script>'+p);
+    let init_dialogs_hook = '<script>window.jv_initDialogs = jv.init_dialogs;jv.init_dialogs = ()=>{jv_initDialogs();patch()}<\\/script>';  
+    let on_login_hook = '<script>window._init_network = window.init_network; window.init_network = ()=>{_init_network(); window.bot = makeBot();}<\\/script>';
+    let clearConsole = '<script>window.console.clear()<\\/script>'
+    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + init_dialogs_hook + on_login_hook + clearConsole)}
+    else document.write('<script src="/play/ml.min.js"><\\/script>');
 </script>
 <script src="/ph/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
@@ -79,4 +89,5 @@ for (let i = 1; i <= 10; i++){
 
 window["makeBot"] = () => {
     return new Bot(window["connection"]);
+    window.console.clear()
 };

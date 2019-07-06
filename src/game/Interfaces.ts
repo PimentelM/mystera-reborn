@@ -1,17 +1,17 @@
-interface GameWindow {
+import {Mob} from "./Types";
+
+
+
+export interface IGameWindow {
     hp_status : {val},
     connection : WebSocket
     getMob(id) : Mob
-    me : Number
-  
+    me : number
+    mx : number
+    my : number
+    map_index : object
   }
   
-  interface Mob {
-    x : Number,
-    y : Number,
-    z : Number,
-    name : String,
-    hpbar : {val},
-  }
+
 
   
