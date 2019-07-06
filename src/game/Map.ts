@@ -35,7 +35,7 @@ export class Map {
                 let index = x *1e4 + y
 
                 if (x == this.game.player.data.x && y == this.game.player.data.y){
-                    xTiles.push('x');
+                    xTiles.push(2);
                     continue;
                 }
 
