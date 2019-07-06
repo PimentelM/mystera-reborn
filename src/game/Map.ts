@@ -1,6 +1,7 @@
 import {Game} from "./Game";
-import {Mob, Tile} from "./Types";
+import {Mob, Point, PointMap, Tile} from "./Types";
 import {filter} from "minimatch";
+import {IWalkableTileMap} from "./Interfaces";
 
 
 export class Map {
@@ -15,19 +16,19 @@ export class Map {
         return tile;
     }
 
-    public getTileByOffset(oX,oY){
-        let x = this.game.player.data.x + oX;
-        let y = this.game.player.data.y + oY;
+    public getTileByOffset(oX, oY): Tile {
+        let x = this.game.player.mob.x + oX;
+        let y = this.game.player.mob.y + oY;
         let tile = this.game.window.map_index[x * 1e4 + y];
         return tile;
     }
 
-    public getTilesAround(radius = 1){
+    public getTilesAround(radius = 1): Tile[] {
         let tiles = [];
-        for(let oX = -radius; oX <= radius; oX++) {
+        for (let oX = -radius; oX <= radius; oX++) {
             for (let oY = -radius; oY <= radius; oY++) {
-                let x = this.game.player.data.x + oX;
-                let y = this.game.player.data.y + oY;
+                let x = this.game.player.mob.x + oX;
+                let y = this.game.player.mob.y + oY;
                 let tile = this.game.window.map_index[x * 1e4 + y];
                 tiles.push(tile);
             }
@@ -35,33 +36,60 @@ export class Map {
         return tiles;
     }
 
+    public isTileWalkable(x, y, considerMobs = true): boolean {
 
-    public getWalkableTileMap(considerMobs = true) {
-        let tileMap = [];
+        if (considerMobs) {
+            for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
+                if (!mob) continue;
+                if (mob.id == this.game.window.me) continue;
+                if (mob.x == x && mob.y == y) return false;
+            }
+        }
+
+        return !this.getTile(x, y).block;
+    }
+
+    public getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {
+        let grid = [];
         let mobs = {};
 
-        for (let mob of Object.entries(this.game.window.mob_ref).map(([_,x])=>x).filter(x=>!!x)){
+        let origin = {x: -1, y: -1};
+
+        let translatedPoints = {};
+
+        for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
             if (!mob) continue;
-            mobs[mob.x*1e4+mob.y] = true;
+            mobs[mob.x * 1e4 + mob.y] = true;
         }
 
         this.game.player.updateData();
+        let {mx, my} = this.game.window;
+        let {x, y} = this.game.player.mob;
+        let pX = x;
+        let pY = y;
         for (let j = 0; j < 26; j++) {
             let xTiles = [];
             for (let i = 0; i < 36; i += 1) {
-                let {mx,my} = this.game.window;
 
                 let x = (mx + i);
                 let y = (j + my);
-                let index = x *1e4 + y
+                let index = x * 1e4 + y;
 
-                if (x == this.game.player.data.x && y == this.game.player.data.y){
+                for (let [pointName,point] of Object.entries(points)){
+                    if (point.x == x && point.y == y){
+                        translatedPoints[pointName] = {x: i, y:j};
+                    }
+                }
+
+                if (x == pX && y == pY) {
                     xTiles.push(2);
+                    origin.x = i;
+                    origin.y = j;
                     continue;
                 }
 
-                if(considerMobs){
-                    if(mobs[index]){
+                if (considerMobs) {
+                    if (mobs[index]) {
                         xTiles.push(-1);
                         continue;
                     }
@@ -69,13 +97,12 @@ export class Map {
 
                 let tile = this.game.window.map_index[index];
 
-
                 xTiles.push(tile ? tile.block : 1)
             }
-            tileMap.push(xTiles);
+            grid.push(xTiles);
         }
 
-        return tileMap;
+        return {grid, origin, points : translatedPoints};
     }
 
 

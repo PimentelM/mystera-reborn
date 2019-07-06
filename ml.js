@@ -3287,10 +3287,10 @@ jv.ChatBubble = {
                 e.still = function() {
                     return this.fromx == this.x && this.fromy == this.y
                 },
-                e.move = function(e, t) {
+                e.move = function(oX, oY) {
                     return this.fromx = this.x,
                         this.fromy = this.y,
-                        this.x > e ? this.dir = 3 : this.x < e ? this.dir = 1 : this.y > t ? this.dir = 0 : this.y < t && (this.dir = 2),
+                        this.x > oX ? this.dir = 3 : this.x < oX ? this.dir = 1 : this.y > oY ? this.dir = 0 : this.y < oY && (this.dir = 2),
                         this.id == me && (space_toggle && (space_toggle = 0,
                             ph_action.gfx.tint = 16777215,
                             jv.action_button.tint = jv.color_base,
@@ -3302,7 +3302,7 @@ jv.ChatBubble = {
                             d: this.dir
                         }),
                             this.last_dir = this.dir)) : (this.id !== me && (this.traveled = 0),
-                            this.id == me && occupied(e, t, this.id) ? void(this.last_dir !== this.dir && (send({
+                            this.id == me && occupied(oX, oY, this.id) ? void(this.last_dir !== this.dir && (send({
                                 type: "m",
                                 x: this.x,
                                 y: this.y,
@@ -3314,8 +3314,8 @@ jv.ChatBubble = {
                                 x: this.x,
                                 y: this.y
                             }),
-                                dest = -1))) : (this.x = e,
-                                this.y = t,
+                                dest = -1))) : (this.x = oX,
+                                this.y = oY,
                                 this.last_dir = this.dir,
                                 void(this.id == me && (dest == -1 || this.dir !== dest || Date.now() - last_dest >= 1e3) && (send({
                                     type: "h",
