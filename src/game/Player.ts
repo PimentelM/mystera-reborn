@@ -114,6 +114,11 @@ export class Player {
 
     }
 
+    public stop(){
+        let {x,y} = this.mob;
+        this.game.send({type: "h",x,y});
+    }
+
     private async serialStepTo(points: Point[]) {
         if(points.length ==0) return false;
 
@@ -122,7 +127,7 @@ export class Player {
             let obj = JSON.parse(data);
             if (obj.type == "h"){
                 if (obj.d === undefined){
-                    // Ensures that we don't drop the last packet.
+                    // Ensures that we don't drop the last \stop\ packet.
                     if(obj.x != destination.x && obj.y != destination.y){
                         // Drop packet;
                         return '';
@@ -138,7 +143,7 @@ export class Player {
         while (points.length > 0) {
             let nextPoint = points.shift();
             if (await this.stepTo(nextPoint) == false){
-                removeMiddleware();
+                removeMiddleware(); this.stop();
                 return false;
             }
         }
