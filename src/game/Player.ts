@@ -149,6 +149,10 @@ export class Player {
         return (await this.serialStepTo(path));
     }
 
+    public async walkAdjacentToAndLookAt(p:Point){
+        return (await this.walkAdjacentTo(p)) && this.lookAt(p);
+    }
+
 }
   
   
