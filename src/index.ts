@@ -80,7 +80,7 @@ window.addEventListener("orientationchange",function(){
 
 
 
-<div style="width:50%;height:50%;margin:0;padding:0;" id="all_container">
+<div style="width:80%;height:100%;margin:0;padding:0;" id="all_container">
 	<canvas tabindex=0 id='jv' style="background-color:black;width:100%;height:100%;margin:0;min-width:740px;min-height:416px;"></canvas>
 </div>
 
