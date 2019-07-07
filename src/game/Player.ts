@@ -7,6 +7,8 @@ import {distanceBetween} from "./Utils";
 const {promisify} = require('util');
 
 
+let directionOffset = [{"x":0,"y":-1},{"x":1,"y":0},{"x":0,"y":1},{"x":-1,"y":0}];
+
 
 export class Player {
     public mob: Mob;
@@ -44,7 +46,9 @@ export class Player {
     }
 
     public turn(d: number) {
-        this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d})
+        this.mob.last_dir = this.mob.dir;
+        this.mob.dir = d;
+        this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d});
         return true;
     }
 
@@ -88,6 +92,49 @@ export class Player {
 
         // Stop action when player move;
         doWhen(stop, playerMoved, 200);
+    }
+
+
+    public async keepActionUntilResourceIsGathered() {
+        this.game.send({type: "A"});
+        console.log("Doing action");
+        let {x, y} = this.mob;
+
+        let moved = false;
+        let gathered = false;
+
+        let offset = directionOffset[this.mob.dir];
+        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+
+        if (tileOnFrontOfPlayer.o.length == 0) return {moved,gathered};
+
+        let resource = tileOnFrontOfPlayer.o[0].name;
+
+        let stop = () => this.game.send({type: "a"});
+        let resourceGatheredOrPlayerMoved = () => {
+            let _moved = this.mob.x != x || this.mob.y != y;
+            if(_moved){
+                console.log("moved.");
+                moved = true;
+                return true;
+            }
+
+            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+            let  _gathered = tileOnFrontOfPlayer.o.length == 0 || tileOnFrontOfPlayer.o[0].name != resource;
+            if(_gathered){
+                console.log("gathered.");
+                gathered = true;
+                return true;
+            }
+
+            return false;
+        };
+
+        // Stop action when player move;
+        await doWhen(stop, resourceGatheredOrPlayerMoved, 250);
+        console.log("Interrupted action");
+
+        return { moved, gathered }
     }
 
     private async stepTo({x, y}: Point) {
@@ -152,7 +199,7 @@ export class Player {
     }
 
 
-    public async walkTo(p : Point) {
+    public async walkTo(p : Point, steps : number = 0) {
         let {x,y} = p;
 
         if (this.mob.x == x && this.mob.y == y) return true;
@@ -160,8 +207,27 @@ export class Player {
 
         if (path.length == 0) return false;
 
+        if(steps>0){
+            path = path.slice(0,steps);
+        }
+
         return await this.serialStepTo(path);
     }
+
+    public async walkAdjacentTo(p : Point, steps : number = 0) {
+        let {x,y} = p;
+        if (this.distanceTo(p) == 1) return true;
+
+        let path = await this.game.pathfinder.findAdjacentPath(x, y);
+        if (path.length == 0) return false;
+
+        if(steps>0){
+            path = path.slice(0,steps);
+        }
+
+        return (await this.serialStepTo(path));
+    }
+
 
     public async walkToOffset(p : Point){
         let {x, y} = this.mob;
@@ -171,15 +237,7 @@ export class Player {
     }
 
 
-    public async walkAdjacentTo(p : Point) {
-        let {x,y} = p;
-        if (this.distanceTo(p) == 1) return true;
 
-        let path = await this.game.pathfinder.findAdjacentPath(x, y);
-        if (path.length == 0) return false;
-
-        return (await this.serialStepTo(path));
-    }
 
     public async walkAdjacentToAndLookAt(p:Point){
         return (await this.walkAdjacentTo(p)) && this.lookAt(p);
