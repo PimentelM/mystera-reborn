@@ -1,5 +1,5 @@
 import {Game} from "./Game";
-import {Mob, Point, PointMap, Tile} from "./Types";
+import {Mob, Point, PointMap, Tile, TilePoint} from "./Types";
 import {filter} from "minimatch";
 import {IWalkableTileMap} from "./Interfaces";
 import {Iventory} from "./Iventory";
@@ -37,7 +37,7 @@ export class Map {
         return tiles;
     }
 
-    public findTilesWithItem(regExp : string): Tile[] {
+    public findTilesWithItem(regExp : string): TilePoint[] {
         let tiles = [];
 
         let test = (name: string, regExp: string): boolean => {
@@ -51,6 +51,10 @@ export class Map {
 
             for (let item of o) {
                 if (test(item.name,regExp)) {
+
+                    (tile as TilePoint).x = item.x;
+                    (tile as TilePoint).y = item.y;
+
                     tiles.push(tile);
                     break;
                 }

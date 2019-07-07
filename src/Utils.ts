@@ -23,3 +23,4 @@ export async function doWhen(action: () => any, when : () => boolean, period : n
 export function isArray (value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
+
