@@ -4,6 +4,8 @@ import {TilePoint} from "./Types";
 let wood = ["Fir tree"];
 let stone = ["Plain Rock"];
 
+let listToRegex = (list) => `(${list.join(")|(")})`;
+
 export class Resouces {
     public game: Game;
 
@@ -11,20 +13,22 @@ export class Resouces {
         this.game = game;
     }
 
-    public find(regex : string) : TilePoint{
+    public find(regex : string | string[]) : TilePoint{
+        if (typeof regex !== "string"){
+            regex = listToRegex(regex)
+        }
+
         let tilePoints = this.game.map.findTilesWithItem(regex);
         return this.game.player.nearestPoint(tilePoints);
     }
 
 
     public findStone(){
-        let regex = stone.map(x=>"("+x+")").join("|");
-        return this.find(regex);
+        return this.find(stone);
     }
 
     public findTree(){
-        let regex = wood.map(x=>"("+x+")").join("|");
-        return this.find(regex);
+        return this.find(wood);
     }
 
 }

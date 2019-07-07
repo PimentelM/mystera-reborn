@@ -34,7 +34,7 @@ export class PathFinder {
         }
 
         // Sort them by distance
-        let sortedTiles = tiles.sort(this.game.player.__cmpDistance);
+        let sortedTiles = this.game.player.sortByDistance(tiles);
 
         // Iterate over this list and return the first path you find.
         for (let tilePoint of sortedTiles){

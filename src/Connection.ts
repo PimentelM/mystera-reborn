@@ -4,10 +4,10 @@ export class Connection {
     public ws: WebSocket;
 
     // Intercepts outgoing packets
-    private middlewares: ((data: string) => string)[] = [];
+    private middlewares: { [id : string] : (data: string) => string } = {};
 
     // Intercepts incoming packets
-    private parsers: MessageHandler[] = [];
+    private parsers: {[id :string] : MessageHandler} = {};
 
     private originalParser: MessageHandler;
     private originalSend: (data: string) => any;
@@ -68,7 +68,7 @@ export class Connection {
         }
         this.parsers[id] = parser;
         return id;
-    }
+    };
 
     public addMiddleware = (middleware: (data) => string, id = undefined): number => {
         if (!id) {
@@ -77,7 +77,7 @@ export class Connection {
         }
         this.middlewares[id] = middleware;
         return id;
-    }
+    };
 
     public removeMiddleware = (id) => delete this.middlewares[id];
     public removeParser = (id) => delete this.parsers[id];

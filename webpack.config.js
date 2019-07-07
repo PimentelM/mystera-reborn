@@ -12,11 +12,12 @@ var getWsProxy = (srv) => proxy('/ws/' + srv, {
     ws: true, // enable websocket proxy
     logLevel: 'debug',
     headers: {
-        Host: "br.mysteralegacy.com",
+        Host: srv + ".mysteralegacy.com",
         Origin: "http://www.mysteralegacy.com"
     }
 });
 
+let servers = ["ust", "usw", "use", "eu", "br",  "ldn", "use2", "usw2", /*"sea", "sa"*/];
 
 let mystera = "http://www.mysteralegacy.com/";
 let isDev = true;
@@ -86,13 +87,15 @@ module.exports = {
 
         setup: function (app) {
 
-            app.use(getWsProxy("br"));
+            for (let server of servers){
+                app.use(getWsProxy(server));
+            }
 
 
         },
         proxy: [
             {
-                context: ['**', '!/', '!/ws-br'],
+                context: ['**', '!/',...servers.map(x=>"!/ws-"+x)],
                 "changeOrigin": true,
                 "cookieDomainRewrite": "localhost",
                 "target": mystera,

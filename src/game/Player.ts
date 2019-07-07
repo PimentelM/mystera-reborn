@@ -21,14 +21,18 @@ export class Player {
         return distanceBetween(this.mob, point,allowDiagonals);
     };
 
-    public __cmpDistance = (pointA: Point, pointB: Point) : number => {
+    private __cmp_dist = (pointA: Point, pointB: Point) : number => {
         let distanceToA = this.distanceTo(pointA);
         let distanceToB = this.distanceTo(pointB);
         return distanceToA - distanceToB;
     };
 
-    public nearestPoint<T extends Point>(mobs: T[]) : T {
-        return mobs.sort(this.__cmpDistance).shift();
+    public sortByDistance<T extends Point>(points : T[]) : T[] {
+        return points.sort(this.__cmp_dist);
+    }
+
+    public nearestPoint<T extends Point>(points: T[]) : T {
+        return this.sortByDistance(points).shift();
     }
 
     public attack(mob: Mob) {
@@ -110,6 +114,11 @@ export class Player {
 
     }
 
+    public stop(){
+        let {x,y} = this.mob;
+        this.game.send({type: "h",x,y});
+    }
+
     private async serialStepTo(points: Point[]) {
         if(points.length ==0) return false;
 
@@ -118,7 +127,7 @@ export class Player {
             let obj = JSON.parse(data);
             if (obj.type == "h"){
                 if (obj.d === undefined){
-                    // Ensures that we don't drop the last packet.
+                    // Ensures that we don't drop the last \stop\ packet.
                     if(obj.x != destination.x && obj.y != destination.y){
                         // Drop packet;
                         return '';
@@ -134,7 +143,7 @@ export class Player {
         while (points.length > 0) {
             let nextPoint = points.shift();
             if (await this.stepTo(nextPoint) == false){
-                removeMiddleware();
+                removeMiddleware(); this.stop();
                 return false;
             }
         }
