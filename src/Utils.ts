@@ -19,3 +19,7 @@ export async function doWhenTestPass(action: () => any, test : () => boolean, pe
     }
 
 }
+
+export function isArray (value) {
+    return value && typeof value === 'object' && value.constructor === Array;
+}

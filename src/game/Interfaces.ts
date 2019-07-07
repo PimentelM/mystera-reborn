@@ -13,7 +13,7 @@ export interface IGameWindow {
 
     getMob(id): Mob
 
-    mob_ref: { [id: number]: Mob }
+    mob_ref: Mob[]
     me: number
     mx: number
     my: number,

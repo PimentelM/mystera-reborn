@@ -7,6 +7,7 @@ export type Mob = {
     last_dir: number,
     name: string,
     tribe: string,
+    template : string | number,
     hpbar: { val },
     move: (x, y) => undefined,
     walking: boolean,
