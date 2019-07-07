@@ -35,6 +35,13 @@ export interface IventoryItem {
     tpl: string  // Template
 }
 
+export interface IIventoryItem extends IventoryItem{
+    name : string,
+    equiped : boolean,
+    qtd : number,
+    template : string
+}
+
 
 export interface GroundItem {
     name: string,
@@ -52,6 +59,15 @@ export interface GroundItem {
 export interface Tile  {
     block: boolean,
     o: GroundItem[] // Items
+}
+
+export interface TilePoint extends Tile{
+    x : number,
+    y : number,
+}
+
+export interface ITile extends TilePoint{
+    items : GroundItem[]
 }
 
 export interface Point {

@@ -1,7 +1,7 @@
 import * as EasyStar from "easystarjs";
 import {promisify} from "util";
 import {Game} from "./Game";
-import {Point} from "./Types";
+import {Point, Tile, TilePoint} from "./Types";
 
 export class PathFinder {
     private game: Game;
@@ -10,8 +10,42 @@ export class PathFinder {
         this.game = game;
     }
 
+    public async findAdjacentPath(x, y, allowDiagonals = false) {
+        // Get walkable tiles around the point
+        let tiles: TilePoint[] = [];
 
-    public async findPath(x,y) : Promise<Point[]> {
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if(i==0&&j==0) continue;
+                if(!allowDiagonals && !(Math.abs(i) ^ Math.abs(j))) continue;
+
+                let tX = x+i;
+                let tY = y+j;
+
+                if(!this.game.map.isTileWalkable(tX,tY)){
+                    continue;
+                }
+
+                let tile = this.game.map.getTile(tX,tY) as TilePoint;
+                tile.x = tX;
+                tile.y = tY;
+                tiles.push(tile);
+            }
+        }
+
+        // Sort them by distance
+        let sortedTiles = tiles.sort(this.game.player.__cmp);
+
+        // Iterate over this list and return the first path you find.
+        for (let tilePoint of sortedTiles){
+            let path = await this.findPath(tilePoint.x,tilePoint.y);
+            if(path.length>0) return path;
+        }
+
+        return [];
+    }
+
+    public async findPath(x, y): Promise<Point[]> {
         let pathFinder = new EasyStar.js();
         let {grid, origin, points} = this.game.map.getWalkableTileMap({destination: {x, y}});
 
@@ -35,7 +69,7 @@ export class PathFinder {
         pathFinder.disableDiagonals();
         pathFinder.disableCornerCutting();
 
-        let findPathAsync : (oX,oY,x,y) => Promise<Point[]> = promisify((oX, oY, x, y, callback) => {
+        let findPathAsync: (oX, oY, x, y) => Promise<Point[]> = promisify((oX, oY, x, y, callback) => {
             pathFinder.findPath(oX, oY, x, y, callback);
             pathFinder.calculate();
         });
@@ -54,12 +88,12 @@ export class PathFinder {
                 path = e;
         }
 
-        if(!path){
+        if (!path) {
             console.log("Could not find path to destination.");
             return [];
         }
 
-        for (let step of path){
+        for (let step of path) {
             step.x += gridStart.x;
             step.y += gridStart.y;
         }

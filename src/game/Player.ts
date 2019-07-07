@@ -7,6 +7,7 @@ import {distanceBetween} from "./Utils";
 const {promisify} = require('util');
 
 
+
 export class Player {
     public mob: Mob;
     public game: Game;
@@ -16,11 +17,11 @@ export class Player {
         doWhen(()=>this.updateData(),()=> !!this.game.window.getMob(this.game.window.me),500)
     }
 
-    public distanceTo<T extends Point>(point: T) {
-        return distanceBetween(this.mob, point);
+    public distanceTo<T extends Point>(point: T,allowDiagonals : boolean = false) {
+        return distanceBetween(this.mob, point,allowDiagonals);
     };
 
-    private __cmp = (pointA: Point, pointB: Point) : number => {
+    public __cmp = (pointA: Point, pointB: Point) : number => {
         let distanceToA = this.distanceTo(pointA);
         let distanceToB = this.distanceTo(pointB);
         return distanceToA - distanceToB;
@@ -115,19 +116,37 @@ export class Player {
     }
 
 
-    public async walkToOffset(oX, oY) {
-        let {x, y} = this.mob;
-        return await this.walkTo(x + oX, y + oY);
-    }
 
-    public async walkTo(x, y) {
+
+    public async walkTo(p : Point) {
+        let {x,y} = p;
+
         if (this.mob.x == x && this.mob.y == y) return true;
         let path = await this.game.pathfinder.findPath(x, y);
 
         if (path.length == 0) return false;
 
         return await this.serialStepTo(path);
+    }
 
+
+
+    public async walkToOffset(p : Point){
+        let {x, y} = this.mob;
+        p.x+=x;
+        p.y+=y;
+        return await this.walkTo(p);
+    }
+
+
+    public async walkAdjacentTo(p : Point) {
+        let {x,y} = p;
+        if (this.distanceTo(p) == 1) return true;
+
+        let path = await this.game.pathfinder.findAdjacentPath(x, y);
+        if (path.length == 0) return false;
+
+        return await this.serialStepTo(path);
     }
 
 }
