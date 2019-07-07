@@ -2,7 +2,7 @@ import {Game} from "./Game";
 import {Mob, Point, PointMap, Tile, TilePoint} from "./Types";
 import {filter} from "minimatch";
 import {IWalkableTileMap} from "./Interfaces";
-import {Iventory} from "./Iventory";
+import {Iventory} from "./Inventory";
 
 
 export class Map {

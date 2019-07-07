@@ -2,7 +2,7 @@ import {Connection} from "../Connection";
 import {Player} from "./Player";
 import {IGameWindow} from "./Interfaces";
 import {Map} from "./Map";
-import {Iventory} from "./Iventory";
+import {Iventory} from "./Inventory";
 import {PathFinder} from "./PathFinder";
 import {Creatures} from "./Creatures";
 import "./Interfaces"

@@ -9,7 +9,7 @@ npm install
 npm start
 ```
 
-The modified version of the game will be avaliable at `http://localhot:8000`
+The modified version of the game will be avaliable at `http://localhost:8000`
 
 ## Website
 
