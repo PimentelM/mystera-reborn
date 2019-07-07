@@ -89,51 +89,15 @@ export class Player {
         return true;
     }
 
+    public async walkToOffset(oX,oY){
+        let {x,y} = this.mob;
+        return await this.walkTo(x+oX,y+oY);
+    }
 
     public async walkTo(x, y) {
-        let pathFinder = new EasyStar.js();
-        let {grid, origin, points} = this.game.map.getWalkableTileMap({destination: {x, y}});
+       let path = await this.game.pathfinder.findPath(x,y);
 
-        let gridStart = {x: this.mob.x - origin.x, y: this.mob.y - origin.y};
-
-        let {destination} = points;
-
-        if (!destination) {
-            console.log("Point not found.");
-            return false;
-        }
-
-
-        pathFinder.setGrid(grid);
-        pathFinder.setAcceptableTiles([0]);
-        pathFinder.disableDiagonals();
-        pathFinder.disableCornerCutting();
-
-        let findPathAsync = promisify((oX, oY, x, y, callback) => {
-            pathFinder.findPath(oX, oY, x, y, callback);
-            pathFinder.calculate();
-        });
-
-        let path = [];
-
-        try {
-            path = await findPathAsync(origin.x, origin.y, destination.x, destination.y);
-        } catch (e) {
-            if(e.message){
-                console.log("Error while finding path...");
-                console.log(e.message);
-                console.log(e.stack);
-                return false;
-            }
-            else
-                path = e;
-        }
-
-        for (let step of path){
-            step.x += gridStart.x;
-            step.y += gridStart.y;
-        }
-
+       if(path.length == 0) return false;
 
         return await this.serialStepTo(path);
 
