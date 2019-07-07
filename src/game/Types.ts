@@ -1,4 +1,5 @@
-export type Mob = {
+
+export interface Mob extends Point{
     id: number,
     x: number,
     y: number,
@@ -25,7 +26,7 @@ export type Mob = {
     sy: number,
 }
 
-export type IventoryItem = {
+export interface IventoryItem {
     col: any,
     eqp: boolean // isEquiped
     n: string   // Name
@@ -35,7 +36,7 @@ export type IventoryItem = {
 }
 
 
-export type GroundItem = {
+export interface GroundItem {
     name: string,
     can_block: boolean,
     can_pickup: boolean,
@@ -48,16 +49,16 @@ export type GroundItem = {
 
 }
 
-export type Tile = {
+export interface Tile  {
     block: boolean,
     o: GroundItem[] // Items
 }
 
-export type Point = {
+export interface Point {
     x: number,
     y: number
 }
 
-export type PointMap = {
+export interface PointMap  {
     [name:string] : Point
 }
