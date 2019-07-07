@@ -1,7 +1,7 @@
 import {Game} from "./Game";
 import {TilePoint} from "./Types";
 
-let wood = ["tree"];
+let wood = ["Fir tree"];
 let stone = ["Plain Rock"];
 
 export class Resouces {
@@ -19,6 +19,11 @@ export class Resouces {
 
     public findStone(){
         let regex = stone.map(x=>"("+x+")").join("|");
+        return this.find(regex);
+    }
+
+    public findTree(){
+        let regex = wood.map(x=>"("+x+")").join("|");
         return this.find(regex);
     }
 
