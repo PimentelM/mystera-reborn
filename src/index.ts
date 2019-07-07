@@ -1,6 +1,8 @@
 import {Bot} from "./Bot";
 import axios from "axios";
 import { setLogLevel as hmrLogLevel} from 'webpack/hot/log';
+import {Connection} from "./Connection";
+import {doWhen} from "./Utils";
 
 hmrLogLevel('error');
 
@@ -16,7 +18,18 @@ function updateBotInstance() {
         console.log("No mystera websocket.");
         return;
     }
-    window["bot"] = new Bot(window["connection"]);
+    // @ts-ignore
+    if(!window.bot_connection || window.bot_connection.ws.readyState === WebSocket.CLOSED){
+        // @ts-ignore
+        window.bot_connection = new Connection(window["connection"]);
+
+        // @ts-ignore
+        // doWhen(()=>updateBotInstance(), ()=>window.bot_connection.ws.readyState === WebSocket.CLOSED, 1000);
+    }
+
+    // @ts-ignore
+    let bot_connection = window.bot_connection;
+    window["bot"] = new Bot(bot_connection);
     //console.log("window.bot instance updated.")
 }
 
@@ -24,8 +37,7 @@ function updateBotInstance() {
 window["updateBotInstance"] = updateBotInstance;
 
 window["makeBot"] = () => {
-    return new Bot(window["connection"]);
-    //window.console.clear()
+    updateBotInstance();
 };
 
 

@@ -6,8 +6,8 @@ export class Bot{
     public connection : Connection;
     public game : Game;
 
-    constructor(ws : WebSocket){
-      this.connection = new Connection(ws);
+    constructor(connection : Connection){
+      this.connection = connection;
       let gameWindow = window;
       // @ts-ignore
         this.game = new Game(this.connection, gameWindow);
