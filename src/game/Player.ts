@@ -36,24 +36,24 @@ export class Player {
         this.game.send({"type": "chat", "data": prefix + text + sufix})
     }
 
-    public pick(){
+    public pick() {
         this.game.send({type: "g"});
     }
 
-    public action(){
+    public action() {
         this.game.send({type: "A"});
         this.game.send({type: "a"});
     }
 
-    public keepAction(){
-        this.game.send({type:"A"});
-        let {x,y} = this.mob;
+    public keepAction() {
+        this.game.send({type: "A"});
+        let {x, y} = this.mob;
 
-        let stop = ()=> this.game.send({type:"a"});
-        let playerMoved = ()=> this.mob.x != x || this.mob.y != y;
+        let stop = () => this.game.send({type: "a"});
+        let playerMoved = () => this.mob.x != x || this.mob.y != y;
 
         // Stop action when player move;
-        doWhenTestPass(stop,playerMoved,200);
+        doWhenTestPass(stop, playerMoved, 200);
     }
 
     private async stepTo({x, y}: Point) {
@@ -89,15 +89,17 @@ export class Player {
         return true;
     }
 
-    public async walkToOffset(oX,oY){
-        let {x,y} = this.mob;
-        return await this.walkTo(x+oX,y+oY);
+
+    public async walkToOffset(oX, oY) {
+        let {x, y} = this.mob;
+        return await this.walkTo(x + oX, y + oY);
     }
 
     public async walkTo(x, y) {
-       let path = await this.game.pathfinder.findPath(x,y);
+        if (this.mob.x == x && this.mob.y == y) return true;
+        let path = await this.game.pathfinder.findPath(x, y);
 
-       if(path.length == 0) return false;
+        if (path.length == 0) return false;
 
         return await this.serialStepTo(path);
 
