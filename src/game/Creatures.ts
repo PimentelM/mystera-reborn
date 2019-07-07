@@ -33,23 +33,7 @@ export class Creatures {
 
     }
 
-    private distanceBetween(mobA: Mob, mobB: Mob) {
-        return Math.abs(mobA.x - mobB.x) + Math.abs(mobB.y - mobA.y);
-    };
 
-    public distanceTo(mobA: Mob) {
-        return this.distanceBetween(this.game.player.mob, mobA);
-    };
-
-    private __cmp = (mobA: Mob, mobB: Mob) : number => {
-        let distanceToA = this.distanceTo(mobA);
-        let distanceToB = this.distanceTo(mobB);
-        return distanceToA - distanceToB;
-    };
-
-    private nearest(mobs: Mob[]) : Mob {
-        return mobs.sort(this.__cmp).shift();
-    }
 
     public find(test: CreatureFilter = all): Mob[] {
         test = predicateIt(test);
@@ -78,17 +62,17 @@ export class Creatures {
 
     public findNearest(test: CreatureFilter = all): Mob {
         let mobs = this.find(test);
-        return this.nearest(mobs);
+        return this.game.player.nearestPoint(mobs);
     }
 
     public findNearestCreature(test: CreatureFilter = all): Mob {
         let mobs = this.findCreatures(test);
-        return this.nearest(mobs);
+        return this.game.player.nearestPoint(mobs);
     }
 
     public findNearestPlayer(test: CreatureFilter = all): Mob {
         let mobs = this.findPlayers(test);
-        return this.nearest(mobs);
+        return this.game.player.nearestPoint(mobs);
     }
 
 

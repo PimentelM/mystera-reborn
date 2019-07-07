@@ -1,7 +1,8 @@
 import {Game} from "./Game";
 import {Mob, Point} from "./Types";
-import {doWhenTestPass, sleep} from "../Utils";
+import {doWhen, sleep} from "../Utils";
 import * as EasyStar from "easystarjs"
+import {distanceBetween} from "./Utils";
 
 const {promisify} = require('util');
 
@@ -12,18 +13,21 @@ export class Player {
 
     constructor(game: Game) {
         this.game = game;
+        doWhen(()=>this.updateData(),()=> !!this.game.window.getMob(this.game.window.me),500)
+    }
 
-        new Promise(async () => {
+    public distanceTo<T extends Point>(point: T) {
+        return distanceBetween(this.mob, point);
+    };
 
-            while (true) {
-                if (this.game.window.getMob(this.game.window.me)) {
-                    this.updateData();
-                    break;
-                }
-                await sleep(500);
-            }
+    private __cmp = (pointA: Point, pointB: Point) : number => {
+        let distanceToA = this.distanceTo(pointA);
+        let distanceToB = this.distanceTo(pointB);
+        return distanceToA - distanceToB;
+    };
 
-        })
+    public nearestPoint<T extends Point>(mobs: T[]) : T {
+        return mobs.sort(this.__cmp).shift();
     }
 
     public attack(mob: Mob) {
@@ -74,7 +78,7 @@ export class Player {
         let playerMoved = () => this.mob.x != x || this.mob.y != y;
 
         // Stop action when player move;
-        doWhenTestPass(stop, playerMoved, 200);
+        doWhen(stop, playerMoved, 200);
     }
 
     private async stepTo({x, y}: Point) {

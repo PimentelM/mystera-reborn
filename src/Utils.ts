@@ -4,11 +4,11 @@ export function sleep(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-export async function doWhenTestPass(action: () => any, test : () => boolean, period : number, timeout : number = Infinity) : Promise<boolean>{
+export async function doWhen(action: () => any, when : () => boolean, period : number, timeout : number = Infinity) : Promise<boolean>{
 
     let elapsedtime = 0;
     while (true) {
-        if (test()) {
+        if (when()) {
             action();
             return true;
         } else if (elapsedtime > timeout) {
