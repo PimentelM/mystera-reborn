@@ -86,7 +86,9 @@ module.exports = {
 
         setup: function (app) {
 
-            app.use(getWsProxy("br"));
+            ["ust", "usw", "use", "eu", "br", "sea", "ldn", "use2", "sa", "usw2"].forEach(server=>{
+                app.use(getWsProxy("server"));
+            });
 
 
         },
