@@ -20,7 +20,6 @@ export class Iventory {
             if (!item) continue;
             if (test(item.n, regExp)) {
                 items.push(item);
-                break;
             }
         }
 
