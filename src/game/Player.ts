@@ -26,12 +26,29 @@ export class Player {
         })
     }
 
-    public attack(mob:Mob){
+    public attack(mob: Mob) {
         this.game.window.info_pane.set_info(mob);
     }
 
     public updateData() {
         this.mob = this.game.window.getMob(this.game.window.me)
+    }
+
+    public turn(d: number) {
+        this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d})
+    }
+
+    public lookAt(x, y) {
+        let dX = x - this.mob.x;
+        let dY = y - this.mob.y;
+
+        if (Math.abs(dX) > Math.abs(dY)) {
+            if (dX < 0) return this.turn(3);
+            if (dX > 0) return this.turn(1);
+        } else {
+            if (dY < 0) return this.turn(0);
+            if (dY > 0) return this.turn(2);
+        }
     }
 
     public say(text) {
