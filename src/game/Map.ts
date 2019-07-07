@@ -12,12 +12,15 @@ export class Map {
         this.game = game;
     }
 
-    public getTile(x, y): Tile {
+    public getTile(p : Point): Tile {
+        let {x,y} = p;
         let tile = this.game.window.map_index[x * 1e4 + y];
         return tile;
     }
 
-    public getTileByOffset(oX, oY): Tile {
+    public getTileByOffset(p : Point): Tile {
+        let oX = p.x;
+        let oY = p.y;
         let x = this.game.player.mob.x + oX;
         let y = this.game.player.mob.y + oY;
         let tile = this.game.window.map_index[x * 1e4 + y];
@@ -64,7 +67,8 @@ export class Map {
         return tiles;
     }
 
-    public isTileWalkable(x, y, considerMobs = true): boolean {
+    public isTileWalkable(p : Point, considerMobs = true): boolean {
+        let {x,y} = p;
 
         if (considerMobs) {
             for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
@@ -74,7 +78,7 @@ export class Map {
             }
         }
 
-        return !this.getTile(x, y).block;
+        return !this.getTile(p).block;
     }
 
     public getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {

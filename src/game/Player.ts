@@ -41,6 +41,16 @@ export class Player {
         this.game.window.info_pane.set_info(mob);
     }
 
+    public hasTarget() : boolean{
+        return this.game.window.target.id != this.mob.id;
+    }
+
+    public cancelTarget(){
+        this.game.window.info_pane.set_info(undefined);
+        this.game.window.target.id = this.mob.id;
+        this.game.send({type: "t", t:0});
+    }
+
     public updateData() {
         this.mob = this.game.window.getMob(this.game.window.me)
     }
@@ -97,14 +107,13 @@ export class Player {
 
     public async keepActionUntilResourceIsGathered() {
         this.game.send({type: "A"});
-        console.log("Doing action");
         let {x, y} = this.mob;
 
         let moved = false;
         let gathered = false;
 
         let offset = directionOffset[this.mob.dir];
-        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
 
         if (tileOnFrontOfPlayer.o.length == 0) return {moved,gathered};
 
@@ -114,15 +123,13 @@ export class Player {
         let resourceGatheredOrPlayerMoved = () => {
             let _moved = this.mob.x != x || this.mob.y != y;
             if(_moved){
-                console.log("moved.");
                 moved = true;
                 return true;
             }
 
-            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
             let  _gathered = tileOnFrontOfPlayer.o.length == 0 || tileOnFrontOfPlayer.o[0].name != resource;
             if(_gathered){
-                console.log("gathered.");
                 gathered = true;
                 return true;
             }
@@ -132,17 +139,16 @@ export class Player {
 
         // Stop action when player move;
         await doWhen(stop, resourceGatheredOrPlayerMoved, 250);
-        console.log("Interrupted action");
-
         return { moved, gathered }
     }
 
-    private async stepTo({x, y}: Point) {
+    private async stepTo(p: Point) {
+        let {x, y} = p;
         if (this.mob.x == x && this.mob.y == y) return true;
 
         this.mob.move(x, y);
 
-        if (!this.game.map.isTileWalkable(x, y)) {
+        if (!this.game.map.isTileWalkable(p)) {
             return false;
         }
 
@@ -203,7 +209,7 @@ export class Player {
         let {x,y} = p;
 
         if (this.mob.x == x && this.mob.y == y) return true;
-        let path = await this.game.pathfinder.findPath(x, y);
+        let path = await this.game.pathfinder.findPath(p);
 
         if (path.length == 0) return false;
 
@@ -218,7 +224,7 @@ export class Player {
         let {x,y} = p;
         if (this.distanceTo(p) == 1) return true;
 
-        let path = await this.game.pathfinder.findAdjacentPath(x, y);
+        let path = await this.game.pathfinder.findAdjacentPath(p);
         if (path.length == 0) return false;
 
         if(steps>0){
