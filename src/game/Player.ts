@@ -21,14 +21,14 @@ export class Player {
         return distanceBetween(this.mob, point,allowDiagonals);
     };
 
-    public __cmp = (pointA: Point, pointB: Point) : number => {
+    public __cmpDistance = (pointA: Point, pointB: Point) : number => {
         let distanceToA = this.distanceTo(pointA);
         let distanceToB = this.distanceTo(pointB);
         return distanceToA - distanceToB;
     };
 
     public nearestPoint<T extends Point>(mobs: T[]) : T {
-        return mobs.sort(this.__cmp).shift();
+        return mobs.sort(this.__cmpDistance).shift();
     }
 
     public attack(mob: Mob) {

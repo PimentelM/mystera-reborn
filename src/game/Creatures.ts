@@ -25,12 +25,9 @@ let predicateIt = (test: CreatureFilter): MobPredicate => {
 
 export class Creatures {
     public game: Game;
-    private static _this : Creatures;
 
     constructor(game) {
         this.game = game;
-        Creatures._this = this;
-
     }
 
 

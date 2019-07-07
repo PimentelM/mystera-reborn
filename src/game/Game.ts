@@ -6,6 +6,7 @@ import {Iventory} from "./Iventory";
 import {PathFinder} from "./PathFinder";
 import {Creatures} from "./Creatures";
 import "./Interfaces"
+import {Resouces} from "./Resouces";
 
 export class Game {
     public window: IGameWindow;
@@ -15,6 +16,7 @@ export class Game {
     public map: Map;
     public iventory: Iventory;
     public creatures: Creatures;
+    public resources: Resouces;
 
     public pathfinder : PathFinder;
 
@@ -26,6 +28,7 @@ export class Game {
         this.iventory = new Iventory(this);
         this.creatures = new Creatures(this);
         this.pathfinder = new PathFinder(this);
+        this.resources = new Resouces(this);
 
 
 
