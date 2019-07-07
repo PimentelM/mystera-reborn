@@ -37,7 +37,7 @@ export class Map {
         return tiles;
     }
 
-    public findTilesWithItems(regExps : string[]): Tile[] {
+    public findTilesWithItem(regExp : string): Tile[] {
         let tiles = [];
 
         let test = (name: string, regExp: string): boolean => {
@@ -50,11 +50,9 @@ export class Map {
             if (o.length == 0) continue;
 
             for (let item of o) {
-                for (let regExp of regExps) {
-                    if (test(item.name,regExp)) {
-                        tiles.push(tile);
-                        break;
-                    }
+                if (test(item.name,regExp)) {
+                    tiles.push(tile);
+                    break;
                 }
             }
         }
@@ -62,9 +60,6 @@ export class Map {
         return tiles;
     }
 
-    public findTilesWithItem(regExp : string){
-        return this.findTilesWithItems([regExp])
-    }
     public isTileWalkable(x, y, considerMobs = true): boolean {
 
         if (considerMobs) {

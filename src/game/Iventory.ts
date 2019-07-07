@@ -9,7 +9,7 @@ export class Iventory {
     }
 
 
-    public findItems(regExp: string[]): IventoryItem[] {
+    public findItem(regExp: string): IventoryItem[] {
         let items: IventoryItem[] = [];
 
         let test = (str1: string, regExp: string): boolean => {
@@ -18,19 +18,13 @@ export class Iventory {
 
         for (let item of this.game.window.item_data) {
             if (!item) continue;
-            for (let itemNameOrTemplate of regExp) {
-                if (test(item.n, itemNameOrTemplate)) {
-                    items.push(item);
-                    break;
-                }
+            if (test(item.n, regExp)) {
+                items.push(item);
+                break;
             }
         }
 
         return items;
-    }
-
-    public findItem(regExp : string): IventoryItem[] {
-        return this.findItems([regExp]);
     }
 
     public use(item:IventoryItem);
