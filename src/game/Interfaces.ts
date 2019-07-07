@@ -2,6 +2,12 @@ import {IventoryItem, Mob, Point, PointMap, Tile} from "./Types";
 
 
 export interface IGameWindow {
+    Player : any,
+    GameMap : any,
+    Iventory : any,
+    Creatures : any,
+    Game : any,
+
     hp_status: { val },
     connection: WebSocket
 
@@ -13,7 +19,7 @@ export interface IGameWindow {
     my: number,
     dest: number,
     map_index: { [coords: number]: Tile },
-    item_data: IventoryItem[]
+    item_data: IventoryItem[],
 }
 
 

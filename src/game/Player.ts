@@ -1,6 +1,6 @@
 import {Game} from "./Game";
 import {Mob, Point} from "./Types";
-import {sleep} from "../Utils";
+import {doWhenTestPass, sleep} from "../Utils";
 import * as EasyStar from "easystarjs"
 
 const {promisify} = require('util');
@@ -34,6 +34,26 @@ export class Player {
         let sufix = "";
         let prefix = "";
         this.game.send({"type": "chat", "data": prefix + text + sufix})
+    }
+
+    public pick(){
+        this.game.send({type: "g"});
+    }
+
+    public action(){
+        this.game.send({type: "A"});
+        this.game.send({type: "a"});
+    }
+
+    public keepAction(){
+        this.game.send({type:"A"});
+        let {x,y} = this.mob;
+
+        let stop = ()=> this.game.send({type:"a"});
+        let playerMoved = ()=> this.mob.x != x || this.mob.y != y;
+
+        // Stop action when player move;
+        doWhenTestPass(stop,playerMoved,200);
     }
 
     private async stepTo({x, y}: Point) {

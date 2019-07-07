@@ -2,6 +2,7 @@ import {Game} from "./Game";
 import {Mob, Point, PointMap, Tile} from "./Types";
 import {filter} from "minimatch";
 import {IWalkableTileMap} from "./Interfaces";
+import {Iventory} from "./Iventory";
 
 
 export class Map {
@@ -36,6 +37,34 @@ export class Map {
         return tiles;
     }
 
+    public findTilesWithItems(regExps : string[]): Tile[] {
+        let tiles = [];
+
+        let test = (name: string, regExp: string): boolean => {
+            return new RegExp(regExp,"i").test(name);
+        };
+
+        for (let [_, tile] of Object.entries(this.game.window.map_index)) {
+            if (!tile || !tile.o) continue;
+            let o = tile.o;
+            if (o.length == 0) continue;
+
+            for (let item of o) {
+                for (let regExp of regExps) {
+                    if (test(item.name,regExp)) {
+                        tiles.push(tile);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return tiles;
+    }
+
+    public findTilesWithItem(regExp : string){
+        return this.findTilesWithItems([regExp])
+    }
     public isTileWalkable(x, y, considerMobs = true): boolean {
 
         if (considerMobs) {

@@ -10,7 +10,8 @@ export class Bot{
       this.connection = new Connection(ws);
       let gameWindow = window;
       // @ts-ignore
-        this.game = new Game(this.connection, gameWindow)
+        this.game = new Game(this.connection, gameWindow);
+
     }
 
     doLogin(login,password) {

@@ -25,7 +25,7 @@ export type Mob = {
 }
 
 export type IventoryItem = {
-    col: any
+    col: any,
     eqp: boolean // isEquiped
     n: string   // Name
     qty: number  // Quantity
