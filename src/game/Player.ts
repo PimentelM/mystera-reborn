@@ -111,11 +111,34 @@ export class Player {
     }
 
     private async serialStepTo(points: Point[]) {
+        if(points.length ==0) return false;
+
+        let destination = points[points.length - 1];
+        let dropUncessaryPackets = (data) => {
+            let obj = JSON.parse(data);
+            if (obj.type == "h"){
+                if (obj.d === undefined){
+                    // Ensures that we don't drop the last packet.
+                    if(obj.x != destination.x && obj.y != destination.y){
+                        // Drop packet;
+                        return '';
+                    }
+                }
+            }
+            return data;
+        };
+
+        let middlewareId = this.game.con.addMiddleware(dropUncessaryPackets);
+        let removeMiddleware = () => this.game.con.removeMiddleware(middlewareId);
+
         while (points.length > 0) {
             let nextPoint = points.shift();
-            if (await this.stepTo(nextPoint) == false)
+            if (await this.stepTo(nextPoint) == false){
+                removeMiddleware();
                 return false;
+            }
         }
+        removeMiddleware();
         return true;
     }
 
