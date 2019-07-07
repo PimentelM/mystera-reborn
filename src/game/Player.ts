@@ -41,9 +41,11 @@ export class Player {
 
     public turn(d: number) {
         this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d})
+        return true;
     }
 
-    public lookAt(x, y) {
+    public lookAt(p : Point) {
+        let {x,y} = p;
         let dX = x - this.mob.x;
         let dY = y - this.mob.y;
 
@@ -54,6 +56,8 @@ export class Player {
             if (dY < 0) return this.turn(0);
             if (dY > 0) return this.turn(2);
         }
+
+        return false;
     }
 
     public say(text) {
@@ -116,8 +120,6 @@ export class Player {
     }
 
 
-
-
     public async walkTo(p : Point) {
         let {x,y} = p;
 
@@ -128,8 +130,6 @@ export class Player {
 
         return await this.serialStepTo(path);
     }
-
-
 
     public async walkToOffset(p : Point){
         let {x, y} = this.mob;
@@ -146,7 +146,7 @@ export class Player {
         let path = await this.game.pathfinder.findAdjacentPath(x, y);
         if (path.length == 0) return false;
 
-        return await this.serialStepTo(path);
+        return (await this.serialStepTo(path));
     }
 
 }
