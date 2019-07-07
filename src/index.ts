@@ -2,7 +2,7 @@ import {Bot} from "./Bot";
 import axios from "axios";
 import { setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 
-//hmrLogLevel('error');
+hmrLogLevel('error');
 
 // @ts-ignore
 if (module.hot) {

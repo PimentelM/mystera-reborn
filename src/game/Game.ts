@@ -5,7 +5,7 @@ import {Map} from "./Map";
 import {Iventory} from "./Iventory";
 import {PathFinder} from "./PathFinder";
 import {Creatures} from "./Creatures";
-
+import "./Interfaces"
 
 export class Game {
     public window: IGameWindow;
