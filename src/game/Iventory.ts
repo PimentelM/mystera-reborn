@@ -26,19 +26,17 @@ export class Iventory {
         return items;
     }
 
-    public use(item:IventoryItem);
-    public use(item:string);
+
     public use(item: IventoryItem | string ){
         if (typeof item == "string"){
             item = this.findItem(item).shift();
             if(!item) return false;
         }
 
-        this.game.send({type:"u",slot:item.slot})
+        this.game.send({type:"u",slot:item.slot});
     }
 
-    public equip(item:IventoryItem);
-    public equip(item:string);
+
     public equip(item: IventoryItem | string){
         if (typeof item == "string"){
             item = this.findItem(item).shift();
@@ -55,15 +53,13 @@ export class Iventory {
         this.game.send({type: "sw", slot, swap})
     }
 
-    public drop(item:IventoryItem, amt? : number);
-    public drop(item:string, amt? : number);
+
     public drop(item: IventoryItem | string , amt? : number){
         if (typeof item == "string"){
             item = this.findItem(item).shift();
             if(!item) return false;
         }
 
-        console.log("drop")
         this.game.send({type:"d",slot:item.slot,amt : amt || "all"})
 
     }
