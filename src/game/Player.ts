@@ -26,6 +26,10 @@ export class Player {
         })
     }
 
+    public attack(mob:Mob){
+        this.game.window.info_pane.set_info(mob);
+    }
+
     public updateData() {
         this.mob = this.game.window.getMob(this.game.window.me)
     }
