@@ -152,7 +152,7 @@ export class Player {
     }
 
 
-    public async walkTo(p : Point) {
+    public async walkTo(p : Point, steps : number = 0) {
         let {x,y} = p;
 
         if (this.mob.x == x && this.mob.y == y) return true;
@@ -160,8 +160,27 @@ export class Player {
 
         if (path.length == 0) return false;
 
+        if(steps>0){
+            path = path.slice(0,steps);
+        }
+
         return await this.serialStepTo(path);
     }
+
+    public async walkAdjacentTo(p : Point, steps : number = 0) {
+        let {x,y} = p;
+        if (this.distanceTo(p) == 1) return true;
+
+        let path = await this.game.pathfinder.findAdjacentPath(x, y);
+        if (path.length == 0) return false;
+
+        if(steps>0){
+            path = path.slice(0,steps);
+        }
+
+        return (await this.serialStepTo(path));
+    }
+
 
     public async walkToOffset(p : Point){
         let {x, y} = this.mob;
@@ -171,15 +190,7 @@ export class Player {
     }
 
 
-    public async walkAdjacentTo(p : Point) {
-        let {x,y} = p;
-        if (this.distanceTo(p) == 1) return true;
 
-        let path = await this.game.pathfinder.findAdjacentPath(x, y);
-        if (path.length == 0) return false;
-
-        return (await this.serialStepTo(path));
-    }
 
     public async walkAdjacentToAndLookAt(p:Point){
         return (await this.walkAdjacentTo(p)) && this.lookAt(p);
