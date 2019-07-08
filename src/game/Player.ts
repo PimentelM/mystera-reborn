@@ -42,10 +42,13 @@ export class Player {
 
     public attack(mob: Mob) {
         this.game.window.info_pane.set_info(mob);
+        setTimeout(()=>this.attack(mob),500);
+        // Ensure you did attack mob.
     }
 
     public hasTarget() : boolean{
-        return this.game.window.target.id != this.mob.id;
+        let targetId = this.game.window.target.id;
+        return targetId && targetId != this.mob.id;
     }
 
     public getTarget() : Mob {
