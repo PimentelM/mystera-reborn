@@ -11,7 +11,9 @@ export interface IGameWindow {
     hp_status: { val },
     connection: WebSocket
 
-    getMob(id): Mob
+    getMob(id): Mob,
+
+    target : {id:number}
 
     mob_ref: Mob[]
     me: number

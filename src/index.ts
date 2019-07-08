@@ -13,6 +13,9 @@ if (module.hot) {
     updateBotInstance();
 }
 
+// @ts-ignore
+window.p = (x,y)=> {return {x,y}};
+
 function updateBotInstance() {
     if (!window['connection']) {
         console.log("No mystera websocket.");
@@ -119,3 +122,4 @@ for (let i = 1; i <= 10; i++){
 }
 
 if(!window['game-is-rendered']) renderGame();
+

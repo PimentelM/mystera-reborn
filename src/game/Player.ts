@@ -9,10 +9,13 @@ const {promisify} = require('util');
 
 let directionOffset = [{"x":0,"y":-1},{"x":1,"y":0},{"x":0,"y":1},{"x":-1,"y":0}];
 
-
 export class Player {
     public mob: Mob;
     public game: Game;
+
+    private serialStepList : Point[] = [];
+    private isSerialWalking : boolean = false;
+    private serialStepPromise : Promise<boolean>;
 
     constructor(game: Game) {
         this.game = game;
@@ -39,6 +42,22 @@ export class Player {
 
     public attack(mob: Mob) {
         this.game.window.info_pane.set_info(mob);
+    }
+
+    public hasTarget() : boolean{
+        return this.game.window.target.id != this.mob.id;
+    }
+
+    public getTarget() : Mob {
+        if (!this.hasTarget()) return null;
+        return this.game.window.getMob(this.game.window.target.id);
+
+    }
+
+    public cancelTarget(){
+        this.game.window.info_pane.set_info(undefined);
+        this.game.window.target.id = this.mob.id;
+        this.game.send({type: "t", t:0});
     }
 
     public updateData() {
@@ -97,14 +116,13 @@ export class Player {
 
     public async keepActionUntilResourceIsGathered() {
         this.game.send({type: "A"});
-        console.log("Doing action");
         let {x, y} = this.mob;
 
         let moved = false;
         let gathered = false;
 
         let offset = directionOffset[this.mob.dir];
-        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
 
         if (tileOnFrontOfPlayer.o.length == 0) return {moved,gathered};
 
@@ -114,15 +132,13 @@ export class Player {
         let resourceGatheredOrPlayerMoved = () => {
             let _moved = this.mob.x != x || this.mob.y != y;
             if(_moved){
-                console.log("moved.");
                 moved = true;
                 return true;
             }
 
-            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset.x,offset.y);
+            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
             let  _gathered = tileOnFrontOfPlayer.o.length == 0 || tileOnFrontOfPlayer.o[0].name != resource;
             if(_gathered){
-                console.log("gathered.");
                 gathered = true;
                 return true;
             }
@@ -132,17 +148,16 @@ export class Player {
 
         // Stop action when player move;
         await doWhen(stop, resourceGatheredOrPlayerMoved, 250);
-        console.log("Interrupted action");
-
         return { moved, gathered }
     }
 
-    private async stepTo({x, y}: Point) {
+    private async stepTo(p: Point) {
+        let {x, y} = p;
         if (this.mob.x == x && this.mob.y == y) return true;
 
         this.mob.move(x, y);
 
-        if (!this.game.map.isTileWalkable(x, y)) {
+        if (!this.game.map.isTileWalkable(p)) {
             return false;
         }
 
@@ -166,9 +181,20 @@ export class Player {
         this.game.send({type: "h",x,y});
     }
 
-    private async serialStepTo(points: Point[]) {
+    private async serialStepTo(points: Point[]) : Promise<boolean>{
         if(points.length ==0) return false;
 
+        // Update serial walk list;
+        this.serialStepList = points;
+
+        // If player is already serial walking...
+        if(this.isSerialWalking) return await this.serialStepPromise;
+
+
+        let remoteResolve = {resolve : (result : boolean) => undefined};
+        // Setup
+        this.serialStepPromise = new Promise<boolean>((resolve)=>remoteResolve.resolve=resolve);
+        this.isSerialWalking = true;
         let destination = points[points.length - 1];
         let dropUncessaryPackets = (data) => {
             let obj = JSON.parse(data);
@@ -183,19 +209,31 @@ export class Player {
             }
             return data;
         };
-
         let middlewareId = this.game.con.addMiddleware(dropUncessaryPackets);
-        let removeMiddleware = () => this.game.con.removeMiddleware(middlewareId);
 
-        while (points.length > 0) {
-            let nextPoint = points.shift();
+
+
+        // Cleanup function
+        let cleanup = (result) => {
+            let removeMiddleware = () => {this.game.con.removeMiddleware(middlewareId)};
+            removeMiddleware();
+            if(!result)
+                this.stop();
+            this.isSerialWalking = false;
+            remoteResolve.resolve(result);
+            return result;
+        };
+
+
+        // Serial Walk Loop
+        while (this.serialStepList.length > 0) {
+            let nextPoint = this.serialStepList.shift();
             if (await this.stepTo(nextPoint) == false){
-                removeMiddleware(); this.stop();
-                return false;
+                return cleanup(false);
             }
         }
-        removeMiddleware();
-        return true;
+
+        return cleanup(true);
     }
 
 
@@ -203,7 +241,7 @@ export class Player {
         let {x,y} = p;
 
         if (this.mob.x == x && this.mob.y == y) return true;
-        let path = await this.game.pathfinder.findPath(x, y);
+        let path = await this.game.pathfinder.findPath(p);
 
         if (path.length == 0) return false;
 
@@ -218,7 +256,7 @@ export class Player {
         let {x,y} = p;
         if (this.distanceTo(p) == 1) return true;
 
-        let path = await this.game.pathfinder.findAdjacentPath(x, y);
+        let path = await this.game.pathfinder.findAdjacentPath(p);
         if (path.length == 0) return false;
 
         if(steps>0){
@@ -237,10 +275,8 @@ export class Player {
     }
 
 
-
-
-    public async walkAdjacentToAndLookAt(p:Point){
-        return (await this.walkAdjacentTo(p)) && this.lookAt(p);
+    public async walkAdjacentToAndLookAt(p:Point, steps : number = 0){
+        return (await this.walkAdjacentTo(p,steps)) && this.lookAt(p);
     }
 
 }
