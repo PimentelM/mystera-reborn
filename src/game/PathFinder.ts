@@ -63,7 +63,6 @@ export class PathFinder {
         }
 
         if (grid[destination.y][destination.x] != 0) {
-            console.log("Destination is not walkable.");
             return [];
         }
 
@@ -93,7 +92,6 @@ export class PathFinder {
         }
 
         if (!path) {
-            console.log("Could not find path to destination.");
             return [];
         }
 
