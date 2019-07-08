@@ -40,8 +40,14 @@ export class Player {
         return this.sortByDistance(points).shift();
     }
 
+
+    // Get the closest walkable point.
     public async nearestReachablePoint<T extends Point>(points : T[], adjacent) : Promise<T> {
         points = this.sortByDistance(points);
+
+        let nearestPoint;
+        let smallestDistance = Infinity;
+
         for (let point of points){
             // If player is already on top of point, returns it.
             if (this.isOnTopOf(point)) return point;
@@ -52,9 +58,21 @@ export class Player {
             } else {
                 path = await this.game.pathfinder.findPath(point);
             }
-            if (path.length > 0) return point;
+
+            let manhathanDistanceToPoint = this.distanceTo(point);
+
+            // If path.length is equal to distance, then returns it;
+            if(path.length == manhathanDistanceToPoint && !nearestPoint) return point;
+
+            if(manhathanDistanceToPoint >= smallestDistance) return nearestPoint;
+
+            if (path.length < smallestDistance){
+                nearestPoint = point;
+                smallestDistance = path.length;
+            }
+
         }
-        return null;
+        return nearestPoint;
     }
 
 
@@ -280,7 +298,7 @@ export class Player {
         if (path.length == 0) return false;
 
         if(steps>0){
-            path = path.slice(0,steps); // We add 1 because the first point is the current location;
+            path = path.slice(0,steps);
         }
 
         return await this.serialStepTo(path);
@@ -294,7 +312,7 @@ export class Player {
         if (path.length == 0) return false;
 
         if(steps>0){
-            path = path.slice(0,steps); // We add 1 because the first point is the current location;
+            path = path.slice(0,steps);
         }
 
         return (await this.serialStepTo(path));
