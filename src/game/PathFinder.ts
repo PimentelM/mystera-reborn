@@ -100,6 +100,6 @@ export class PathFinder {
             step.y += gridStart.y;
         }
 
-        return path;
+        return path.slice(1);
     }
 }

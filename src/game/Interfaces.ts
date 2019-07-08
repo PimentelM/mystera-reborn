@@ -7,6 +7,7 @@ export interface IGameWindow {
     Iventory : any,
     Creatures : any,
     Game : any,
+    Bot : any,
 
     StateController : any,
     StateFactory : any,

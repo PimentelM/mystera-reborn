@@ -1,6 +1,6 @@
 import {Game} from "./Game";
-import {Mob, Point} from "./Types";
-import {doWhen, sleep} from "../Utils";
+import {Mob, Point, TilePoint} from "./Types";
+import {doWhen, sleep, until} from "../Utils";
 import * as EasyStar from "easystarjs"
 import {distanceBetween} from "./Utils";
 
@@ -40,6 +40,24 @@ export class Player {
         return this.sortByDistance(points).shift();
     }
 
+    public async nearestReachablePoint<T extends Point>(points : T[], adjacent) : Promise<T> {
+        points = this.sortByDistance(points);
+        for (let point of points){
+            // If player is already on top of point, returns it.
+            if (this.isOnTopOf(point)) return point;
+            // Check if can reach point
+            let path = [];
+            if(adjacent){
+                path = await this.game.pathfinder.findAdjacentPath(point);
+            } else {
+                path = await this.game.pathfinder.findPath(point);
+            }
+            if (path.length > 0) return point;
+        }
+        return null;
+    }
+
+
     public attack(mob: Mob) {
         this.game.window.info_pane.set_info(mob);
         setTimeout(()=>this.attack(mob),500);
@@ -48,7 +66,11 @@ export class Player {
 
     public hasTarget() : boolean{
         let targetId = this.game.window.target.id;
-        return targetId && targetId != this.mob.id;
+
+        if (targetId == this.mob.id) return false;
+        let target = this.game.window.getMob(targetId);
+        if (!target) return  false;
+        return true;
     }
 
     public getTarget() : Mob {
@@ -74,6 +96,10 @@ export class Player {
         return true;
     }
 
+    public isMoving(){
+        return this.game.window.dest != -1
+    }
+
     public lookAt(p : Point) {
         let {x,y} = p;
         let dX = x - this.mob.x;
@@ -90,14 +116,30 @@ export class Player {
         return false;
     }
 
-    public say(text) {
-        let sufix = "";
+    public isOnTopOf(tile : Point){
+        return tile.x == this.mob.x && tile.y == this.mob.y;
+    }
+
+    public say(text = "") {
+        let sufix = ".";
         let prefix = "";
         this.game.send({"type": "chat", "data": prefix + text + sufix})
     }
 
-    public pick() {
+    public async pick(timeout : number = 1500) : Promise<boolean> {
+        await until(()=> !this.isMoving(),5,1000);
+
+        let currentTile = this.game.map.getTile(this.mob);
+        if (!currentTile) return false;
+        let itemCount = currentTile.o.length;
+        if (itemCount == 0) return false;
+
         this.game.send({type: "g"});
+
+        return await until(()=>{
+            return this.game.map.getTile(this.mob).o.length != itemCount
+        },50,timeout);
+
     }
 
     public action() {
@@ -164,18 +206,7 @@ export class Player {
             return false;
         }
 
-        let timeout = 1000;
-        let checkPeriod = 5;
-        let elapsedtime = 0;
-        while (true) {
-            if (this.game.window.dest == -1) {
-                return true;
-            } else if (elapsedtime > timeout) {
-                return false;
-            }
-            await sleep(checkPeriod);
-            elapsedtime += checkPeriod;
-        }
+        await until(()=> !this.isMoving(),5,1000);
 
     }
 
@@ -249,7 +280,7 @@ export class Player {
         if (path.length == 0) return false;
 
         if(steps>0){
-            path = path.slice(0,steps);
+            path = path.slice(0,steps); // We add 1 because the first point is the current location;
         }
 
         return await this.serialStepTo(path);
@@ -263,7 +294,7 @@ export class Player {
         if (path.length == 0) return false;
 
         if(steps>0){
-            path = path.slice(0,steps);
+            path = path.slice(0,steps); // We add 1 because the first point is the current location;
         }
 
         return (await this.serialStepTo(path));
