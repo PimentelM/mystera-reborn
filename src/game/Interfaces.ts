@@ -9,6 +9,8 @@ export interface IGameWindow {
     Game : any,
     Bot : any,
 
+    PathFinder : any,
+
     StateController : any,
     StateFactory : any,
 

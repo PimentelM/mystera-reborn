@@ -37,6 +37,7 @@ export class Game {
         this.window.Player = this.player;
         this.window.Iventory = this.iventory;
         this.window.Creatures = this.creatures;
+        this.window.PathFinder = this.pathfinder;
 
 
     }
