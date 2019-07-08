@@ -4,7 +4,7 @@ import {setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 import {Connection} from "./Connection";
 import {doWhen} from "./Utils";
 
-//hmrLogLevel('error');
+hmrLogLevel('error');
 
 // @ts-ignore
 if (module.hot) {
@@ -30,19 +30,23 @@ function updateBotInstance() {
         // @ts-ignore
         window.bot_connection = new Connection(window["connection"]);
 
-        // @ts-ignore
-        let bot_connection = window.bot_connection;
-        window[botVar] = new Bot(bot_connection);
-        console.log("window.bot instance updated.")
-    } else {
 
-        if (window[botVar] && window[botVar]["reloadBotObjects"]) {
-            window[botVar]["reloadBotObjects"]();
-            console.log("Bot objects re-instantiated.")
-        }else{
-            console.log("Could not find bot instance.");
-        }
     }
+
+    // @ts-ignore
+    let bot_connection = window.bot_connection;
+    window[botVar] = new Bot(bot_connection);
+    //console.log("window.bot instance updated.")
+
+    // else {
+    //
+    //     if (window[botVar] && window[botVar]["reloadBotObjects"]) {
+    //         window[botVar]["reloadBotObjects"]();
+    //         console.log("Bot objects re-instantiated.")
+    //     }else{
+    //         console.log("Could not find bot instance.");
+    //     }
+    // }
 
 
 }
