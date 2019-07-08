@@ -76,25 +76,26 @@ export class Player {
     }
 
 
-    public attack(mob: Mob) {
-        this.game.window.info_pane.set_info(mob);
-        setTimeout(()=>this.attack(mob),500);
-        // Ensure you did attack mob.
+    public async attack(mob: Mob) {
+        let attack = () =>
+        {
+            if(mob.title)
+                this.game.window.info_pane.set_info(mob);
+        };
+
+        attack();
+        setTimeout(()=> attack(),500);
     }
 
     public hasTarget() : boolean{
-        let targetId = this.game.window.target.id;
-
-        if (targetId == this.mob.id) return false;
-        let target = this.game.window.getMob(targetId);
-        if (!target) return  false;
-        return true;
+        return !!this.getTarget();
     }
 
     public getTarget() : Mob {
-        if (!this.hasTarget()) return null;
-        return this.game.window.getMob(this.game.window.target.id);
-
+        let targetId = this.game.window.target.id;
+        if (targetId == this.mob.id) return null;
+        let target = this.game.window.getMob(targetId);
+        return target;
     }
 
     public cancelTarget(){

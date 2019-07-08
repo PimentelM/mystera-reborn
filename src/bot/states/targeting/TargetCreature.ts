@@ -8,7 +8,8 @@ import {Mob} from "../../../game/Types";
 
 export interface TargetCreatureState {
     filters : CreatureFilter[],
-    creatureTarget? : Mob
+    bestTarget? : Mob,
+    retarget : boolean,
 
 }
 
@@ -16,16 +17,31 @@ export class TargetCreature extends StateDefinition{
     state: TargetCreatureState;
 
     readonly defaultParams: TargetCreatureState = {
-        filters : [""]
+        filters : [""], retarget : true
     };
 
     async isReached(game : Game): Promise<boolean> {
+        let currentTarget = game.player.getTarget();
         // If already has target
-        if(game.player.hasTarget()) return true;
+        if(currentTarget) {
+            // If bot is not configured to retarget;
+            if(!this.state.retarget) return true;
 
-        this.state.creatureTarget = await this.getReachableCreature(game);
+            this.state.bestTarget = await this.getReachableCreature(game);
+
+            // This means that the player is attacking some creature that is not in the filter list;
+            if(!!this.state.bestTarget) return true;
+
+
+            // If player already has the best target;
+            if (this.state.bestTarget.id === currentTarget.id) return true;
+
+            return false;
+        }
+
+        this.state.bestTarget = await this.getReachableCreature(game);
         // If there are no creatures that player can target on the screen;
-        if(!this.state.creatureTarget) {
+        if(!this.state.bestTarget) {
             return true;
         }
 
@@ -33,7 +49,7 @@ export class TargetCreature extends StateDefinition{
     }
 
     async reach(game : Game): Promise<boolean> {
-        let creatureToAttack = this.state.creatureTarget;
+        let creatureToAttack = this.state.bestTarget;
         game.player.attack(creatureToAttack);
         return true;
     }

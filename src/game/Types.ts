@@ -24,6 +24,7 @@ export interface Mob extends Point{
     fromy: number,
     sx: number,
     sy: number,
+    title : any
 }
 
 export interface IventoryItem {
