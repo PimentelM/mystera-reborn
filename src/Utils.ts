@@ -24,3 +24,11 @@ export function isArray (value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
 
+
+export function fillInto(sourceObject : object, destinationObject : object) : void {
+    for (let [key,value] of Object.entries(sourceObject)){
+        if(!destinationObject[key]){
+            destinationObject[key] = value;
+        }
+    }
+}

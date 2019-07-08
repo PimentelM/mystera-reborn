@@ -8,6 +8,9 @@ export interface IGameWindow {
     Creatures : any,
     Game : any,
 
+    StateController : any,
+    StateFactory : any,
+
     hp_status: { val },
     connection: WebSocket
 

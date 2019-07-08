@@ -1,4 +1,4 @@
-import {StateDefinition, StateDefinitionState} from "../Interfaces";
+import {StateDefinition} from "../Interfaces";
 import {Game} from "../../game/Game";
 import {Player} from "../../game/Player";
 import {CreatureFilter} from "../../game/Creatures";
@@ -6,50 +6,44 @@ import {Mob} from "../../game/Types";
 
 
 
-export interface TargetCreatureState extends StateDefinitionState{
+export interface TargetCreatureParams {
     targetFilter : CreatureFilter
 }
 
 export class TargetCreature extends StateDefinition{
-    game: Game;
-    state: TargetCreatureState;
+    params: TargetCreatureParams;
 
-    public static getDefaultState() : TargetCreatureState{
-        return {targetFilter: ""}
-    }
+    readonly defaultParams: TargetCreatureParams = {
+        targetFilter : ""
+    };
 
-    public TargetCreatures(game: Game,state : TargetCreatureState){
-        this.game = game;
-        this.state = state;
-    }
-
-    private async getReachableCreature() : Promise<Mob> {
-        let creatures = this.game.creatures.findCreatures(this.state.targetFilter);
-        creatures = this.game.player.sortByDistance(creatures);
-
-        for (let creature of creatures){
-            // Check if can reach creature
-            let path = await this.game.pathfinder.findAdjacentPath(creature);
-            if (path.length > 0) return creature;
-        }
-
-        return null;
-    }
-
-    async isReached(): Promise<boolean> {
+    async isReached(game : Game): Promise<boolean> {
         // If already has target
-        if(this.game.player.hasTarget()) return true;
+        if(game.player.hasTarget()) return true;
 
         // If there are no creatures that player can target on the screen;
-        if(!(await this.getReachableCreature())) return true;
+        if(!(await this.getReachableCreature(game))) return true;
 
         return false;
     }
 
-    async reach(): Promise<boolean> {
-        let creatureToAttack = await this.getReachableCreature();
-        this.game.player.attack(creatureToAttack);
+    async reach(game : Game): Promise<boolean> {
+        let creatureToAttack = await this.getReachableCreature(game);
+        game.player.attack(creatureToAttack);
         return true;
+    }
+
+    private async getReachableCreature(game : Game) : Promise<Mob> {
+        let creatures = game.creatures.findCreatures(this.params.targetFilter);
+        creatures = game.player.sortByDistance(creatures);
+
+        for (let creature of creatures){
+            // Check if can reach creature
+            let path = await game.pathfinder.findAdjacentPath(creature);
+            if (path.length > 0) return creature;
+        }
+
+        return null;
     }
 
 }
