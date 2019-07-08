@@ -32,9 +32,11 @@ export class TargetCreature extends StateDefinition{
             // This means that the player is attacking some creature that is not in the filter list;
             if(!!this.state.bestTarget) return true;
 
-
             // If player already has the best target;
-            if (this.state.bestTarget.id === currentTarget.id) return true;
+            //if (this.state.bestTarget.id === currentTarget.id) return true;
+
+            // If the other found target is of same type;
+            if (this.state.bestTarget.template == currentTarget.template) return true;
 
             return false;
         }
