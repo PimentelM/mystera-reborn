@@ -7,7 +7,7 @@ import {Mob} from "../../../game/Types";
 
 
 export interface TargetCreatureState {
-    filter : CreatureFilter,
+    filters : CreatureFilter[],
     creatureTarget? : Mob
 
 }
@@ -16,7 +16,7 @@ export class TargetCreature extends StateDefinition{
     state: TargetCreatureState;
 
     readonly defaultParams: TargetCreatureState = {
-        filter : ""
+        filters : [""]
     };
 
     async isReached(game : Game): Promise<boolean> {
@@ -39,7 +39,13 @@ export class TargetCreature extends StateDefinition{
     }
 
     private async getReachableCreature(game : Game) : Promise<Mob> {
-        let creatures = game.creatures.findCreatures(this.state.filter);
+        let creatures;
+
+        for (let filter of this.state.filters){
+            creatures = game.creatures.findCreatures(filter);
+            if(creatures.length != 0) break;
+        }
+
         return await game.player.nearestReachablePoint(creatures,true);
     }
 
