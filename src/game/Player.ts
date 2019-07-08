@@ -9,10 +9,13 @@ const {promisify} = require('util');
 
 let directionOffset = [{"x":0,"y":-1},{"x":1,"y":0},{"x":0,"y":1},{"x":-1,"y":0}];
 
-
 export class Player {
     public mob: Mob;
     public game: Game;
+
+    private serialStepList : Point[] = [];
+    private isSerialWalking : boolean = false;
+    private serialStepPromise : Promise<boolean>;
 
     constructor(game: Game) {
         this.game = game;
@@ -43,6 +46,12 @@ export class Player {
 
     public hasTarget() : boolean{
         return this.game.window.target.id != this.mob.id;
+    }
+
+    public getTarget() : Mob {
+        if (!this.hasTarget()) return null;
+        return this.game.window.getMob(this.game.window.target.id);
+
     }
 
     public cancelTarget(){
@@ -172,9 +181,20 @@ export class Player {
         this.game.send({type: "h",x,y});
     }
 
-    private async serialStepTo(points: Point[]) {
+    private async serialStepTo(points: Point[]) : Promise<boolean>{
         if(points.length ==0) return false;
 
+        // Update serial walk list;
+        this.serialStepList = points;
+
+        // If player is already serial walking...
+        if(this.isSerialWalking) return await this.serialStepPromise;
+
+
+        let remoteResolve = {resolve : (result : boolean) => undefined};
+        // Setup
+        this.serialStepPromise = new Promise<boolean>((resolve)=>remoteResolve.resolve=resolve);
+        this.isSerialWalking = true;
         let destination = points[points.length - 1];
         let dropUncessaryPackets = (data) => {
             let obj = JSON.parse(data);
@@ -189,19 +209,31 @@ export class Player {
             }
             return data;
         };
-
         let middlewareId = this.game.con.addMiddleware(dropUncessaryPackets);
-        let removeMiddleware = () => this.game.con.removeMiddleware(middlewareId);
 
-        while (points.length > 0) {
-            let nextPoint = points.shift();
+
+
+        // Cleanup function
+        let cleanup = (result) => {
+            let removeMiddleware = () => {this.game.con.removeMiddleware(middlewareId)};
+            removeMiddleware();
+            if(!result)
+                this.stop();
+            this.isSerialWalking = false;
+            remoteResolve.resolve(result);
+            return result;
+        };
+
+
+        // Serial Walk Loop
+        while (this.serialStepList.length > 0) {
+            let nextPoint = this.serialStepList.shift();
             if (await this.stepTo(nextPoint) == false){
-                removeMiddleware(); this.stop();
-                return false;
+                return cleanup(false);
             }
         }
-        removeMiddleware();
-        return true;
+
+        return cleanup(true);
     }
 
 
@@ -243,10 +275,8 @@ export class Player {
     }
 
 
-
-
-    public async walkAdjacentToAndLookAt(p:Point){
-        return (await this.walkAdjacentTo(p)) && this.lookAt(p);
+    public async walkAdjacentToAndLookAt(p:Point, steps : number = 0){
+        return (await this.walkAdjacentTo(p,steps)) && this.lookAt(p);
     }
 
 }
