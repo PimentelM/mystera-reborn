@@ -1,8 +1,9 @@
-import {Game} from "./Game";
-import {Mob, Point, TilePoint} from "./Types";
-import {doWhen, sleep, until} from "../Utils";
+import {Game} from "../Game";
+import {Mob, Point, TilePoint} from "../Types";
+import {doWhen, sleep, until} from "../../Utils";
 import * as EasyStar from "easystarjs"
-import {distanceBetween} from "./Utils";
+import {distanceBetween} from "../Utils";
+import {Status} from "./Status";
 
 const {promisify} = require('util');
 
@@ -12,14 +13,21 @@ let directionOffset = [{"x":0,"y":-1},{"x":1,"y":0},{"x":0,"y":1},{"x":-1,"y":0}
 export class Player {
     public mob: Mob;
     public game: Game;
+    public status: Status;
 
     private serialStepList : Point[] = [];
     private isSerialWalking : boolean = false;
     private serialStepPromise : Promise<boolean>;
 
+
     constructor(game: Game) {
         this.game = game;
+        this.status = new Status(game);
         doWhen(()=>this.updateData(),()=> !!this.game.window.getMob(this.game.window.me),500)
+    }
+
+    public isAdjacentTo(p : Point){
+        return this.distanceTo(p) == 1;
     }
 
     public distanceTo<T extends Point>(point: T,allowDiagonals : boolean = false) {
@@ -131,8 +139,6 @@ export class Player {
             if (dY < 0) return this.turn(0);
             if (dY > 0) return this.turn(2);
         }
-
-        return false;
     }
 
     public isOnTopOf(tile : Point){
@@ -140,7 +146,7 @@ export class Player {
     }
 
     public say(text = "") {
-        let sufix = ".";
+        let sufix = "";
         let prefix = "";
         this.game.send({"type": "chat", "data": prefix + text + sufix})
     }

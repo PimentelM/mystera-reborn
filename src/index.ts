@@ -4,7 +4,7 @@ import {setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 import {Connection} from "./Connection";
 import {doWhen} from "./Utils";
 
-hmrLogLevel('error');
+//hmrLogLevel('error');
 
 // @ts-ignore
 if (module.hot) {
@@ -18,6 +18,7 @@ window.p = (x, y) => {
     return {x, y}
 };
 
+let bot : Bot;
 
 function updateBotInstance() {
     if (!window['connection']) {
@@ -33,10 +34,15 @@ function updateBotInstance() {
 
     }
 
+    // Cleanup last instance before re-instantiating it.
+    if(bot){
+        bot.stateController.stop();
+    }
     // @ts-ignore
     let bot_connection = window.bot_connection;
-    window[botVar] = new Bot(bot_connection);
-    //console.log("window.bot instance updated.")
+    bot = new Bot(bot_connection);
+    window[botVar] = bot;
+    console.log("window.bot instance updated.")
 
     // else {
     //

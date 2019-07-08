@@ -15,6 +15,7 @@ export interface IGameWindow {
     StateFactory : any,
 
     hp_status: { val },
+    hunger_status: { val },
     connection: WebSocket
 
     getMob(id): Mob,
