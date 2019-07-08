@@ -1,6 +1,6 @@
 import {StateDefinition} from "../../Interfaces";
 import {Game} from "../../../game/Game";
-import {Player} from "../../../game/Player";
+import {Player} from "../../../game/player/Player";
 
 export interface FollowTargetState{
     steps : number

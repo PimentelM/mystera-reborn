@@ -4,6 +4,9 @@ import {FollowTarget} from "./walking/FollowTarget";
 import {StateDefinition} from "../Interfaces";
 import {fillInto} from "../../Utils";
 import {LootItems} from "./looting/LootItems";
+import {EatFood} from "./misc/EatFood";
+import {HealOnFountain} from "./misc/HealOnFountain";
+import {EquipItem} from "./iventory/EquipItem";
 
 
 type UnitTypeConstructor = new () => StateDefinition;
@@ -14,19 +17,25 @@ export type Unit = {
 }
 
 
-
 export class StateFactory {
 
     public states = {
+        iventory :{
+            equipItem : EquipItem
+        },
         looting: {
             lootItems: LootItems
+        },
+        misc: {
+            eatFood: EatFood,
+            healOnFountain: HealOnFountain,
         },
         targeting: {
             targetCreature: TargetCreature,
         },
         walking: {
             followTarget: FollowTarget,
-        }
+        },
     };
 
     public build(unitInitiators: (Unit | UnitType )[]): StateDefinition[] {

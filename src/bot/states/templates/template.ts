@@ -1,12 +1,12 @@
-import {StateDefinition} from "../Interfaces";
-import {Game} from "../../game/Game";
-import {Player} from "../../game/Player";
+import {StateDefinition} from "../../Interfaces";
+import {Game} from "../../../game/Game";
+import {Player} from "../../../game/player/Player";
 
 export interface ZState {
 
 }
 
-export class Template extends StateDefinition{
+export class Z extends StateDefinition{
     public state: ZState;
 
     readonly defaultParams: ZState = {

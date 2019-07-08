@@ -1,6 +1,6 @@
 import {StateDefinition} from "../../Interfaces";
 import {Game} from "../../../game/Game";
-import {Player} from "../../../game/Player";
+import {Player} from "../../../game/player/Player";
 import {Mob, TilePoint} from "../../../game/Types";
 
 export interface LootItemsState {

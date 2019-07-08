@@ -1,6 +1,6 @@
 import {StateDefinition} from "../../Interfaces";
 import {Game} from "../../../game/Game";
-import {Player} from "../../../game/Player";
+import {Player} from "../../../game/player/Player";
 import {CreatureFilter} from "../../../game/Creatures";
 import {Mob} from "../../../game/Types";
 
@@ -13,11 +13,13 @@ export interface TargetCreatureState {
 
 }
 
+// Currently, retargeting is an expensive feature computationally speaking, so we need to examine it later to improve it's performance.
+
 export class TargetCreature extends StateDefinition{
     state: TargetCreatureState;
 
     readonly defaultParams: TargetCreatureState = {
-        filters : [""], retarget : true
+        filters : [""], retarget : false
     };
 
     async isReached(game : Game): Promise<boolean> {
