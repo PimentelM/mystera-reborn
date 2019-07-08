@@ -78,14 +78,3 @@ export interface Point {
 export interface PointMap  {
     [name:string] : Point
 }
-
-export type Resource = {
-    smallStone : any;
-    lightStone : any;
-    darkStone : any;
-    smallTree : any;
-    bigTree : any;
-    plainBush : any;
-    spicyBush : any;
-    berryBush : any;
-}
