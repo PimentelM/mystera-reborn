@@ -12,12 +12,15 @@ export class Map {
         this.game = game;
     }
 
-    public getTile(x, y): Tile {
+    public getTile(p : Point): Tile {
+        let {x,y} = p;
         let tile = this.game.window.map_index[x * 1e4 + y];
         return tile;
     }
 
-    public getTileByOffset(oX, oY): Tile {
+    public getTileByOffset(p : Point): Tile {
+        let oX = p.x;
+        let oY = p.y;
         let x = this.game.player.mob.x + oX;
         let y = this.game.player.mob.y + oY;
         let tile = this.game.window.map_index[x * 1e4 + y];
@@ -37,34 +40,52 @@ export class Map {
         return tiles;
     }
 
-    public findTilesWithItem(regExp : string): TilePoint[] {
+    public findTilesWithItem(regExp : string, radius : number = Infinity): TilePoint[] {
         let tiles = [];
 
         let test = (name: string, regExp: string): boolean => {
             return new RegExp(regExp,"i").test(name);
         };
 
-        for (let [_, tile] of Object.entries(this.game.window.map_index)) {
-            if (!tile || !tile.o) continue;
-            let o = tile.o;
-            if (o.length == 0) continue;
+        let rX = 16;
+        let rY = 13;
 
-            for (let item of o) {
-                if (test(item.name,regExp)) {
+        if(radius < 13){
+            rX = radius;
+            rY = radius;
+        }
 
-                    (tile as TilePoint).x = item.x;
-                    (tile as TilePoint).y = item.y;
+        for (let oX = -rX; oX <= rX; oX++) {
+            for (let oY = -rY; oY <= rY; oY++) {
+                let x = this.game.player.mob.x + oX;
+                let y = this.game.player.mob.y + oY;
+                let tile = this.game.window.map_index[x * 1e4 + y];
 
-                    tiles.push(tile);
-                    break;
+
+                if (!tile || !tile.o) continue;
+                let o = tile.o;
+                if (o.length == 0) continue;
+
+                for (let item of o) {
+                    if (test(item.name,regExp)) {
+
+                        (tile as TilePoint).x = item.x;
+                        (tile as TilePoint).y = item.y;
+
+                        tiles.push(tile);
+                        break;
+                    }
                 }
+
             }
         }
+
 
         return tiles;
     }
 
-    public isTileWalkable(x, y, considerMobs = true): boolean {
+    public isTileWalkable<T extends Point>(p : T, considerMobs = true): boolean {
+        let {x,y} = p;
 
         if (considerMobs) {
             for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
@@ -74,7 +95,10 @@ export class Map {
             }
         }
 
-        return !this.getTile(x, y).block;
+        let tile = this.getTile(p);
+        if(!tile) return false;
+
+        return !tile.block;
     }
 
     public getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {

@@ -1,10 +1,10 @@
 import {Bot} from "./Bot";
 import axios from "axios";
-import { setLogLevel as hmrLogLevel} from 'webpack/hot/log';
+import {setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 import {Connection} from "./Connection";
 import {doWhen} from "./Utils";
 
-hmrLogLevel('error');
+//hmrLogLevel('error');
 
 // @ts-ignore
 if (module.hot) {
@@ -13,24 +13,48 @@ if (module.hot) {
     updateBotInstance();
 }
 
+// @ts-ignore
+window.p = (x, y) => {
+    return {x, y}
+};
+
+let bot : Bot;
+
 function updateBotInstance() {
     if (!window['connection']) {
         console.log("No mystera websocket.");
         return;
     }
+    let botVar = "_bot";
     // @ts-ignore
-    if(!window.bot_connection || window.bot_connection.ws.readyState === WebSocket.CLOSED){
+    if (!window.bot_connection || window.bot_connection.ws.readyState === WebSocket.CLOSED) {
         // @ts-ignore
         window.bot_connection = new Connection(window["connection"]);
 
-        // @ts-ignore
-        // doWhen(()=>updateBotInstance(), ()=>window.bot_connection.ws.readyState === WebSocket.CLOSED, 1000);
+
     }
 
+    // Cleanup last instance before re-instantiating it.
+    if(bot){
+        bot.stateController.stop();
+    }
     // @ts-ignore
     let bot_connection = window.bot_connection;
-    window["bot"] = new Bot(bot_connection);
-    //console.log("window.bot instance updated.")
+    bot = new Bot(bot_connection);
+    window[botVar] = bot;
+    console.log("window.bot instance updated.")
+
+    // else {
+    //
+    //     if (window[botVar] && window[botVar]["reloadBotObjects"]) {
+    //         window[botVar]["reloadBotObjects"]();
+    //         console.log("Bot objects re-instantiated.")
+    //     }else{
+    //         console.log("Could not find bot instance.");
+    //     }
+    // }
+
+
 }
 
 
@@ -41,8 +65,7 @@ window["makeBot"] = () => {
 };
 
 
-
-function renderGame(){
+function renderGame() {
     document.write(`
 <!DOCTYPE html>
 <html lang="en-US" style="height:100%;margin:0;padding:0;overflow:hidden;">
@@ -118,4 +141,5 @@ for (let i = 1; i <= 10; i++){
     window['game-is-rendered'] = true;
 }
 
-if(!window['game-is-rendered']) renderGame();
+if (!window['game-is-rendered']) renderGame();
+

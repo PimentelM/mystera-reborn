@@ -7,11 +7,20 @@ export interface IGameWindow {
     Iventory : any,
     Creatures : any,
     Game : any,
+    Bot : any,
+
+    PathFinder : any,
+
+    StateController : any,
+    StateFactory : any,
 
     hp_status: { val },
+    hunger_status: { val },
     connection: WebSocket
 
-    getMob(id): Mob
+    getMob(id): Mob,
+
+    target : {id:number}
 
     mob_ref: Mob[]
     me: number

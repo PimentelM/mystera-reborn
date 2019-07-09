@@ -4,7 +4,7 @@ import {isArray} from "../Utils";
 
 
 type MobPredicate = (mob: Mob) => boolean
-type CreatureFilter = MobPredicate | string | string[]
+export type CreatureFilter = MobPredicate | string | string[]
 const all = () => true;
 
 

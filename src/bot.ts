@@ -1,24 +1,39 @@
 import {Connection} from "./Connection";
 import {Game} from "./game/Game";
+import {StateController} from "./bot/states/StateController";
+import {IGameWindow} from "./game/Interfaces";
+import {StateFactory} from "./bot/states/StateFactory";
 
-export class Bot{
+export class Bot {
 
-    public connection : Connection;
-    public game : Game;
+    public connection: Connection;
+    public game: Game;
+    public stateController : StateController;
+    public stateFactory : StateFactory;
 
-    constructor(connection : Connection){
-      this.connection = connection;
-      let gameWindow = window;
-      // @ts-ignore
-        this.game = new Game(this.connection, gameWindow);
+    private window: IGameWindow;
+
+    constructor(connection: Connection) {
+        this.connection = connection;
+        this.window = eval(`window`);
+
+        this.window.Bot = this;
+
+        this.game = new Game(this.connection, this.window);
+
+        this.stateController = new StateController(this.game);
+        this.window.StateController = this.stateController;
+
+        this.stateFactory = new StateFactory();
+        this.window.StateFactory = this.stateFactory;
 
     }
 
-    doLogin(login,password) {
-      const login_b64 = btoa(login);
-      const password_b64 = btoa(password);
-      this.connection.send({"type":"client","ver":"4.9.1","mobile":false,"agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"});
-      this.connection.send({"type":"login","user": login_b64,"pass":password_b64});
+    public async reloadBotObjects() {
+        this.game = new Game(this.connection, this.window);
+        this.stateController.updateApi(this.game);
+        this.stateFactory = new StateFactory();
+        this.window.StateFactory = this.stateFactory;
     }
-    
-  }
+
+}

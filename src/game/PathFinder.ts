@@ -10,7 +10,8 @@ export class PathFinder {
         this.game = game;
     }
 
-    public async findAdjacentPath(x, y, allowDiagonals = false) {
+    public async findAdjacentPath(p : Point, allowDiagonals = false) {
+        let {x,y} = p;
         // Get walkable tiles around the point
         let tiles: TilePoint[] = [];
 
@@ -22,11 +23,13 @@ export class PathFinder {
                 let tX = x+i;
                 let tY = y+j;
 
-                if(!this.game.map.isTileWalkable(tX,tY)){
+                let tP = {x:tX,y:tY};
+
+                if(!this.game.map.isTileWalkable(tP)){
                     continue;
                 }
 
-                let tile = this.game.map.getTile(tX,tY) as TilePoint;
+                let tile = this.game.map.getTile(tP) as TilePoint;
                 tile.x = tX;
                 tile.y = tY;
                 tiles.push(tile);
@@ -38,14 +41,15 @@ export class PathFinder {
 
         // Iterate over this list and return the first path you find.
         for (let tilePoint of sortedTiles){
-            let path = await this.findPath(tilePoint.x,tilePoint.y);
+            let path = await this.findPath(tilePoint);
             if(path.length>0) return path;
         }
 
         return [];
     }
 
-    public async findPath(x, y): Promise<Point[]> {
+    public async findPath(p : Point): Promise<Point[]> {
+        let {x,y} = p;
         let pathFinder = new EasyStar.js();
         let {grid, origin, points} = this.game.map.getWalkableTileMap({destination: {x, y}});
 
@@ -59,7 +63,6 @@ export class PathFinder {
         }
 
         if (grid[destination.y][destination.x] != 0) {
-            console.log("Destination is not walkable.");
             return [];
         }
 
@@ -89,7 +92,6 @@ export class PathFinder {
         }
 
         if (!path) {
-            console.log("Could not find path to destination.");
             return [];
         }
 
@@ -98,6 +100,6 @@ export class PathFinder {
             step.y += gridStart.y;
         }
 
-        return path;
+        return path.slice(1);
     }
 }

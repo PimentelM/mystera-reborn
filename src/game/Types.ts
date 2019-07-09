@@ -24,6 +24,7 @@ export interface Mob extends Point{
     fromy: number,
     sx: number,
     sy: number,
+    title : any
 }
 
 export interface IventoryItem {
@@ -77,15 +78,4 @@ export interface Point {
 
 export interface PointMap  {
     [name:string] : Point
-}
-
-export type Resource = {
-    smallStone : any;
-    lightStone : any;
-    darkStone : any;
-    smallTree : any;
-    bigTree : any;
-    plainBush : any;
-    spicyBush : any;
-    berryBush : any;
 }

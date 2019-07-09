@@ -1,5 +1,5 @@
 import {Connection} from "../Connection";
-import {Player} from "./Player";
+import {Player} from "./player/Player";
 import {IGameWindow} from "./Interfaces";
 import {Map} from "./Map";
 import {Iventory} from "./Iventory";
@@ -17,7 +17,6 @@ export class Game {
     public iventory: Iventory;
     public creatures: Creatures;
     public resources: Resouces;
-
     public pathfinder : PathFinder;
 
     public constructor(con: Connection, window: IGameWindow) {
@@ -37,6 +36,7 @@ export class Game {
         this.window.Player = this.player;
         this.window.Iventory = this.iventory;
         this.window.Creatures = this.creatures;
+        this.window.PathFinder = this.pathfinder;
 
 
     }
