@@ -7,7 +7,7 @@ let successEquipRegex = (itemName) => new RegExp(`You (hold|wear|equip) [a|the] 
 let requiresLevelToEquipRegex = (itemName) => new RegExp(`${itemName} requires level \\d*\\.`);
 
 
-let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint", "Bone","Turtle", "Herald" ,"Blunt", ""];
+let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint", "Bone","Turtle", "Herald" ,"Blunt","Short", "Simple" , ""];
 
 
 const defaultTimeout = 3000;
@@ -61,13 +61,13 @@ export class Equip {
     }
 
 
-    private _isEqquipedWith(regex) : boolean{
-        let eqquiped_item_sprite = this.game.window.jv.equip_sprite;
-        if(eqquiped_item_sprite){
-            let equippedItem = this.game.iventory.items.find(x=>x.spr == eqquiped_item_sprite);
-            return new RegExp(regex,"i").test(equippedItem.n)
 
-        }
+
+    private _isEqquipedWith(regex) : boolean{
+        let equippedItem = this.game.iventory.currentEquip();
+        return new RegExp(regex,"i").test(equippedItem.n);
+
+
         return false
     }
 
@@ -95,8 +95,8 @@ export class Equip {
         do {
 
             item = this._getBestTool(typeRegex);
-            // Retorna true se não possui um item para equipar, logo o player já estará com o "melhor item".
-            if (!item) return true;
+            // Retorna false se não foi possível equipar o item do tipo especificado.
+            if (!item) return false;
 
             if (await this._equip(item)) return true;
 
@@ -114,45 +114,52 @@ export class Equip {
     }
 
     public async bestDagger(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("dagger",timeout)
+        return await this.best("dagger",timeout)
     }
 
 
     public async bestSword(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("sword",timeout)
+        return await this.best("sword",timeout)
     }
 
     public async bestHammer(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("hammer",timeout)
+        return await this.best("hammer",timeout)
     }
 
     public async bestSpear(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("spear",timeout)
+        return await this.best("spear",timeout)
     }
 
     public async bestAxe(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("axe",timeout)
+        return await this.best("axe",timeout)
     }
 
     public async bestPickaxe(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("pickaxe",timeout)
+        return await this.best("pickaxe",timeout)
     }
 
 
     public async bestMace(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("(mace|club)",timeout)
+        return await this.best("(mace|club)",timeout)
     }
 
     public async bestPick(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("sword",timeout)
+        return await this.best("sword",timeout)
     }
 
     public async bestShield(timeout = defaultTimeout) : Promise<boolean>{
-        return this.best("(shield|buckler)",timeout)
+        return await this.best("(shield|buckler)",timeout)
     }
 
-
-
+    public async bestBow(timeout = defaultTimeout) : Promise<boolean>{
+        return await this.best("(bow)",timeout)
+    }
+    
+    public async bestKnuckles(timeout = defaultTimeout) : Promise<boolean>{
+        let result =  await this.best("(duster|knuckles)",timeout);
+        if(!result) this.game.iventory.disarm();
+        return true;
+    }
 
 
 

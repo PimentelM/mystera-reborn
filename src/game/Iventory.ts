@@ -8,7 +8,6 @@ export class Iventory {
         this.game = game;
     }
 
-
     public findItem(regExp: string): IventoryItem[] {
         let items: IventoryItem[] = [];
 
@@ -67,5 +66,19 @@ export class Iventory {
 
     }
 
+    public disarm() {
+        let currentEquip = this.currentEquip();
+        if(currentEquip){
+            this.use(currentEquip);
+        }
+    }
+
+    public currentEquip(){
+        let eqquiped_item_sprite = this.game.window.jv.equip_sprite;
+        if(eqquiped_item_sprite) {
+            return this.game.iventory.items.find(x => x && x.spr == eqquiped_item_sprite);
+        }
+        return null;
+    }
 }
 
