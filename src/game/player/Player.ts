@@ -4,6 +4,7 @@ import {doWhen, sleep, until} from "../../Utils";
 import * as EasyStar from "easystarjs"
 import {distanceBetween} from "../Utils";
 import {Status} from "./Status";
+import {Equip} from "./Equip";
 
 const {promisify} = require('util');
 
@@ -14,6 +15,7 @@ export class Player {
     public mob: Mob;
     public game: Game;
     public status: Status;
+    public equip : Equip;
 
     private serialStepList : Point[] = [];
     private isSerialWalking : boolean = false;
@@ -23,6 +25,7 @@ export class Player {
     constructor(game: Game) {
         this.game = game;
         this.status = new Status(game);
+        this.equip = new Equip(game);
         doWhen(()=>this.updateData(),()=> !!this.game.window.getMob(this.game.window.me),500)
     }
 

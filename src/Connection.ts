@@ -44,10 +44,12 @@ export class Connection {
     };
 
     private executeParsers = (msg) => {
+        let dataObj;
         for (let [_, parse] of Object.entries(this.parsers)) {
             {
+                if(!dataObj) dataObj = JSON.parse(msg.data);
                 if (parse)
-                    parse(msg);
+                    parse(dataObj);
             }
         }
     };
@@ -61,7 +63,7 @@ export class Connection {
     };
 
 
-    public addParser = (parser: (msg) => null, id = undefined): number => {
+    public addParser = (parser: (msg) => any, id = undefined): number => {
         if (!id) {
             id = new Date().valueOf();
             while (this.parsers[id]) id++;
