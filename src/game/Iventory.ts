@@ -26,6 +26,9 @@ export class Iventory {
         return items;
     }
 
+    public get items() {
+        return this.game.window.item_data;
+    }
 
     public use(item: IventoryItem | string ){
         if (typeof item == "string"){

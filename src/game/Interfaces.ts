@@ -30,6 +30,8 @@ export interface IGameWindow {
     map_index: { [coords: number]: Tile },
     item_data: IventoryItem[],
     info_pane: { set_info : (mob: Mob) => any}
+
+    jv : {equip_sprite : number}
 }
 
 

@@ -34,6 +34,7 @@ export interface IventoryItem {
     qty: number  // Quantity
     slot: string // Slot
     tpl: string  // Template
+    spr: number
 }
 
 export interface IIventoryItem extends IventoryItem{
