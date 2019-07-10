@@ -31,6 +31,8 @@ export interface IGameWindow {
     item_data: IventoryItem[],
     info_pane: { set_info : (mob: Mob) => any}
 
+    action : number,
+
     jv : {equip_sprite : number}
 }
 

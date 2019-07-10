@@ -7,6 +7,7 @@ import {LootItems} from "./looting/LootItems";
 import {EatFood} from "./misc/EatFood";
 import {HealOnFountain} from "./misc/HealOnFountain";
 import {EquipItem} from "./iventory/EquipItem";
+import {GrindItemQuantity} from "./grind/GrindItemQuantity";
 
 
 type UnitTypeConstructor = new () => StateDefinition;
@@ -20,6 +21,9 @@ export type Unit = {
 export class StateFactory {
 
     public states = {
+        grind: {
+          grindItemQuantity : GrindItemQuantity
+        },
         iventory :{
             equipItem : EquipItem
         },

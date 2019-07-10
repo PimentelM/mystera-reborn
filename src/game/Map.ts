@@ -1,5 +1,5 @@
 import {Game} from "./Game";
-import {Mob, Point, PointMap, Tile, TilePoint} from "./Types";
+import {GroundItem, Mob, Point, PointMap, Tile, TilePoint} from "./Types";
 import {filter} from "minimatch";
 import {IWalkableTileMap} from "./Interfaces";
 import {Iventory} from "./Iventory";
@@ -40,12 +40,28 @@ export class Map {
         return tiles;
     }
 
-    public findTilesWithItem(regExp : string, radius : number = Infinity): TilePoint[] {
-        let tiles = [];
+    public getItemAt(tile : Tile, regExp : string) : GroundItem{
 
         let test = (name: string, regExp: string): boolean => {
             return new RegExp(regExp,"i").test(name);
         };
+
+        if (!tile || !tile.o) return null;
+        let o = tile.o;
+        if (o.length == 0) return null;
+
+        for (let item of o) {
+            if (test(item.name,regExp)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public findTilesWithItem(regExp : string, radius : number = Infinity): TilePoint[] {
+        let tiles = [];
+
 
         let rX = 16;
         let rY = 13;
@@ -61,20 +77,11 @@ export class Map {
                 let y = this.game.player.mob.y + oY;
                 let tile = this.game.window.map_index[x * 1e4 + y];
 
-
-                if (!tile || !tile.o) continue;
-                let o = tile.o;
-                if (o.length == 0) continue;
-
-                for (let item of o) {
-                    if (test(item.name,regExp)) {
-
-                        (tile as TilePoint).x = item.x;
-                        (tile as TilePoint).y = item.y;
-
-                        tiles.push(tile);
-                        break;
-                    }
+                let item = this.getItemAt(tile,regExp);
+                if(item){
+                    (tile as TilePoint).x = item.x;
+                    (tile as TilePoint).y = item.y;
+                    tiles.push(tile);
                 }
 
             }
