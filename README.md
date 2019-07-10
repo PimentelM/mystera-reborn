@@ -1,4 +1,4 @@
-# 🤖 Mystera Legacy
+# Mystera Legacy Bot
 
 ## General info
 
