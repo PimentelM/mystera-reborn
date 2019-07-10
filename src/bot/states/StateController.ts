@@ -54,21 +54,21 @@ export class StateController {
     }
 
     private async loop() {
-        while (this.isActivated) {
-            try {
+        try {
+            while (this.isActivated) {
                 for (let state of this.stateDefinitions) {
                     if (!(await state.isReached(this.game))) {
                         await state.reach(this.game);
                         break;
                     }
-                    await sleep(this.state.delay);
                 }
-            } catch (e) {
-                console.log("Exception while running StateController script.");
-                console.log(e.message);
-                console.log(e.stack);
-                this.stop();
+                await sleep(this.state.delay);
             }
+        } catch (e) {
+            console.log("Exception while running StateController script.");
+            console.log(e.message);
+            console.log(e.stack);
+            this.stop();
         }
     }
 
