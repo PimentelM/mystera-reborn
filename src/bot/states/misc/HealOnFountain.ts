@@ -5,6 +5,8 @@ import {TilePoint} from "../../../game/Types";
 
 export interface HealOnFountainState {
     minHealth : number,
+
+    originalMinHealth? : number
     fountainTile? : TilePoint
 
 }
@@ -34,10 +36,15 @@ export class HealOnFountain extends StateDefinition{
         if(game.player.isAdjacentTo(tilePoint)) {
             await game.player.lookAt(tilePoint);
             game.player.action();
+            this.state.minHealth = this.state.originalMinHealth;
             return true;
         }
         // If not, walk in the direction of item.
-        else game.player.walkAdjacentTo(tilePoint);
+        else {
+            this.state.originalMinHealth = this.state.minHealth;
+            this.state.minHealth += 10;
+            game.player.walkAdjacentTo(tilePoint);
+        }
 
         return true;
     }
