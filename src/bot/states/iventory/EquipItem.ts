@@ -5,14 +5,17 @@ import {IventoryItem} from "../../../game/Types";
 
 export interface EquipItemState {
     item : string[],
-    two? : boolean
+    two? : boolean,
+    cooldown: number;
+
+    lastUse? : number
 }
 
 export class EquipItem extends StateDefinition{
     public state: EquipItemState;
 
     readonly defaultParams: EquipItemState = {
-        item : []
+        item : [], cooldown: 1000
     };
 
     async isReached(game): Promise<boolean> {
@@ -23,14 +26,20 @@ export class EquipItem extends StateDefinition{
         // If item is already equipped.
         if (item.eqp) return true;
 
+
+        if(new Date().valueOf() - this.state.lastUse < this.state.cooldown) return true;
+
+
         return false;
     }
 
     async reach(game): Promise<boolean> {
         let item = this.findItem(game);
 
-        if(item)
+        if(item){
             game.iventory.equip(item);
+            this.state.lastUse = new Date().valueOf();
+        }
 
         return true;
     }

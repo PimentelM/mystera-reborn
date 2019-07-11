@@ -6,19 +6,25 @@ import {sleep} from "../../../Utils";
 
 export interface DropItemState {
     items: { [name: string]: number },
+    cooldown: number;
+
+    lastDrop? : number
 }
 
 export class DropItem extends StateDefinition {
     public state: DropItemState;
 
     readonly defaultParams: DropItemState = {
-        items: {}
+        items: {}, cooldown: 500
     };
 
     async isReached(game): Promise<boolean> {
         let item = this.findItem(game);
         // If there is no item to drop
         if (!item) return true;
+
+        if(new Date().valueOf() - this.state.lastDrop < this.state.cooldown) return true;
+
 
 
         return false;
@@ -30,7 +36,7 @@ export class DropItem extends StateDefinition {
         if (result) {
             let {item, drop} = result;
             game.iventory.drop(item, drop);
-            await sleep(500);
+            this.state.lastDrop = new Date().valueOf();
         }
 
         return true;

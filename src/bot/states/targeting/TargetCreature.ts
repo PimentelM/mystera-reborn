@@ -12,6 +12,9 @@ export interface TargetCreatureState {
 
 
     bestTarget? : Mob,
+    cooldown: number;
+
+    lastRetarget? : number
 
 }
 
@@ -21,7 +24,7 @@ export class TargetCreature extends StateDefinition{
     state: TargetCreatureState;
 
     readonly defaultParams: TargetCreatureState = {
-        filters : [""], retarget : false
+        filters : [""], retarget : false, cooldown: 2000
     };
 
     async isReached(game : Game): Promise<boolean> {
@@ -30,6 +33,10 @@ export class TargetCreature extends StateDefinition{
         if(currentTarget) {
             // If bot is not configured to retarget;
             if(!this.state.retarget) return true;
+
+            // If retarget is in cooldown
+            if(new Date().valueOf() - this.state.lastRetarget < this.state.cooldown) return true;
+
 
             this.state.bestTarget = await this.getReachableCreature(game);
 
@@ -42,6 +49,7 @@ export class TargetCreature extends StateDefinition{
             // If the other found target is of same type;
             if (this.state.bestTarget.template == currentTarget.template) return true;
 
+            this.state.lastRetarget = new Date().valueOf();
             return false;
         }
 

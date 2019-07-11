@@ -3,12 +3,8 @@ import {IventoryItem} from "../Types";
 import {Iventory} from "../Iventory";
 import {dynamicSort, getTimeout} from "../../Utils";
 
-let successEquipRegex = (itemName) => new RegExp(`You (hold|wear|equip) [a|the] ${itemName}`);
-let requiresLevelToEquipRegex = (itemName) => new RegExp(`${itemName} requires level \\d*\\.`);
-
 
 let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint", "Bone","Turtle", "Herald" ,"Blunt","Short", "Simple" , ""];
-
 
 const defaultTimeout = 3000;
 
@@ -30,49 +26,9 @@ export class Equip {
 
     equipQueue : IventoryItem[];
 
-    equipLevels : {[equipName : string] : number} = {};
-
-
     constructor(game) {
         this.game = game;
     }
-
-
-    private async _equip(item : IventoryItem, timeout : number = defaultTimeout) : Promise<boolean>{
-        if(item.eqp) return true;
-
-        let remoteResolve = {resolve : (result : boolean) => undefined};
-
-        let resultPromise = new Promise<boolean>((resolve) : void=>{remoteResolve.resolve=resolve});
-
-        let parserId = this.game.con.addParser(({type, data}) => {
-            let successEquip = successEquipRegex(item.n);
-            let requiresLevelToEquip = requiresLevelToEquipRegex(item.n);
-            if (type == "pkg") {
-                if (data.indexOf("message") > -1) {
-                    if (successEquip.test(data)) {
-                        remoteResolve.resolve(true);
-                    } else if (requiresLevelToEquip.test(data)){
-                        this.equipLevels[item.n] = data.split("requires level")[1].split(".")[0];
-                        remoteResolve.resolve(false);
-                    }
-                }
-            }
-        });
-
-
-        this.game.iventory.equip(item);
-
-
-        let timeoutPromise = new Promise<boolean>((resolve)=>setTimeout(()=>resolve(false),timeout));
-
-        let result = await Promise.race([resultPromise,timeoutPromise]);
-
-        this.game.con.removeParser(parserId);
-
-        return result;
-    }
-
 
 
 
@@ -88,7 +44,7 @@ export class Equip {
             // Sorty by level +n
             let sortedItems = items.sort(dynamicSort("-n"));
             for (let item of sortedItems){
-                if (!this.equipLevels[item.n] || this.game.player.mob.level >= this.equipLevels[item.n] ){
+                if (!this.game.iventory.equipLevels[item.n] || this.game.player.mob.level >= this.game.iventory.equipLevels[item.n] ){
                     return item;
                 }
             }
@@ -108,7 +64,7 @@ export class Equip {
             // Retorna false se não foi possível equipar o item do tipo especificado.
             if (!item) return false;
 
-            if (await this._equip(item)) return true;
+            if (await this.game.iventory.equip(item)) return true;
 
             c++;
 

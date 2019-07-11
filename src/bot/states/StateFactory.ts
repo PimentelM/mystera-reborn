@@ -5,12 +5,14 @@ import {StateDefinition} from "../Interfaces";
 import {fillInto} from "../../Utils";
 import {LootItems} from "./looting/LootItems";
 import {EatFood} from "./misc/EatFood";
-import {HealOnFountain} from "./misc/HealOnFountain";
+import {HealOnFountain} from "./healing/HealOnFountain";
 import {EquipItem} from "./iventory/EquipItem";
 import {GrindItemQuantity} from "./grind/GrindItemQuantity";
 import {CraftItem} from "./craft/CraftItem";
 import {examples} from "../Examples";
 import {LootItemQuantity} from "./looting/LootItemQuantity";
+import {DropItem} from "./iventory/DropItem";
+import {HealWithItem} from "./healing/HealWithItem";
 
 
 type UnitTypeConstructor = new () => StateDefinition;
@@ -32,8 +34,13 @@ export class StateFactory {
         grind: {
           grindItemQuantity : GrindItemQuantity
         },
+        healing:{
+            healOnFountain: HealOnFountain,
+            healWithItem : HealWithItem,
+        },
         iventory :{
-            equipItem : EquipItem
+            equipItem : EquipItem,
+            dropItem : DropItem
         },
         looting: {
             lootItems: LootItems,
@@ -41,7 +48,6 @@ export class StateFactory {
         },
         misc: {
             eatFood: EatFood,
-            healOnFountain: HealOnFountain,
         },
         targeting: {
             targetCreature: TargetCreature,
