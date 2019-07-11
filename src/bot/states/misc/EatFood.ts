@@ -12,7 +12,7 @@ export class EatFood extends StateDefinition{
     public state: EatFoodState;
 
     readonly defaultParams: EatFoodState = {
-        foods : ["Salmonberry"], minHunger : 75
+        foods : ["Salmonberry", "Cooked \\w*"], minHunger : 75
     };
 
     async isReached(game): Promise<boolean> {

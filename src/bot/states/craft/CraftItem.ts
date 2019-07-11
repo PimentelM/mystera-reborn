@@ -5,7 +5,7 @@ import {TilePoint} from "../../../game/Types";
 
 type ItemSpec = {
     tpl : string,
-    quantity : number,
+    quantity? : number,
 }
 
 export interface CraftItemState {
@@ -48,7 +48,7 @@ export class CraftItem extends StateDefinition{
             if(game.player.mob.level < level) continue;
 
             let itemCount = game.iventory.count(name);
-            if (itemCount >= quantity)  continue;
+            if (itemCount >= (quantity || 1) )  continue;
 
             if (!game.iventory.containsRecipe(recipe)) continue;
 

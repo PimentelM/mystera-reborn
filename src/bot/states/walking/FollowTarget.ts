@@ -11,7 +11,7 @@ export class FollowTarget extends StateDefinition{
     state: FollowTargetState;
 
     readonly defaultParams: FollowTargetState = {
-        steps : 1,
+        steps : 2,
         maxDistance: 1
     };
 

@@ -8,10 +8,13 @@ import {EatFood} from "./misc/EatFood";
 import {HealOnFountain} from "./misc/HealOnFountain";
 import {EquipItem} from "./iventory/EquipItem";
 import {GrindItemQuantity} from "./grind/GrindItemQuantity";
+import {CraftItem} from "./craft/CraftItem";
+import {examples} from "../Examples";
+import {LootItemQuantity} from "./looting/LootItemQuantity";
 
 
 type UnitTypeConstructor = new () => StateDefinition;
-type UnitType = UnitTypeConstructor | string;
+export type UnitType = UnitTypeConstructor | string;
 
 export type Unit = {
     type: UnitType, state: {}
@@ -20,7 +23,12 @@ export type Unit = {
 
 export class StateFactory {
 
+    public examples = examples;
+
     public states = {
+        craft:{
+            craftItem : CraftItem
+        },
         grind: {
           grindItemQuantity : GrindItemQuantity
         },
@@ -28,7 +36,8 @@ export class StateFactory {
             equipItem : EquipItem
         },
         looting: {
-            lootItems: LootItems
+            lootItems: LootItems,
+            lootItemQuantity : LootItemQuantity
         },
         misc: {
             eatFood: EatFood,

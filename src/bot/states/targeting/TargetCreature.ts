@@ -8,8 +8,10 @@ import {Mob} from "../../../game/Types";
 
 export interface TargetCreatureState {
     filters : CreatureFilter[],
-    bestTarget? : Mob,
     retarget : boolean,
+
+
+    bestTarget? : Mob,
 
 }
 

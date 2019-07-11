@@ -13,7 +13,7 @@ export class HealOnFountain extends StateDefinition{
     public state: HealOnFountainState;
 
     readonly defaultParams: HealOnFountainState = {
-        minHealth : 40
+        minHealth : 30
     };
 
     async isReached(game): Promise<boolean> {

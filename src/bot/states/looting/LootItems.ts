@@ -14,7 +14,7 @@ export interface LootItemsState {
 export class LootItems extends StateDefinition{
     state: LootItemsState;
     readonly defaultParams: LootItemsState = {
-        filter: "Salmonberry|Healing Potion",
+        filter: null,
         radius : 3,
         pickTimeoout: 1000
     };
@@ -42,6 +42,7 @@ export class LootItems extends StateDefinition{
     }
 
     private async getReachableItemPosition(game : Game) : Promise<TilePoint> {
+        if(!this.state.filter) return null;
         let tiles = game.map.findTilesWithItem(this.state.filter,this.state.radius);
         return await game.player.nearestReachablePoint(tiles,false);
     }

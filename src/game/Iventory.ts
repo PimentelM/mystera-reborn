@@ -8,11 +8,11 @@ export class Iventory {
         this.game = game;
     }
 
-    public findItem(regExp: string): IventoryItem[] {
+    public findItem(regExp: string, exact = false): IventoryItem[] {
         let items: IventoryItem[] = [];
 
         let test = (str1: string, regExp: string): boolean => {
-            return new RegExp(regExp,"i").test(str1);
+            return new RegExp(exact ? `^${regExp}$` : regExp,"i").test(str1);
         };
 
         for (let item of this.game.window.item_data) {
@@ -63,6 +63,7 @@ export class Iventory {
         }
 
         if(!item.eqp){
+            item.eqp = true;
             this.use(item);
         }
     }

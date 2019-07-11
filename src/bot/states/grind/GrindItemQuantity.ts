@@ -15,7 +15,7 @@ export class GrindItemQuantity extends StateDefinition{
     public state: GrindItemQuantityState;
 
     readonly defaultParams: GrindItemQuantityState = {
-        resource : "" , items : {}, tool : ""
+        resource : "" , items : {}, tool : null
     };
 
     async isReached(game): Promise<boolean> {
@@ -37,7 +37,9 @@ export class GrindItemQuantity extends StateDefinition{
         // If player is adjacent to resource
         if(game.player.isAdjacentTo(tilePoint)) {
             if(game.player.mob.dir == game.player.dirTo(tilePoint)){
-                await game.player.equip.best(this.state.tool);
+                if (this.state.tool) {
+                    await game.player.equip.best(this.state.tool);
+                }
                 if(!game.player.isDoingAction){
                     game.player.keepActionUntilResourceIsGathered();
                 }

@@ -5,6 +5,7 @@ import {IventoryItem} from "../../../game/Types";
 
 export interface EquipItemState {
     item : string[],
+    two? : boolean
 }
 
 export class EquipItem extends StateDefinition{
@@ -36,7 +37,13 @@ export class EquipItem extends StateDefinition{
 
     findItem(game: Game){
         for (let item of this.state.item ){
-            let found = game.iventory.findItem(item).shift();
+            let founds = game.iventory.findItem(item , true);
+            let found = founds.shift();
+
+            if(this.state.two && !!found.eqp){
+                found = founds.shift();
+            }
+
             if(found) return found
         }
         return null;

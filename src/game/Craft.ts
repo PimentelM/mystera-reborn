@@ -32,16 +32,17 @@ export class Craft{
 
         let resultPromise = new Promise<ItemData>((resolve) : void=>{remoteResolve.resolve=resolve});
 
+        let regexString = `<strong>[\\w\\s]*<\\/strong> requires:.*?\\.( Level: \\d*)?`;
         let parserId = this.game.con.addParser(({type, data}) => {
             if (type == "pkg") {
                 if (data.indexOf("message") > -1) {
-                    let regex = new RegExp("<strong>[\\w\\s]*<\\/strong> requires:.*?\\. Level: \\d*", "gmi");
+                    let regex = new RegExp(regexString, "gmi");
                     if (regex.test(data)) {
-                        let regex = new RegExp("<strong>[\\w\\s]*<\\/strong> requires:.*?\\. Level: \\d*", "gmi");
+                        let regex = new RegExp(regexString, "gmi");
                         let response = regex.exec(data)[0];
                         let name = response.split("<strong>")[1].split("</strong>")[0];
                         let recipe = recipeFromResponse(response.split("requires: ")[1]);
-                        let level = Number(response.split("Level: ")[1]);
+                        let level = Number(response.split("Level: ")[1]) || 0;
                         remoteResolve.resolve({name,recipe,level});
                     }
                 }
