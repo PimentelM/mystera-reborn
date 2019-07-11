@@ -51,17 +51,17 @@ export class Iventory {
     }
 
 
-    public containItems(items : {[name : string] : number} ){
+    public containItems(items : {[name : string] : number}, sufix : string = "" ){
 
         for (let [item,ammount] of Object.entries(items)){
-            if (!this.contains(item,ammount)) return false;
+            if (!this.contains(item + sufix,ammount)) return false;
         }
 
         return true
     }
 
-    public contains(item , amount){
-        return this.count(item) >= amount
+    public contains(item , amount,  sufix : string = ""){
+        return this.count(item + sufix) >= amount
     }
 
     public async equip(item : IventoryItem | string, timeout : number = 1000) : Promise<boolean>{

@@ -21,6 +21,8 @@ export class Player {
     private isSerialWalking: boolean = false;
     private serialStepPromise: Promise<boolean>;
 
+    public isDoingAction: boolean = false;
+
 
     constructor(game: Game) {
         this.game = game;
@@ -29,13 +31,7 @@ export class Player {
         doWhen(() => this.updateData(), () => !!this.game.window.getMob(this.game.window.me), 500)
     }
 
-    get isDoingAction(): boolean {
-        return !!this.game.window.action
-    }
 
-    set isDoingAction(value : boolean){
-        this.game.window.action = value ? 1 : 0;
-    }
 
     public isAdjacentTo(p: Point) {
         return this.distanceTo(p) == 1;
@@ -68,8 +64,8 @@ export class Player {
         let smallestDistance = Infinity;
 
         for (let point of points) {
-            // If player is already on top of point, returns it.
-            if (this.isOnTopOf(point)) return point;
+            // If player is already on top of point or adjacent to it if it is the case, returns it.
+            if (this.isOnTopOf(point) || adjacent && this.isAdjacentTo(point)) return point;
             // Check if can reach point
             let path = [];
             if (adjacent) {

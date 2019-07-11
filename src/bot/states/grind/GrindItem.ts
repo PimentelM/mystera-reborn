@@ -3,24 +3,30 @@ import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {TilePoint} from "../../../game/Types";
 
-export interface GrindItemQuantityState {
+export interface GrindItemState {
     resource : string,
     tool : string,
-    items : {[name : string] : number},
+
+    condition? : (game : Game) => boolean,
+    until? : (game : Game) => boolean,
+
     tileToGather? : TilePoint
 
 }
 
-export class GrindItemQuantity extends StateDefinition{
-    public state: GrindItemQuantityState;
+export class GrindItem extends StateDefinition{
+    public state: GrindItemState;
 
-    readonly defaultParams: GrindItemQuantityState = {
-        resource : "" , items : {}, tool : null
+    readonly defaultParams: GrindItemState = {
+        resource : "" , tool : null
     };
 
     async isReached(game : Game): Promise<boolean> {
-        // Se ja tiver a quantidade necessária de items.
-        if (this.isQuantityReached(game)) return true;
+        // If condition to grind is not met.
+        if(this.state.condition && !this.state.condition(game)) return true;
+
+        // If desired state is already met
+        if(this.state.until && this.state.until(game)) return true;
 
         this.state.tileToGather = await this.getResourceTile(game);
         // If cannot find the resource on the ground
@@ -41,7 +47,7 @@ export class GrindItemQuantity extends StateDefinition{
                     await game.player.equip.best(this.state.tool);
                 }
                 if(!game.player.isDoingAction){
-                    game.player.keepActionUntilResourceIsGathered();
+                    game.player.keepAction();
                 }
             } else {
                 game.player.lookAt(tilePoint);
@@ -61,7 +67,4 @@ export class GrindItemQuantity extends StateDefinition{
     }
 
 
-    private isQuantityReached(game: Game) {
-        return game.iventory.containItems(this.state.items);
-    }
 }

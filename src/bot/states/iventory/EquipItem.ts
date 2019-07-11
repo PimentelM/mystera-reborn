@@ -46,7 +46,7 @@ export class EquipItem extends StateDefinition{
 
     findItem(game: Game){
         for (let item of this.state.item ){
-            let founds = game.iventory.findItem(item , true);
+            let founds = game.iventory.findItem(item + "\\*?" , true);
             let found = founds.shift();
 
             if(this.state.two && found && !!found.eqp){

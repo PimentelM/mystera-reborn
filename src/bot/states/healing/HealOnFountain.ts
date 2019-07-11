@@ -20,7 +20,12 @@ export class HealOnFountain extends StateDefinition {
 
     async isReached(game): Promise<boolean> {
         // Player health is already ok
-        if (game.player.status.hpppc > this.state.minHealth) return true;
+        if (game.player.status.hpppc > this.state.minHealth) {
+            if (this.state.originalMinHealth) {
+                this.state.minHealth = this.state.originalMinHealth;
+            }
+            return true;
+        }
 
         this.state.fountainTile = await this.findFountain(game);
         // There is no fountain nearbly
@@ -36,14 +41,13 @@ export class HealOnFountain extends StateDefinition {
         if (game.player.isAdjacentTo(tilePoint)) {
             await game.player.lookAt(tilePoint);
             game.player.action();
-            this.state.minHealth = this.state.originalMinHealth;
             return true;
         }
         // If not, walk in the direction of item.
         else {
             if (!this.state.originalMinHealth || this.state.originalMinHealth == this.state.minHealth) {
                 this.state.originalMinHealth = this.state.minHealth;
-                this.state.minHealth += 10;
+                this.state.minHealth = 99;
             }
             game.player.walkAdjacentTo(tilePoint);
         }

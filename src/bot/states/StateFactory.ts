@@ -7,12 +7,12 @@ import {LootItems} from "./looting/LootItems";
 import {EatFood} from "./misc/EatFood";
 import {HealOnFountain} from "./healing/HealOnFountain";
 import {EquipItem} from "./iventory/EquipItem";
-import {GrindItemQuantity} from "./grind/GrindItemQuantity";
 import {CraftItem} from "./craft/CraftItem";
 import {examples} from "../Examples";
 import {LootItemQuantity} from "./looting/LootItemQuantity";
 import {DropItem} from "./iventory/DropItem";
 import {HealWithItem} from "./healing/HealWithItem";
+import {GrindItem} from "./grind/GrindItem";
 
 
 type UnitTypeConstructor = new () => StateDefinition;
@@ -32,7 +32,7 @@ export class StateFactory {
             craftItem : CraftItem
         },
         grind: {
-          grindItemQuantity : GrindItemQuantity
+          grindItem : GrindItem
         },
         healing:{
             healOnFountain: HealOnFountain,
