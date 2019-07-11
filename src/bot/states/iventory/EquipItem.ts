@@ -40,7 +40,7 @@ export class EquipItem extends StateDefinition{
             let founds = game.iventory.findItem(item , true);
             let found = founds.shift();
 
-            if(this.state.two && !!found.eqp){
+            if(this.state.two && found && !!found.eqp){
                 found = founds.shift();
             }
 
