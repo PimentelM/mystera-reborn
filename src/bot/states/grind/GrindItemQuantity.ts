@@ -18,11 +18,11 @@ export class GrindItemQuantity extends StateDefinition{
         resource : "" , items : {}, tool : null
     };
 
-    async isReached(game): Promise<boolean> {
+    async isReached(game : Game): Promise<boolean> {
         // Se ja tiver a quantidade necessária de items.
         if (this.isQuantityReached(game)) return true;
 
-        this.state.tileToGather = await this.getReachableItemPosition(game);
+        this.state.tileToGather = await this.getResourceTile(game);
         // If cannot find the resource on the ground
         if(!this.state.tileToGather) {
             return true;
@@ -55,21 +55,13 @@ export class GrindItemQuantity extends StateDefinition{
         return true;
     }
 
-    private isQuantityReached(game){
-        for (let item of Object.keys(this.state.items)){
-            let requiredQuantity = this.state.items[item];
-            let itemCount = game.iventory.findItem(`^${item}$`).reduce((a,x)=>a+=x.qty,0);
-            if (itemCount < requiredQuantity) return false;
-        }
-
-        return true;
+    // Returns the tile with the desired resource
+    async getResourceTile(game){
+        return await game.map.getReachableItemPosition(this.state.resource);
     }
 
-    private async getReachableItemPosition(game : Game) : Promise<TilePoint> {
-        // To avoid a lot of recalculations at every controller loop, we must check if the previously calculated item is already defined.
-        //if(game.map.getItemAt(this.state.tileToGather,this.state.resource)) return this.state.tileToGather;
-        let tiles = game.map.findTilesWithItem(this.state.resource);
-        return await game.player.nearestReachablePoint(tiles,false);
-    }
 
+    private isQuantityReached(game: Game) {
+        return game.iventory.containItems(this.state.items);
+    }
 }

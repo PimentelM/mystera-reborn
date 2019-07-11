@@ -51,7 +51,7 @@ export class Iventory {
     }
 
 
-    public containsRecipe(items : {[name : string] : number} ){
+    public containItems(items : {[name : string] : number} ){
 
         for (let [item,ammount] of Object.entries(items)){
             if (!this.contains(item,ammount)) return false;

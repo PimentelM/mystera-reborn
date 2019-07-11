@@ -14,7 +14,7 @@ export class Craft{
     public async canCraft(tpl : string) : Promise<boolean>{
         let {recipe} = await this.getInfo(tpl);
         if(!recipe) return false;
-        return this.game.iventory.containsRecipe(recipe);
+        return this.game.iventory.containItems(recipe);
     }
 
     public async getInfo(tpl : string) : Promise<ItemData>{

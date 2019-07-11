@@ -59,6 +59,23 @@ export class Map {
         return null;
     }
 
+    /**
+     * Returns a tile containing a item you can reach.
+     * @param filter is a regex string used to find the item on the ground
+     * @param radius is the radius around the player where the search is allowed
+     * @returns a point you can walk to adjacently or not depending on the type of item.
+     */
+    public async getReachableItemPosition(filter : string, radius : number = Infinity) : Promise<TilePoint> {
+        if(!filter) return null;
+        let tiles = this.findTilesWithItem(filter,radius);
+        if(tiles.length == 0) return null;
+
+        // It will be adjacent search if all found items are on unwalkable tiles.
+        let adjacent = !tiles.find(x=>!x.block);
+        return await this.game.player.nearestReachablePoint(tiles,adjacent);
+    }
+
+
     public findTilesWithItem(regExp : string, radius : number = Infinity): TilePoint[] {
         let tiles = [];
 
@@ -66,7 +83,7 @@ export class Map {
         let rX = 16;
         let rY = 13;
 
-        if(radius < 13){
+        if(radius && radius < 13){
             rX = radius;
             rY = radius;
         }

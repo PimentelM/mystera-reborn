@@ -50,7 +50,7 @@ export class CraftItem extends StateDefinition{
             let itemCount = game.iventory.count(name);
             if (itemCount >= (quantity || 1) )  continue;
 
-            if (!game.iventory.containsRecipe(recipe)) continue;
+            if (!game.iventory.containItems(recipe)) continue;
 
             return tpl;
         }

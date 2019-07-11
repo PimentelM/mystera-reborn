@@ -51,8 +51,7 @@ export class HealOnFountain extends StateDefinition {
         return true;
     }
 
-    async findFountain(game: Game) {
-        let tiles = game.map.findTilesWithItem("Healing Fountain");
-        return await game.player.nearestReachablePoint(tiles, true);
+    private async findFountain(game: Game) {
+        return await game.map.getReachableItemPosition("Healing Fountain");
     }
 }

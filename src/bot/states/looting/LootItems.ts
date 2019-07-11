@@ -20,7 +20,7 @@ export class LootItems extends StateDefinition{
     };
 
     async isReached(game): Promise<boolean> {
-        this.state.tileWithItem = await this.getReachableItemPosition(game);
+        this.state.tileWithItem = await game.map.getReachableItemPosition(game);
         // If cannot find items on ground
         if(!this.state.tileWithItem) {
             return true;
@@ -39,12 +39,6 @@ export class LootItems extends StateDefinition{
         else game.player.walkTo(tilePoint);
 
         return true;
-    }
-
-    private async getReachableItemPosition(game : Game) : Promise<TilePoint> {
-        if(!this.state.filter) return null;
-        let tiles = game.map.findTilesWithItem(this.state.filter,this.state.radius);
-        return await game.player.nearestReachablePoint(tiles,false);
     }
 }
 
