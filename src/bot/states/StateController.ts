@@ -14,6 +14,8 @@ export class StateController {
 
     private loopPromise: Promise<any>;
 
+    public lastStateExecuted : StateDefinition;
+
     public constructor(game: Game, stateDefinitions: StateDefinition[] = [], state: ControllerState = StateController.getDefaultState()) {
         this.stateDefinitions = stateDefinitions;
         this.state = state;
@@ -59,6 +61,7 @@ export class StateController {
                 for (let state of this.stateDefinitions) {
                     if (!(await state.isReached(this.game))) {
                         await state.reach(this.game);
+                        this.lastStateExecuted = state;
                         break;
                     }
                 }

@@ -23,6 +23,7 @@ export class Player {
 
     public isDoingAction: boolean = false;
 
+    public lastSendAction: number;
 
     constructor(game: Game) {
         this.game = game;
@@ -122,11 +123,12 @@ export class Player {
         this.mob = this.game.window.getMob(this.game.window.me)
     }
 
-    public turn(d: number) {
-        this.mob.last_dir = this.mob.dir;
-        this.mob.dir = d;
+    public async turn(d: number) {
+        let changedDir = () => d == this.mob.dir;
+
         this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d});
-        return true;
+
+        return await until(()=>changedDir(),100,1500);
     }
 
     public isMoving() {
@@ -151,9 +153,9 @@ export class Player {
         return d;
     }
 
-    public lookAt(p: Point) {
+    public async lookAt(p: Point) {
         let d = this.dirTo(p);
-        this.turn(d);
+        return await this.turn(d);
     }
 
     public isOnTopOf(tile: Point) {
@@ -188,63 +190,31 @@ export class Player {
     }
 
     public keepAction() {
+        let thisActionId = new Date().valueOf();
+        this.lastSendAction = thisActionId;
+
         this.game.send({type: "A"});
         this.game.player.isDoingAction = true;
         let {x, y, dir} = this.mob;
 
         let stop = () => {
+            // Stop only if player moved.
+            if(actionIsResend()) return;
+
             this.game.player.isDoingAction = false;
             this.game.send({type: "a"});
         };
+
         let playerMoved = () => this.mob.x != x || this.mob.y != y || this.mob.dir != dir;
 
+        let actionIsResend = () => this.lastSendAction != thisActionId;
+
+        let playerMovedOrActionIsResend = () => playerMoved() || actionIsResend();
+
         // Stop action when player move or turn;
-        doWhen(stop, playerMoved, 200);
+        doWhen(stop, playerMovedOrActionIsResend, 200);
     }
 
-
-    public async keepActionUntilResourceIsGathered() {
-        this.game.send({type: "A"});
-        this.game.player.isDoingAction = true;
-
-        let {x, y, dir} = this.mob;
-
-        let moved = false;
-        let gathered = false;
-
-        let offset = directionOffset[this.mob.dir];
-        let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
-
-        if (tileOnFrontOfPlayer.o.length == 0) return {moved, gathered};
-
-        let resource = tileOnFrontOfPlayer.o[0].name;
-
-        let stop = () => {
-            this.game.send({type: "a"});
-            this.game.player.isDoingAction = false;
-        };
-
-        let resourceGatheredOrPlayerMoved = () => {
-            let _moved = this.mob.x != x || this.mob.y != y || this.mob.dir != dir;
-            if (_moved) {
-                moved = true;
-                return true;
-            }
-
-            let tileOnFrontOfPlayer = this.game.map.getTileByOffset(offset);
-            let _gathered = tileOnFrontOfPlayer.o.length == 0 || tileOnFrontOfPlayer.o[0].name != resource;
-            if (_gathered) {
-                gathered = true;
-                return true;
-            }
-
-            return false;
-        };
-
-        // Stop action when player move;
-        await doWhen(stop, resourceGatheredOrPlayerMoved, 250);
-        return {moved, gathered}
-    }
 
     private async stepTo(p: Point) {
         let {x, y} = p;

@@ -14,13 +14,16 @@ export class HealWithItem extends StateDefinition{
     public state: HealWithItemState;
 
     readonly defaultParams: HealWithItemState = {
-        hppc: 25, item: "Healing Potion", cooldown: 2000
+        hppc: 24.99, item: "Healing Potion", cooldown: 1000
     };
 
     async isReached(game): Promise<boolean> {
 
+        // Se ja tiver vida suficiente
         if(game.player.status.hpppc > this.state.hppc) return true;
-        if(game.iventory.count(this.state.hppc == 0)) return true;
+        // Se não tiver potions
+        if(game.iventory.count(this.state.item) == 0 ) return true;
+        // Se tiver usado a potion à pouco tempo
         if(new Date().valueOf() - this.state.lastUse < this.state.cooldown) return true;
 
         return false;

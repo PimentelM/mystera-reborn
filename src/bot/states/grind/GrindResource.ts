@@ -3,7 +3,7 @@ import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {TilePoint} from "../../../game/Types";
 
-export interface GrindItemState {
+export interface GrindResourceState {
     resource : string,
     tool : string,
 
@@ -14,10 +14,12 @@ export interface GrindItemState {
 
 }
 
-export class GrindItem extends StateDefinition{
-    public state: GrindItemState;
+export class GrindResource extends StateDefinition{
+    public state: GrindResourceState;
 
-    readonly defaultParams: GrindItemState = {
+    private lastResend : number = 0;
+
+    readonly defaultParams: GrindResourceState = {
         resource : "" , tool : null
     };
 
@@ -46,11 +48,11 @@ export class GrindItem extends StateDefinition{
                 if (this.state.tool) {
                     await game.player.equip.best(this.state.tool);
                 }
-                if(!game.player.isDoingAction){
+                if(!game.player.isDoingAction || (!game.window.action && this.resendActionCooldown())){
                     game.player.keepAction();
                 }
             } else {
-                game.player.lookAt(tilePoint);
+                await game.player.lookAt(tilePoint);
             }
         }
         // If not, walk in the direction of resource.
@@ -61,10 +63,19 @@ export class GrindItem extends StateDefinition{
         return true;
     }
 
+    private resendActionCooldown() {
+        if (new Date().valueOf() - this.lastResend >= 3000){
+            this.lastResend = new Date().valueOf();
+            return true;
+        }
+        return false;
+    }
+
     // Returns the tile with the desired resource
     async getResourceTile(game){
         return await game.map.getReachableItemPosition(this.state.resource);
     }
+
 
 
 }
