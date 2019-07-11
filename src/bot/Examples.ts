@@ -28,8 +28,8 @@ export let examples = {
         {type: GrindItemQuantity, state: {resource: " Bush", items: {Tinder: 4}}},
         {type: EquipItem, state: {item: ["Wood Sword"]}},
         TargetCreature,
-        {type: DropItem, state: {items: {Pelt: 2, Bone : 0, "Raw Meat" : 0, "Carrot Seed" : 0 }}},
         {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 20}}},
+        {type: DropItem, state: {items: {Pelt: 2, Bone : 0, "Raw Meat" : 0, "Carrot Seed" : 0 }}},
         FollowTarget
     ]
 };
