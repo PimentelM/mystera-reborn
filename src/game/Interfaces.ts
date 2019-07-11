@@ -8,6 +8,9 @@ export interface IGameWindow {
     Creatures : any,
     Game : any,
     Bot : any,
+    Craft : any,
+    Equip : any,
+    Upgrades : any
 
     PathFinder : any,
 

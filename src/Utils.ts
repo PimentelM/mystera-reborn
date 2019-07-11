@@ -65,6 +65,6 @@ export function dynamicSort(property) {
 }
 
 export function getTimeout(ms, value = false){
-    return new Promise<boolean>((resolve)=>setTimeout(()=>resolve(value),ms));
+    return new Promise<any>((resolve)=>setTimeout(()=>resolve(value),ms));
 
 }

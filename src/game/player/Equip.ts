@@ -12,6 +12,19 @@ let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint"
 
 const defaultTimeout = 3000;
 
+export enum types {
+    dagger = "dagger",
+    sword = "sword",
+    axe = "axe",
+    pickaxe = "pickaxe",
+    spear = "spear",
+    hammer = "hammer",
+    club = "(club|mace)",
+    shield = "(shield|buckler)",
+    bow = "bow",
+    knuckles = "(duster|knuckles)"
+}
+
 export class Equip {
     game: Game;
 
@@ -64,11 +77,8 @@ export class Equip {
 
 
     private _isEqquipedWith(regex) : boolean{
-        let equippedItem = this.game.iventory.currentEquip();
+        let equippedItem = this.currentEquip();
         return new RegExp(regex,"i").test(equippedItem.n);
-
-
-        return false
     }
 
     // Retorna a melhor tool do tipo x encontratada no iventory.
@@ -157,8 +167,23 @@ export class Equip {
     
     public async bestKnuckles(timeout = defaultTimeout) : Promise<boolean>{
         let result =  await this.best("(duster|knuckles)",timeout);
-        if(!result) this.game.iventory.disarm();
+        if(!result) this.disarm();
         return true;
+    }
+
+    public currentEquip(){
+        let eqquiped_item_sprite = this.game.window.jv.equip_sprite;
+        if(eqquiped_item_sprite) {
+            return this.game.iventory.items.find(x => x && x.spr == eqquiped_item_sprite);
+        }
+        return null;
+    }
+
+    public disarm() {
+        let currentEquip = this.currentEquip();
+        if(currentEquip){
+            this.game.iventory.use(currentEquip);
+        }
     }
 
 

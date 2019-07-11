@@ -38,6 +38,23 @@ export class Iventory {
         this.game.send({type:"u",slot:item.slot});
     }
 
+    public count(regExp : string, exactMatch = true) : number{
+        return this.findItem(exactMatch ? `^${regExp}$` : regExp).reduce((a,x)=>a+=x.qty,0);
+    }
+
+
+    public containsRecipe(items : {[name : string] : number} ){
+
+        for (let [item,ammount] of Object.entries(items)){
+            if (!this.contains(item,ammount)) return false;
+        }
+
+        return true
+    }
+
+    public contains(item , amount){
+        return this.count(item) >= amount
+    }
 
     public equip(item: IventoryItem | string){
         if (typeof item == "string"){
@@ -66,19 +83,6 @@ export class Iventory {
 
     }
 
-    public disarm() {
-        let currentEquip = this.currentEquip();
-        if(currentEquip){
-            this.use(currentEquip);
-        }
-    }
 
-    public currentEquip(){
-        let eqquiped_item_sprite = this.game.window.jv.equip_sprite;
-        if(eqquiped_item_sprite) {
-            return this.game.iventory.items.find(x => x && x.spr == eqquiped_item_sprite);
-        }
-        return null;
-    }
 }
 
