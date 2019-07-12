@@ -18,8 +18,8 @@ export class DropItem extends StateDefinition {
         items: {}, cooldown: 500
     };
 
-    async isReached(game): Promise<boolean> {
-        let item = this.findItem(game);
+    async isReached(): Promise<boolean> {
+        let item = this.findItem();
         // If there is no item to drop
         if (!item) return true;
 
@@ -30,27 +30,29 @@ export class DropItem extends StateDefinition {
         return false;
     }
 
-    async reach(game): Promise<boolean> {
-        let result = this.findItem(game);
+    async reach(): Promise<boolean> {
+        let result = this.findItem();
 
         if (result) {
             let {item, drop} = result;
-            game.iventory.drop(item, drop);
+            this.game.iventory.drop(item, drop);
             this.state.lastDrop = new Date().valueOf();
         }
 
         return true;
     }
 
-    findItem(game: Game): { item: IventoryItem, drop: number } {
+    findItem(): { item: IventoryItem, drop: number } {
         for (let [itemName, qtd] of Object.entries(this.state.items)) {
-            let itemCount = game.iventory.count(itemName);
+            let itemCount = this.game.iventory.count(itemName);
             if (itemCount > qtd) {
-                let item = game.iventory.findItem(itemName, true).shift();
+                let item = this.game.iventory.findItem(itemName, true).shift();
                 let drop = itemCount - qtd;
                 return {item, drop}
             }
         }
         return null;
     }
+
+    game: Game;
 }

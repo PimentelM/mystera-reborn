@@ -7,18 +7,19 @@ export interface ZState {
 }
 
 export class Z extends StateDefinition{
+    game: Game;
     public state: ZState;
 
     readonly defaultParams: ZState = {
 
     };
 
-    async isReached(game): Promise<boolean> {
+    async isReached(): Promise<boolean> {
 
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
 
         return true;
     }

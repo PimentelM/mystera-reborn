@@ -24,7 +24,7 @@ let playerHasWoodItems = (game: Game) => {
     return game.iventory.containItems(
         {
             "Wood Sword": 1,
-            "Wooden Buckler": 1,
+            //"Wooden Buckler": 1,
             "Stone Pickaxe": 1,
             "Stone Axe": 1
         }, "\\*?") || game.iventory.contains("Wood", 30)
@@ -49,7 +49,7 @@ export let reachLevel15 = [
     {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
     {type: CraftItem, state: {items: [{tpl: "wood_sword"}]}},
     {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
-    {type: CraftItem, state: {items: [{tpl: "wooden_buckler"}]}},
+    //{type: CraftItem, state: {items: [{tpl: "wooden_buckler"}]}},
     {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
 
     {type: EquipItem, state: {item: ["Grass Band"], two: true}},
@@ -60,7 +60,7 @@ export let reachLevel15 = [
     {type: GrindResource, state: {resource: "\\w* Bush", items: {Tinder: 4}, until: playerHasTinderItems}},
 
     {type: EquipItem, state: {item: ["Wood Sword"]}},
-    {type: EquipItem, state: {item: ["Wooden Buckler"]}},
+    //{type: EquipItem, state: {item: ["Wooden Buckler"]}},
 
     {type: TargetCreature, state: {filters: ["Raccoon", ""]}},
     {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 10}}},

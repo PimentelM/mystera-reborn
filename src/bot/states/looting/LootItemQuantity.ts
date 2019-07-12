@@ -19,8 +19,8 @@ export class LootItemQuantity extends StateDefinition {
         pickTimeoout: 1000
     };
 
-    async isReached(game): Promise<boolean> {
-        this.state.tileWithItem = await this.getReachableItemPosition(game);
+    async isReached(): Promise<boolean> {
+        this.state.tileWithItem = await this.getReachableItemPosition();
         // If cannot find items on ground
         if (!this.state.tileWithItem) {
             return true;
@@ -28,28 +28,30 @@ export class LootItemQuantity extends StateDefinition {
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
         let tilePoint = this.state.tileWithItem;
 
         // If player is on top of item, picks the item.
-        if (game.player.isOnTopOf(tilePoint)) {
-            return await game.player.pick(this.state.pickTimeoout);
+        if (this.game.player.isOnTopOf(tilePoint)) {
+            return await this.game.player.pick(this.state.pickTimeoout);
         }
         // If not, walk in the direction of item.
-        else game.player.walkTo(tilePoint);
+        else this.game.player.walkTo(tilePoint);
 
         return true;
     }
 
-    private async getReachableItemPosition(game: Game): Promise<TilePoint> {
+    private async getReachableItemPosition(): Promise<TilePoint> {
         for (let [item, count] of Object.entries(this.state.items)) {
-            if(game.iventory.count(item) < count){
-                let tiles = game.map.findTilesWithItem(item, this.state.radius);
-                return await game.player.nearestReachablePoint(tiles, false);
+            if(this.game.iventory.count(item) < count){
+                let tiles = this.game.map.findTilesWithItem(item, this.state.radius);
+                return await this.game.player.nearestReachablePoint(tiles, false);
             }
         }
 
         return null
     }
+
+    game: Game;
 }
 

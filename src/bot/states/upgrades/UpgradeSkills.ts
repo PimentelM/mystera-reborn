@@ -19,24 +19,26 @@ export class UpgradeSkills extends StateDefinition{
         skills : []
     };
 
-    async isReached(game): Promise<boolean> {
-        this.state.nextUpgrade = await this.getNextUpgrade(game);
+    async isReached(): Promise<boolean> {
+        this.state.nextUpgrade = await this.getNextUpgrade();
 
         if(!this.state.nextUpgrade) return true;
 
         return false;
     }
 
-    async reach(game): Promise<boolean> {
-        return await game.upgrades.upgradeSkill(this.state.nextUpgrade);
+    async reach(): Promise<boolean> {
+        return await this.game.upgrades.upgradeSkill(this.state.nextUpgrade);
     }
 
-    async getNextUpgrade(game){
+    async getNextUpgrade(){
         for (let skill of this.state.skills){
-            if (await game.upgrades.canUpgrade(skill)){
+            if (await this.game.upgrades.canUpgrade(skill)){
                 return skill;
             }
         }
         return null
     }
+
+    game: Game;
 }

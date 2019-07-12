@@ -18,29 +18,29 @@ export class HealOnFountain extends StateDefinition {
         minHealth: 40
     };
 
-    async isReached(game): Promise<boolean> {
+    async isReached(): Promise<boolean> {
         // Player health is already ok
-        if (game.player.status.hpppc > this.state.minHealth) {
+        if (this.game.player.status.hpppc > this.state.minHealth) {
             if (this.state.originalMinHealth) {
                 this.state.minHealth = this.state.originalMinHealth;
             }
             return true;
         }
 
-        this.state.fountainTile = await this.findFountain(game);
+        this.state.fountainTile = await this.findFountain();
         // There is no fountain nearbly
         if (!this.state.fountainTile) return true;
 
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
         let tilePoint = this.state.fountainTile;
 
         // If player is adjacent to fountain;
-        if (game.player.isAdjacentTo(tilePoint)) {
-            await game.player.lookAt(tilePoint);
-            game.player.action();
+        if (this.game.player.isAdjacentTo(tilePoint)) {
+            await this.game.player.lookAt(tilePoint);
+            this.game.player.action();
             return true;
         }
         // If not, walk in the direction of item.
@@ -49,13 +49,15 @@ export class HealOnFountain extends StateDefinition {
                 this.state.originalMinHealth = this.state.minHealth;
                 this.state.minHealth = 99;
             }
-            game.player.walkAdjacentTo(tilePoint);
+            this.game.player.walkAdjacentTo(tilePoint);
         }
 
         return true;
     }
 
-    private async findFountain(game: Game) {
-        return await game.map.getReachableItemPosition("Healing Fountain");
+    private async findFountain() {
+        return await this.game.map.getReachableItemPosition("Healing Fountain");
     }
+
+    game: Game;
 }

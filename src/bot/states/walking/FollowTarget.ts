@@ -16,12 +16,12 @@ export class FollowTarget extends StateDefinition{
     };
 
 
-    async isReached(game): Promise<boolean> {
+    async isReached(): Promise<boolean> {
         // When has no target
-        if (!game.player.hasTarget()) return true;
+        if (!this.game.player.hasTarget()) return true;
 
         // When player already is near target
-        let distance = game.player.distanceTo(game.player.getTarget());
+        let distance = this.game.player.distanceTo(this.game.player.getTarget());
         if (distance <= this.state.maxDistance) {
             return true;
         }
@@ -29,9 +29,11 @@ export class FollowTarget extends StateDefinition{
         return false;
     }
 
-    async reach(game): Promise<boolean> {
-        let walkPromise =  game.player.walkAdjacentTo(game.player.getTarget(),this.state.steps);
+    async reach(): Promise<boolean> {
+        let walkPromise =  this.game.player.walkAdjacentTo(this.game.player.getTarget(),this.state.steps);
         return true;
     }
+
+    game: Game;
 }
 

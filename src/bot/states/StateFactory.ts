@@ -26,25 +26,26 @@ export type Unit = {
 export class StateFactory {
 
     public examples = examples;
+    private game: Game;
 
     public states = {
-        craft:{
-            craftItem : CraftItem
+        craft: {
+            craftItem: CraftItem
         },
         grind: {
-          grindResource : GrindResource
+            grindResource: GrindResource
         },
-        healing:{
+        healing: {
             healOnFountain: HealOnFountain,
-            healWithItem : HealWithItem,
+            healWithItem: HealWithItem,
         },
-        iventory :{
-            equipItem : EquipItem,
-            dropItem : DropItem
+        iventory: {
+            equipItem: EquipItem,
+            dropItem: DropItem
         },
         looting: {
             lootItems: LootItems,
-            lootItemQuantity : LootItemQuantity
+            lootItemQuantity: LootItemQuantity
         },
         misc: {
             eatFood: EatFood,
@@ -57,19 +58,23 @@ export class StateFactory {
         },
     };
 
-    public build(unitInitiators: (Unit | UnitType )[]): StateDefinition[] {
+    public constructor(game: Game) {
+        this.game = game;
+    }
+
+    public build(unitInitiators: (Unit | UnitType)[]): StateDefinition[] {
         let builtUnits = [];
 
         for (let unit of unitInitiators) {
             // Unit
-            if((unit as Unit).type){
+            if ((unit as Unit).type) {
                 let {type, state} = (unit as Unit);
-                builtUnits.push(this.buildUnit(type,state));
+                builtUnits.push(this.buildUnit(type, state));
                 continue;
             }
 
             //UnitType
-            builtUnits.push(this.buildUnit((unit as UnitType),{}));
+            builtUnits.push(this.buildUnit((unit as UnitType), {}));
         }
 
         return builtUnits;
@@ -81,19 +86,20 @@ export class StateFactory {
 
         let unit = new type();
         unit.state = state;
+        unit.game = this.game;
         fillInto(unit.defaultParams, unit.state);
         return unit;
     }
 
-    private typeFromString(path : string | UnitTypeConstructor) : UnitTypeConstructor {
+    private typeFromString(path: string | UnitTypeConstructor): UnitTypeConstructor {
         if (typeof path !== "string") return path;
 
         let pathParts = path.split(".");
         let type = this.states[pathParts.shift()];
 
-        for (let part of pathParts){
+        for (let part of pathParts) {
             type = type[part];
-            if(!type) throw new Error(`Could not find a UnitType from the provided path "${path}"`);
+            if (!type) throw new Error(`Could not find a UnitType from the provided path "${path}"`);
         }
 
         return type;

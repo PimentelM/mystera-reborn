@@ -21,8 +21,8 @@ export class CraftItem extends StateDefinition{
         items : []
     };
 
-    async isReached(game): Promise<boolean> {
-        this.state.itemToCraft =  await this.getItemToCraft(game);
+    async isReached(): Promise<boolean> {
+        this.state.itemToCraft =  await this.getItemToCraft();
 
         // Se não tiver um item pra craftar na lista de craft
         if(!this.state.itemToCraft) return true;
@@ -31,32 +31,34 @@ export class CraftItem extends StateDefinition{
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
 
-        await game.craft.craft(this.state.itemToCraft);
+        await this.game.craft.craft(this.state.itemToCraft);
 
         return true;
     }
 
-    private async getItemToCraft(game : Game) : Promise<string>{
+    private async getItemToCraft() : Promise<string>{
         for (let {tpl,quantity} of this.state.items){
 
-            let {name,recipe, level} = await game.craft.getInfo(tpl);
+            let {name,recipe, level} = await this.game.craft.getInfo(tpl);
 
             if(!name) continue;
 
-            if(game.player.mob.level < level) continue;
+            if(this.game.player.mob.level < level) continue;
 
-            let itemCount = game.iventory.count(name);
+            let itemCount = this.game.iventory.count(name);
             if (itemCount >= (quantity || 1) )  continue;
 
-            if (!game.iventory.containItems(recipe)) continue;
+            if (!this.game.iventory.containItems(recipe)) continue;
 
             return tpl;
         }
 
         return null;
     }
+
+    game: Game;
 
 
 

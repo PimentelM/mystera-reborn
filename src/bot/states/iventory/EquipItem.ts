@@ -18,8 +18,8 @@ export class EquipItem extends StateDefinition{
         item : [], cooldown: 1000
     };
 
-    async isReached(game): Promise<boolean> {
-        let item = this.findItem(game);
+    async isReached(): Promise<boolean> {
+        let item = this.findItem();
         // If there is no item
         if (!item) return true;
 
@@ -33,20 +33,20 @@ export class EquipItem extends StateDefinition{
         return false;
     }
 
-    async reach(game): Promise<boolean> {
-        let item = this.findItem(game);
+    async reach(): Promise<boolean> {
+        let item = this.findItem();
 
         if(item){
-            game.iventory.equip(item);
+            this.game.iventory.equip(item);
             this.state.lastUse = new Date().valueOf();
         }
 
         return true;
     }
 
-    findItem(game: Game){
+    findItem(){
         for (let item of this.state.item ){
-            let founds = game.iventory.findItem(item + "\\*?" , true);
+            let founds = this.game.iventory.findItem(item + "\\*?" , true);
             let found = founds.shift();
 
             if(this.state.two && found && !!found.eqp){
@@ -57,4 +57,6 @@ export class EquipItem extends StateDefinition{
         }
         return null;
     }
+
+    game: Game;
 }

@@ -67,8 +67,8 @@ export class StateController {
         try {
             while (this.canRun()) {
                 for (let state of this.stateDefinitions) {
-                    if (!(await state.isReached(this.game))) {
-                        await state.reach(this.game);
+                    if (!(await state.isReached())) {
+                        await state.reach();
                         if(this.lastStateExecuted != state) console.log(state);
                         this.lastStateExecuted = state;
                         break;

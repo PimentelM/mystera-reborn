@@ -24,7 +24,7 @@ export class Bot {
         this.stateController = new StateController(this.game);
         this.window.StateController = this.stateController;
 
-        this.stateFactory = new StateFactory();
+        this.stateFactory = new StateFactory(this.game);
         this.window.StateFactory = this.stateFactory;
 
     }
@@ -32,7 +32,7 @@ export class Bot {
     public async reloadBotObjects() {
         this.game = new Game(this.connection, this.window);
         this.stateController.updateApi(this.game);
-        this.stateFactory = new StateFactory();
+        this.stateFactory = new StateFactory(this.game);
         this.window.StateFactory = this.stateFactory;
     }
 

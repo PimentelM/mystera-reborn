@@ -19,8 +19,8 @@ export class LootItems extends StateDefinition{
         pickTimeoout: 1000
     };
 
-    async isReached(game): Promise<boolean> {
-        this.state.tileWithItem = await game.map.getReachableItemPosition(game);
+    async isReached(): Promise<boolean> {
+        this.state.tileWithItem = await this.game.map.getReachableItemPosition(this.state.filter,this.state.radius);
         // If cannot find items on ground
         if(!this.state.tileWithItem) {
             return true;
@@ -28,17 +28,19 @@ export class LootItems extends StateDefinition{
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
         let tilePoint = this.state.tileWithItem;
 
         // If player is on top of item, picks the item.
-        if(game.player.isOnTopOf(tilePoint)) {
-            return await game.player.pick(this.state.pickTimeoout);
+        if(this.game.player.isOnTopOf(tilePoint)) {
+            return await this.game.player.pick(this.state.pickTimeoout);
         }
         // If not, walk in the direction of item.
-        else game.player.walkTo(tilePoint);
+        else this.game.player.walkTo(tilePoint);
 
         return true;
     }
+
+    game: Game;
 }
 

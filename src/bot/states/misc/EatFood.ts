@@ -15,29 +15,31 @@ export class EatFood extends StateDefinition{
         foods : ["Salmonberry", "Cooked \\w*"], minHunger : 75
     };
 
-    async isReached(game): Promise<boolean> {
+    async isReached(): Promise<boolean> {
         // If player is already ok
-        if (game.player.status.hunger > this.state.minHunger) return true;
+        if (this.game.player.status.hunger > this.state.minHunger) return true;
 
         // If there is no food
-        if (!this.findFood(game)) return true;
+        if (!this.findFood()) return true;
         return false;
     }
 
-    async reach(game): Promise<boolean> {
-        let food = this.findFood(game);
+    async reach(): Promise<boolean> {
+        let food = this.findFood();
 
         if(food)
-            game.iventory.use(food);
+            this.game.iventory.use(food);
 
         return true;
     }
 
-    findFood(game: Game){
+    findFood(){
         for (let food of this.state.foods ){
-            let found = game.iventory.findItem(food).shift();
+            let found = this.game.iventory.findItem(food).shift();
             if(found) return found
         }
         return null;
     }
+
+    game: Game;
 }

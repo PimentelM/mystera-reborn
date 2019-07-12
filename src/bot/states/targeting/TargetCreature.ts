@@ -22,13 +22,14 @@ export interface TargetCreatureState {
 
 export class TargetCreature extends StateDefinition{
     state: TargetCreatureState;
+    game: Game;
 
     readonly defaultParams: TargetCreatureState = {
         filters : [""], retarget : false, cooldown: 2000
     };
 
-    async isReached(game : Game): Promise<boolean> {
-        let currentTarget = game.player.getTarget();
+    async isReached(): Promise<boolean> {
+        let currentTarget = this.game.player.getTarget();
         // If already has target
         if(currentTarget) {
             // If bot is not configured to retarget;
@@ -38,7 +39,7 @@ export class TargetCreature extends StateDefinition{
             if(new Date().valueOf() - this.state.lastRetarget < this.state.cooldown) return true;
 
 
-            this.state.bestTarget = await this.getReachableCreature(game);
+            this.state.bestTarget = await this.getReachableCreature();
 
             // This means that the player is attacking some creature that is not in the filter list;
             if(!!this.state.bestTarget) return true;
@@ -53,7 +54,7 @@ export class TargetCreature extends StateDefinition{
             return false;
         }
 
-        this.state.bestTarget = await this.getReachableCreature(game);
+        this.state.bestTarget = await this.getReachableCreature();
         // If there are no creatures that player can target on the screen;
         if(!this.state.bestTarget) {
             return true;
@@ -62,22 +63,23 @@ export class TargetCreature extends StateDefinition{
         return false;
     }
 
-    async reach(game : Game): Promise<boolean> {
+    async reach(): Promise<boolean> {
         let creatureToAttack = this.state.bestTarget;
-        game.player.attack(creatureToAttack);
+        this.game.player.attack(creatureToAttack);
         return true;
     }
 
-    private async getReachableCreature(game : Game) : Promise<Mob> {
+    private async getReachableCreature() : Promise<Mob> {
         let creatures;
 
         for (let filter of this.state.filters){
-            creatures = game.creatures.findCreatures(filter);
+            creatures = this.game.creatures.findCreatures(filter);
             if(creatures.length != 0) break;
         }
 
-        return await game.player.nearestReachablePoint(creatures,true);
+        return await this.game.player.nearestReachablePoint(creatures,true);
     }
+
 
 }
 

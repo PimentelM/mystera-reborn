@@ -22,6 +22,7 @@ let whichTool = (resourceName ) => {
 
 export class GrindResource extends StateDefinition{
     public state: GrindResourceState;
+    game: Game;
 
     private lastResend : number = 0;
 
@@ -29,18 +30,18 @@ export class GrindResource extends StateDefinition{
         resource : ""
     };
 
-    async isReached(game : Game): Promise<boolean> {
+    async isReached(): Promise<boolean> {
         // If condition to grind is not met.
-        if(this.state.condition && !this.state.condition(game)) {
+        if(this.state.condition && !this.state.condition(this.game)) {
             return true;
         }
 
         // If desired state is already met
-        if(this.state.until && this.state.until(game)) {
+        if(this.state.until && this.state.until(this.game)) {
             return true;
         }
 
-        this.state.tileToGather = await this.getResourceTile(game);
+        this.state.tileToGather = await this.getResourceTile();
         // If cannot find the resource on the ground
         if(!this.state.tileToGather) {
             return true;
@@ -49,27 +50,27 @@ export class GrindResource extends StateDefinition{
         return false;
     }
 
-    async reach(game): Promise<boolean> {
+    async reach(): Promise<boolean> {
         let tilePoint = this.state.tileToGather;
         let resourceName = tilePoint.o[0].name;
         let tool = whichTool(resourceName);
 
         // If player is adjacent to resource
-        if(game.player.isAdjacentTo(tilePoint)) {
-            if(game.player.mob.dir == game.player.dirTo(tilePoint)){
+        if(this.game.player.isAdjacentTo(tilePoint)) {
+            if(this.game.player.mob.dir == this.game.player.dirTo(tilePoint)){
                 if (tool) {
-                    await game.player.equip.best(tool);
+                    await this.game.player.equip.best(tool);
                 }
-                if(!game.player.isDoingAction || (!game.window.action && this.resendActionCooldown())){
-                    game.player.keepAction();
+                if(!this.game.player.isDoingAction || (!this.game.window.action && this.resendActionCooldown())){
+                    this.game.player.keepAction();
                 }
             } else {
-                await game.player.lookAt(tilePoint);
+                await this.game.player.lookAt(tilePoint);
             }
         }
         // If not, walk in the direction of resource.
         else {
-            game.player.walkAdjacentTo(tilePoint);
+            this.game.player.walkAdjacentTo(tilePoint);
         }
 
         return true;
@@ -84,9 +85,10 @@ export class GrindResource extends StateDefinition{
     }
 
     // Returns the tile with the desired resource
-    async getResourceTile(game){
-        return await game.map.getReachableItemPosition(this.state.resource);
+    async getResourceTile(){
+        return await this.game.map.getReachableItemPosition(this.state.resource);
     }
+
 
 
 
