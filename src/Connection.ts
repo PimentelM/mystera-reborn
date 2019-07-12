@@ -1,6 +1,7 @@
 type MessageHandler = (( msg: MessageEvent) => null)
 
-type BotMessageHandler = (( data : {type? : string, data? : any}, options?: {drop : boolean}) => any)
+type HandlerOptions = {drop? : boolean, replaceWith? : {type : string, data : string}}
+type BotMessageHandler = (( data : {type? : string, data? : any}, options?: HandlerOptions) => any)
 
 export class Connection {
     public ws: WebSocket;
@@ -27,8 +28,12 @@ export class Connection {
         this.originalParser = this.ws.onmessage;
 
         let newParser = (msg: MessageEvent) => {
-            let drop = this.executeParsers(msg);
+            let {drop,replaceWith} = this.executeParsers(msg);
             if(drop) return;
+            if(replaceWith && replaceWith.data && replaceWith.type){
+                // @ts-ignore
+                return this.originalParser( {data : JSON.stringify(replaceWith)});
+            }
             this.originalParser(msg);
         };
 
@@ -46,9 +51,9 @@ export class Connection {
 
     };
 
-    private executeParsers = (msg) : boolean => {
+    private executeParsers = (msg) : HandlerOptions => {
         let dataObj;
-        let options = { drop : false};
+        let options = {};
         for (let [_, parse] of Object.entries(this.parsers)) {
             {
                 if(!dataObj) dataObj = JSON.parse(msg.data);
@@ -56,7 +61,7 @@ export class Connection {
                     parse(dataObj,options);
             }
         }
-        return options.drop;
+        return options;
     };
 
     private executeMiddlewares = (data: string): string => {

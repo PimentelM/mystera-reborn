@@ -108,14 +108,22 @@ export class Upgrades{
             if (type == "pkg") {
                 if (data.indexOf("\\\"type\\\":\\\"upg\\\"") > -1) {
                     let pacotes =JSON.parse(data);
+                    let msg = {type : "pkg", data : ""};
+                    let newData = [];
                     for (let pacote of pacotes){
                         pacote = JSON.parse(pacote);
                         if (pacote.type == "upg"){
                             remoteResolve.resolve( pacote.obj.map(x=> new UpgradeData(x)));
-                            options.drop = true;
-                            return;
+                        }else{
+                            newData.push(JSON.stringify(pacote));
                         }
                     }
+                    let stringifiedData = JSON.stringify(newData);
+
+                    msg.data = stringifiedData;
+
+                    options.replaceWith = msg;
+
                 }
             }
         });
