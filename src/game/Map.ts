@@ -1,8 +1,7 @@
 import {Game} from "./Game";
 import {GroundItem, Mob, Point, PointMap, Tile, TilePoint} from "./Types";
-import {filter} from "minimatch";
 import {IWalkableTileMap} from "./Interfaces";
-import {Iventory} from "./Iventory";
+import {until} from "../Utils";
 
 
 export class Map {
@@ -66,6 +65,8 @@ export class Map {
      * @returns a point you can walk to adjacently or not depending on the type of item.
      */
     public async getReachableItemPosition(filter : string, radius : number = Infinity) : Promise<TilePoint> {
+        await until(()=>this.game.window.isUpdatingMap == false,20,1000);
+
         if(!filter) return null;
         let tiles = this.findTilesWithItem(filter,radius);
         if(tiles.length == 0) return null;

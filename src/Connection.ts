@@ -1,4 +1,6 @@
-type MessageHandler = ((msg: MessageEvent) => null)
+type MessageHandler = (( msg: MessageEvent) => null)
+
+type BotMessageHandler = (( data : {type? : string, data? : any}, options?: {drop : boolean}) => any)
 
 export class Connection {
     public ws: WebSocket;
@@ -7,7 +9,7 @@ export class Connection {
     private middlewares: { [id : string] : (data: string) => string } = {};
 
     // Intercepts incoming packets
-    private parsers: {[id :string] : MessageHandler} = {};
+    private parsers: {[id :string] : BotMessageHandler} = {};
 
     private originalParser: MessageHandler;
     private originalSend: (data: string) => any;
@@ -19,13 +21,14 @@ export class Connection {
 
     public send = (obj) => {
         return this.ws.send(JSON.stringify(obj))
-    }
+    };
 
     private hookInstall = () => {
         this.originalParser = this.ws.onmessage;
 
         let newParser = (msg: MessageEvent) => {
-            this.executeParsers(msg);
+            let drop = this.executeParsers(msg);
+            if(drop) return;
             this.originalParser(msg);
         };
 
@@ -43,15 +46,17 @@ export class Connection {
 
     };
 
-    private executeParsers = (msg) => {
+    private executeParsers = (msg) : boolean => {
         let dataObj;
+        let options = { drop : false};
         for (let [_, parse] of Object.entries(this.parsers)) {
             {
                 if(!dataObj) dataObj = JSON.parse(msg.data);
                 if (parse)
-                    parse(dataObj);
+                    parse(dataObj,options);
             }
         }
+        return options.drop;
     };
 
     private executeMiddlewares = (data: string): string => {
@@ -63,7 +68,7 @@ export class Connection {
     };
 
 
-    public addParser = (parser: (msg) => any, id = undefined): number => {
+    public addParser = (parser: BotMessageHandler, id = undefined): number => {
         if (!id) {
             id = new Date().valueOf();
             while (this.parsers[id]) id++;

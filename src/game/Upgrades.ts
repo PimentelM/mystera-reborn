@@ -2,7 +2,7 @@ import {Game} from "./Game";
 import {getTimeout} from "../Utils";
 
 
-export let  upgrades =  {
+export let upgrades =  {
     attack : "attack",
     defense : "defense",
     weight : "weight",
@@ -95,6 +95,7 @@ export class Upgrades{
 
     public async updateData(){
         this.data = await this.getData();
+        return this.data;
     }
 
     public async getData() : Promise<UpgradeData[]>{
@@ -103,20 +104,21 @@ export class Upgrades{
 
         let resultPromise = new Promise<UpgradeData[]>((resolve) : void=>{remoteResolve.resolve=resolve});
 
-        let parserId = this.game.con.addParser(({type, data}) => {
+        let parserId = this.game.con.addParser(({type, data},options) => {
             if (type == "pkg") {
                 if (data.indexOf("\\\"type\\\":\\\"upg\\\"") > -1) {
                     let pacotes =JSON.parse(data);
                     for (let pacote of pacotes){
+                        pacote = JSON.parse(pacote);
                         if (pacote.type == "upg"){
                             remoteResolve.resolve( pacote.obj.map(x=> new UpgradeData(x)));
+                            options.drop = true;
                             return;
                         }
                     }
                 }
             }
         });
-
 
         this.game.send({"type":"c","r":"up"});
 

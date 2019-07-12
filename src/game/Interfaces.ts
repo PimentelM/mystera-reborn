@@ -25,6 +25,8 @@ export interface IGameWindow {
 
     getMob(id): Mob,
 
+    isUpdatingMap : boolean
+
     target : {id:number}
 
     mob_ref: Mob[]
@@ -37,6 +39,8 @@ export interface IGameWindow {
     info_pane: { set_info : (mob: Mob) => any}
 
     action : number,
+
+    controllerId : number,
 
     jv : {equip_sprite : number, upgrade_number : number}
 }

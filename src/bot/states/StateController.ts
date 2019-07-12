@@ -7,6 +7,7 @@ export interface ControllerState {
 }
 
 export class StateController {
+    private readonly id : number;
     private stateDefinitions: StateDefinition[];
     private game: Game;
     private state: ControllerState;
@@ -20,6 +21,9 @@ export class StateController {
         this.stateDefinitions = stateDefinitions;
         this.state = state;
         this.game = game;
+
+        this.id = new Date().valueOf();
+        this.game.window.controllerId = this.id;
     }
 
     public static getDefaultState(): ControllerState {
@@ -55,12 +59,17 @@ export class StateController {
         return await this.start();
     }
 
+    private canRun(){
+        return this.isActivated && this.game.window.controllerId == this.id
+    }
+
     private async loop() {
         try {
-            while (this.isActivated) {
+            while (this.canRun()) {
                 for (let state of this.stateDefinitions) {
                     if (!(await state.isReached(this.game))) {
                         await state.reach(this.game);
+                        if(this.lastStateExecuted != state) console.log(state);
                         this.lastStateExecuted = state;
                         break;
                     }
