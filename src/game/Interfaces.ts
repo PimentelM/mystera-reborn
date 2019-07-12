@@ -10,7 +10,9 @@ export interface IGameWindow {
     Bot : any,
     Craft : any,
     Equip : any,
-    Upgrades : any
+    Upgrades : any,
+
+    Scanner : any
 
     PathFinder : any,
 
@@ -36,7 +38,7 @@ export interface IGameWindow {
 
     action : number,
 
-    jv : {equip_sprite : number}
+    jv : {equip_sprite : number, upgrade_number : number}
 }
 
 

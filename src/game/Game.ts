@@ -8,6 +8,8 @@ import {Creatures} from "./Creatures";
 import "./Interfaces"
 import {Resouces} from "./Resouces";
 import {Craft} from "./Craft";
+import {Scanner} from "./data/Scanner";
+import {Upgrades} from "./Upgrades";
 
 export class Game {
     public window: IGameWindow;
@@ -18,8 +20,9 @@ export class Game {
     public iventory: Iventory;
     public creatures: Creatures;
     public resources: Resouces;
-    public pathfinder : PathFinder;
-    public craft : Craft;
+    public pathfinder: PathFinder;
+    public craft: Craft;
+    public upgrades: Upgrades
 
     public constructor(con: Connection, window: IGameWindow) {
         this.con = con;
@@ -30,16 +33,18 @@ export class Game {
         this.creatures = new Creatures(this);
         this.pathfinder = new PathFinder(this);
         this.resources = new Resouces(this);
+        this.upgrades = new Upgrades(this);
         this.craft = new Craft(this);
 
 
-
+        this.window.Scanner = new Scanner();
         this.window.Game = this;
         this.window.GameMap = this.map;
         this.window.Player = this.player;
         this.window.Iventory = this.iventory;
         this.window.Creatures = this.creatures;
         this.window.PathFinder = this.pathfinder;
+        this.window.Upgrades = this.upgrades;
         this.window.Craft = this.craft;
 
 
