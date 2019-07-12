@@ -69,12 +69,12 @@ export class Upgrades{
         return this.game.window.jv.upgrade_number
     }
 
-    public async canUpgrade(skillName: string){
+    public async canUpgrade(skillName: string, remainMist = 0){
         if(!this.data) await this.updateData();
 
         let skillData = this.data.find(x=>x.name == skillName);
         if(skillData){
-            if (skillData.cost <= this.myst){
+            if (skillData.cost <= (this.myst + remainMist)){
                 return skillName;
             }
         }
@@ -104,27 +104,32 @@ export class Upgrades{
 
         let resultPromise = new Promise<UpgradeData[]>((resolve) : void=>{remoteResolve.resolve=resolve});
 
-        let parserId = this.game.con.addParser(({type, data},options) => {
+        let parserId = this.game.con.addParser(({type, data, obj},options) => {
             if (type == "pkg") {
                 if (data.indexOf("\\\"type\\\":\\\"upg\\\"") > -1) {
                     let pacotes =JSON.parse(data);
-                    let msg = {type : "pkg", data : ""};
-                    let newData = [];
+                    // let msg = {type : "pkg", data : ""};
+                    //let newData = [];
                     for (let pacote of pacotes){
                         pacote = JSON.parse(pacote);
                         if (pacote.type == "upg"){
                             remoteResolve.resolve( pacote.obj.map(x=> new UpgradeData(x)));
-                        }else{
-                            newData.push(JSON.stringify(pacote));
+                            this.game.window.didBotUpgrade = 0;
                         }
+                        // else{
+                        //     newData.push(JSON.stringify(pacote));
+                        // }
                     }
-                    let stringifiedData = JSON.stringify(newData);
+                    //let stringifiedData = JSON.stringify(newData);
 
-                    msg.data = stringifiedData;
+                    //msg.data = stringifiedData;
 
-                    options.replaceWith = msg;
-
+                    //options.replaceWith = msg;
                 }
+            } else if(type =="upg"){
+                remoteResolve.resolve( obj.map(x=> new UpgradeData(x)));
+                this.game.window.didBotUpgrade = 0;
+                //options.drop = true;
             }
         });
 

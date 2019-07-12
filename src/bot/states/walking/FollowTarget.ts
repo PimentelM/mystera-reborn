@@ -21,10 +21,10 @@ export class FollowTarget extends StateDefinition{
         if (!this.game.player.hasTarget()) return true;
 
         // When player already is near target
-        let distance = this.game.player.distanceTo(this.game.player.getTarget());
-        if (distance <= this.state.maxDistance) {
-            return true;
-        }
+        // let distance = this.game.player.distanceTo(this.game.player.getTarget());
+        // if (distance <= this.state.maxDistance) {
+        //     return true;
+        // }
 
         return false;
     }

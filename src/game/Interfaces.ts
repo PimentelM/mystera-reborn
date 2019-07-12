@@ -25,7 +25,13 @@ export interface IGameWindow {
 
     getMob(id): Mob,
 
+    dlevel : string,
+
     isUpdatingMap : boolean
+
+    didBotUpgrade : number
+
+    areHooksInstalled : boolean
 
     target : {id:number}
 

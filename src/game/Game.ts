@@ -10,6 +10,7 @@ import {Resouces} from "./Resouces";
 import {Craft} from "./Craft";
 import {Scanner} from "./data/Scanner";
 import {Upgrades} from "./Upgrades";
+import {Hooks} from "./Hooks";
 
 export class Game {
     public window: IGameWindow;
@@ -22,7 +23,8 @@ export class Game {
     public resources: Resouces;
     public pathfinder: PathFinder;
     public craft: Craft;
-    public upgrades: Upgrades
+    public upgrades: Upgrades;
+    public hooks: Hooks;
 
     public constructor(con: Connection, window: IGameWindow) {
         this.con = con;
@@ -35,7 +37,7 @@ export class Game {
         this.resources = new Resouces(this);
         this.upgrades = new Upgrades(this);
         this.craft = new Craft(this);
-
+        this.hooks = new Hooks(this);
 
         this.window.Scanner = new Scanner();
         this.window.Game = this;

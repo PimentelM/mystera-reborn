@@ -43,9 +43,11 @@ export class LootItemQuantity extends StateDefinition {
 
     private async getReachableItemPosition(): Promise<TilePoint> {
         for (let [item, count] of Object.entries(this.state.items)) {
-            if(this.game.iventory.count(item) < count){
+            if (!count || this.game.iventory.count(item) < count) {
                 let tiles = this.game.map.findTilesWithItem(item, this.state.radius);
-                return await this.game.player.nearestReachablePoint(tiles, false);
+                if (tiles.length > 0) {
+                    return await this.game.player.nearestReachablePoint(tiles, false);
+                }
             }
         }
 

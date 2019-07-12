@@ -321,6 +321,20 @@ export class Player {
         return (await this.serialStepTo(path));
     }
 
+    public async walkIntoArea(p: Point, radius : number, steps: number = 0){
+        let {x, y} = p;
+        if (this.distanceTo(p) <= radius) return true;
+
+        let path = await this.game.pathfinder.findPathIntoArea(p,radius);
+        if (path.length == 0) return false;
+
+        if (steps > 0) {
+            path = path.slice(0, steps);
+        }
+
+        return (await this.serialStepTo(path));
+    }
+
 
     public async walkToOffset(p: Point) {
         let {x, y} = this.mob;

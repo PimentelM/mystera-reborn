@@ -11,6 +11,9 @@ import {FollowTarget} from "../states/walking/FollowTarget";
 import {Game} from "../../game/Game";
 import {UpgradeSkills} from "../states/upgrades/UpgradeSkills";
 import {upgrades} from "../../game/Upgrades";
+import {WaypointState} from "../states/walking/waypoint/Common";
+import {FollowWaypoint} from "../states/walking/waypoint/FollowWaypoint";
+import {AdvanceWaypoint} from "../states/walking/waypoint/AdvanceWaypoint";
 
 
 let playerHasStoneTools = (game: Game) => {
@@ -23,11 +26,10 @@ let playerHasStoneTools = (game: Game) => {
 let playerHasWoodItems = (game: Game) => {
     return game.iventory.containItems(
         {
-            "Wood Sword": 1,
-            //"Wooden Buckler": 1,
+            "Wood Sword": 2,
             "Stone Pickaxe": 1,
             "Stone Axe": 1
-        }, "\\*?") || game.iventory.contains("Wood", 30)
+        }, "\\*?") || game.iventory.contains("Wood", 15)
 };
 
 let playerHasTinderItems = (game: Game) => {
@@ -37,6 +39,13 @@ let playerHasTinderItems = (game: Game) => {
     }, "\\*?") || game.iventory.contains("Tinder", 4)
 };
 
+
+let waypoints = [{"dlevel":"newbie","x":28,"y":42,"radius":3},{"dlevel":"newbie","x":41,"y":42,"radius":3},{"dlevel":"newbie","x":50,"y":33,"radius":3},{"dlevel":"newbie","x":49,"y":42,"radius":3},{"dlevel":"newbie","x":61,"y":42,"radius":3},{"dlevel":"newbie","x":69,"y":44,"radius":3},{"dlevel":"newbie","x":62,"y":35,"radius":3},{"dlevel":"newbie","x":70,"y":27,"radius":3},{"dlevel":"newbie","x":71,"y":19,"radius":3},{"dlevel":"newbie","x":61,"y":14,"radius":3},{"dlevel":"newbie","x":48,"y":15,"radius":3},{"dlevel":"newbie","x":41,"y":21,"radius":3},{"dlevel":"newbie","x":51,"y":26,"radius":3},{"dlevel":"newbie","x":44,"y":37,"radius":3},{"dlevel":"newbie","x":37,"y":42,"radius":3}];
+let waypointState : WaypointState = {
+    loop: true,
+    steps: 4,
+    waypoints: waypoints
+};
 
 export let reachLevel15 = [
     {type: HealWithItem, state: {}},
@@ -49,7 +58,6 @@ export let reachLevel15 = [
     {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
     {type: CraftItem, state: {items: [{tpl: "wood_sword"}]}},
     {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
-    //{type: CraftItem, state: {items: [{tpl: "wooden_buckler"}]}},
     {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
 
     {type: EquipItem, state: {item: ["Grass Band"], two: true}},
@@ -60,11 +68,13 @@ export let reachLevel15 = [
     {type: GrindResource, state: {resource: "\\w* Bush", items: {Tinder: 4}, until: playerHasTinderItems}},
 
     {type: EquipItem, state: {item: ["Wood Sword"]}},
-    //{type: EquipItem, state: {item: ["Wooden Buckler"]}},
 
-    {type: TargetCreature, state: {filters: ["Raccoon", ""]}},
-    {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 10}}},
-    {type: DropItem, state: {items: {Pelt: 2, Bone: 0, "Raw Meat": 0, "Carrot Seed": 0}}},
+    {type: TargetCreature, state: {filters: ["Snake", "Bee" ,"Chicken", "Water \\w*","Raccoon" ,""]}},
+    {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 10, "Healing Potion" : 0, "Feather" : 0, Worms : 0}}},
+    {type: DropItem, state: {items: {Pelt: 2, Bone: 0, "Raw Meat": 0, "Carrot Seed": 0, Mud : 0}}},
     {type: FollowTarget, state: {}},
+
+    {type: FollowWaypoint, state: waypointState},
+    {type: AdvanceWaypoint, state: waypointState},
 ];
 

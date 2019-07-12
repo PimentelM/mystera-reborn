@@ -11,6 +11,11 @@ export class Map {
         this.game = game;
     }
 
+    
+    get dlevel() {
+        return this.game.window.dlevel;
+    }
+
     public getTile(p : Point): Tile {
         let {x,y} = p;
         let tile = this.game.window.map_index[x * 1e4 + y];

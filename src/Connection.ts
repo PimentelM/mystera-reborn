@@ -1,7 +1,7 @@
 type MessageHandler = (( msg: MessageEvent) => null)
 
 type HandlerOptions = {drop? : boolean, replaceWith? : {type : string, data : string}}
-type BotMessageHandler = (( data : {type? : string, data? : any}, options?: HandlerOptions) => any)
+type BotMessageHandler = (( data : any, options?: HandlerOptions) => any)
 
 export class Connection {
     public ws: WebSocket;

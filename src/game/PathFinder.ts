@@ -10,6 +10,44 @@ export class PathFinder {
         this.game = game;
     }
 
+    public async findPathIntoArea(p: Point, radius : number){
+        let {x,y} = p;
+        // Get walkable tiles around the point
+        let tiles: TilePoint[] = [];
+
+        for (let i = -radius; i <= radius; i++) {
+            for (let j = -radius; j <= radius; j++) {
+                // Prevents distance from being bigger than radius.
+                if(Math.abs(i) + Math.abs(j) > radius) continue;
+
+                let tX = x+i;
+                let tY = y+j;
+
+                let tP = {x:tX,y:tY};
+
+                if(!this.game.map.isTileWalkable(tP)){
+                    continue;
+                }
+
+                let tile = this.game.map.getTile(tP) as TilePoint;
+                tile.x = tX;
+                tile.y = tY;
+                tiles.push(tile);
+            }
+        }
+
+        // Sort them by distance
+        let sortedTiles = this.game.player.sortByDistance(tiles);
+
+        // Iterate over this list and return the first path you find.
+        for (let tilePoint of sortedTiles){
+            let path = await this.findPath(tilePoint);
+            if(path.length>0) return path;
+        }
+
+        return [];
+    }
+
     public async findAdjacentPath(p : Point, allowDiagonals = false) {
         let {x,y} = p;
         // Get walkable tiles around the point
