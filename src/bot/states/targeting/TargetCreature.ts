@@ -9,7 +9,7 @@ import {Mob} from "../../../game/Types";
 export interface TargetCreatureState {
     filters : CreatureFilter[],
     retarget : boolean,
-
+    range : number
 
     bestTarget? : Mob,
     cooldown: number;
@@ -25,7 +25,7 @@ export class TargetCreature extends StateDefinition{
     game: Game;
 
     readonly defaultParams: TargetCreatureState = {
-        filters : [""], retarget : false, cooldown: 2000
+        filters : [""], retarget : false, cooldown: 2000, range : 9
     };
 
     async isReached(): Promise<boolean> {
@@ -48,7 +48,7 @@ export class TargetCreature extends StateDefinition{
             //if (this.state.bestTarget.id === currentTarget.id) return true;
 
             // If the other found target is of same type;
-            if (this.state.bestTarget.template == currentTarget.template) return true;
+            if ((this.state.bestTarget && this.state.bestTarget.template) == (currentTarget && currentTarget.template)) return true;
 
             this.state.lastRetarget = new Date().valueOf();
             return false;
@@ -73,7 +73,7 @@ export class TargetCreature extends StateDefinition{
         let creatures;
 
         for (let filter of this.state.filters){
-            creatures = this.game.creatures.findCreatures(filter);
+            creatures = this.game.creatures.findCreatures(filter,this.state.range);
             if(creatures.length != 0) break;
         }
 

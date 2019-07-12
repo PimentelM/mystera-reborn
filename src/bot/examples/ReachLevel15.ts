@@ -56,7 +56,7 @@ export let reachLevel15 = [
 
     {type: CraftItem, state: {items: [{tpl: "stone_pickaxe"}]}},
     {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
-    {type: CraftItem, state: {items: [{tpl: "wood_sword"}]}},
+    {type: CraftItem, state: {items: [{tpl: "wood_sword", quantity: 2}]}},
     {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
     {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
 
@@ -69,7 +69,10 @@ export let reachLevel15 = [
 
     {type: EquipItem, state: {item: ["Wood Sword"]}},
 
-    {type: TargetCreature, state: {filters: ["Snake", "Bee" ,"Chicken", "Water \\w*","Raccoon" ,""]}},
+
+    {type: TargetCreature, state: { retarget : true ,filters: ["Snake", "Bee" ,"Chicken", "Water \\w*","Raccoon"]}},
+    {type: TargetCreature, state: { range : 3 ,filters: [""]}},
+
     {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 10, "Healing Potion" : 0, "Feather" : 0, Worms : 0}}},
     {type: DropItem, state: {items: {Pelt: 2, Bone: 0, "Raw Meat": 0, "Carrot Seed": 0, Mud : 0}}},
     {type: FollowTarget, state: {}},

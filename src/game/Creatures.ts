@@ -42,10 +42,11 @@ export class Creatures {
         return creatures;
     }
 
-    public findCreatures(test: CreatureFilter = all): Mob[] {
+    public findCreatures(test: CreatureFilter = all, range : number = 0): Mob[] {
         test = predicateIt(test);
         let isCreature = (x) => typeof x.template == typeof "";
-        let testMob = x => isCreature(x) && (test as MobPredicate)(x);
+        let isInRange = (x) => !range || this.game.player.distanceTo(x) <= range;
+        let testMob = x => isCreature(x) && isInRange(x) && (test as MobPredicate)(x);
         return this.find(testMob);
     }
 
