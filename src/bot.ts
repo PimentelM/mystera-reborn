@@ -21,7 +21,8 @@ export class Bot {
 
         this.game = new Game(this.connection, this.window);
 
-        this.stateController = new StateController(this.game);
+        if(!this.window.controllerState) this.window.controllerState = {};
+        this.stateController = new StateController(this.game, this.window.controllerState);
         this.window.StateController = this.stateController;
 
         this.stateFactory = new StateFactory(this.game);

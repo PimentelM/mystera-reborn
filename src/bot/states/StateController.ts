@@ -1,37 +1,48 @@
 import {Game} from "../../game/Game";
 import {StateDefinition} from "../Interfaces";
-import {sleep} from "../../Utils";
+import {doWhen, fillInto, sleep} from "../../Utils";
+
 
 export interface ControllerState {
+    isActivated: boolean;
     delay: number
+    stateDefinitions: StateDefinition[];
+    lastStateExecuted: StateDefinition;
+
+    didReload?: boolean
+
 }
 
 export class StateController {
-    private readonly id : number;
-    private stateDefinitions: StateDefinition[];
+    private readonly id: number;
     private game: Game;
     private state: ControllerState;
-    private isActivated: boolean;
-
     private loopPromise: Promise<any>;
 
-    public lastStateExecuted : StateDefinition;
 
-    public constructor(game: Game, stateDefinitions: StateDefinition[] = [], state: ControllerState = StateController.getDefaultState()) {
-        this.stateDefinitions = stateDefinitions;
-        this.state = state;
+    public constructor(game: Game, state: object | ControllerState) {
+        let defaultState = this.getDefaultState();
+        fillInto(defaultState, state);
+
+        this.state = (state as ControllerState);
+
         this.game = game;
-
         this.id = new Date().valueOf();
         this.game.window.controllerId = this.id;
+
+        if (this.state.isActivated) {
+            // If it was activated before reload, wait for a maximum of 3 cycles for the reload to take effect and re-start.
+            // Also resets reload flag.
+            doWhen(() => {this.start(); this.state.didReload = false;}, () => this.state.didReload, this.state.delay, this.state.delay * 3);
+        }
     }
 
-    public static getDefaultState(): ControllerState {
-        return {delay: 200}
+    public getDefaultState(): ControllerState {
+        return {delay: 200, isActivated: false, stateDefinitions: [], lastStateExecuted: null}
     }
 
     public async updateApi(game: Game) {
-        if (this.isActivated) {
+        if (this.state.isActivated) {
             await this.stop();
             this.game = game;
             await this.start();
@@ -40,42 +51,50 @@ export class StateController {
     }
 
     public async start() {
-        if (this.stateDefinitions.length == 0) return;
+        if (this.state.stateDefinitions.length == 0) return;
         await this.stop();
-        this.isActivated = true;
+        this.state.isActivated = true;
         this.loopPromise = this.loop();
     }
 
     public async stop() {
         if (this.loopPromise) {
-            this.isActivated = false;
+            this.state.isActivated = false;
             await this.loopPromise;
             this.loopPromise = undefined;
         }
     }
 
     public async execute(stateDefinitions: StateDefinition[]) {
-        this.stateDefinitions = stateDefinitions;
+        this.state.stateDefinitions = stateDefinitions;
         return await this.start();
     }
 
-    private canRun(){
-        return this.isActivated && this.game.window.controllerId == this.id
+    private isCurrentInstance() {
+        return this.game.window.controllerId == this.id;
+    }
+
+    private canRun() {
+        let isCurrentInstance = this.isCurrentInstance();
+        return this.state.isActivated && isCurrentInstance;
     }
 
     private async loop() {
         try {
             while (this.canRun()) {
-                for (let state of this.stateDefinitions) {
+                for (let state of this.state.stateDefinitions) {
                     if (!(await state.isReached())) {
                         await state.reach();
-                        if(this.lastStateExecuted != state) console.log(state);
-                        this.lastStateExecuted = state;
+                        if (this.state.lastStateExecuted != state) console.log(state);
+                        this.state.lastStateExecuted = state;
                         break;
                     }
                 }
                 await sleep(this.state.delay);
             }
+
+            if (!this.isCurrentInstance()) this.state.didReload = true;
+
         } catch (e) {
             console.log("Exception while running StateController script.");
             console.log(e.message);

@@ -11,7 +11,7 @@ export class Map {
         this.game = game;
     }
 
-    
+
     get dlevel() {
         return this.game.window.dlevel;
     }
@@ -128,7 +128,7 @@ export class Map {
         let tile = this.getTile(p);
         if(!tile) return false;
 
-        return !tile.block;
+        return !tile.block && tile.template != "325";
     }
 
     public getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {

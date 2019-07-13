@@ -1,6 +1,21 @@
 import {IventoryItem, Mob, Point, PointMap, Tile} from "./Types";
 import "./Types"
+import {ControllerState} from "../bot/states/StateController";
 
+
+
+// Persistent data from the bot
+export interface IGameWindow {
+    controllerState : object | ControllerState
+
+    isUpdatingMap : boolean
+    didBotUpgrade : number
+    areHooksInstalled : boolean
+    controllerId : number,
+}
+
+
+// global variables from the bot
 export interface IGameWindow {
     Player : any,
     GameMap : any,
@@ -11,13 +26,16 @@ export interface IGameWindow {
     Craft : any,
     Equip : any,
     Upgrades : any,
-
     Scanner : any
-
     PathFinder : any,
-
     StateController : any,
     StateFactory : any,
+}
+
+
+// Game data
+export interface IGameWindow {
+
 
     hp_status: { val },
     hunger_status: { val },
@@ -26,12 +44,6 @@ export interface IGameWindow {
     getMob(id): Mob,
 
     dlevel : string,
-
-    isUpdatingMap : boolean
-
-    didBotUpgrade : number
-
-    areHooksInstalled : boolean
 
     target : {id:number}
 
@@ -45,8 +57,6 @@ export interface IGameWindow {
     info_pane: { set_info : (mob: Mob) => any}
 
     action : number,
-
-    controllerId : number,
 
     jv : {equip_sprite : number, upgrade_number : number}
 }

@@ -60,7 +60,8 @@ export interface GroundItem {
 
 export interface Tile  {
     block: boolean,
-    o: GroundItem[] // Items
+    o: GroundItem[], // Items
+    template : string
 }
 
 export interface TilePoint extends Tile{
