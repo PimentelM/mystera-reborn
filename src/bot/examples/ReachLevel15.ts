@@ -14,29 +14,37 @@ import {upgrades} from "../../game/Upgrades";
 import {WaypointState} from "../states/walking/waypoint/Common";
 import {FollowWaypoint} from "../states/walking/waypoint/FollowWaypoint";
 import {AdvanceWaypoint} from "../states/walking/waypoint/AdvanceWaypoint";
+import {LootItems} from "../states/looting/LootItems";
 
 
 let playerHasStoneTools = (game: Game) => {
-    return game.iventory.containItems({
+    return game.player.equip.hasEquipables({
         "Stone Pickaxe": 1,
         "Stone Axe": 1,
-    }, "\\*?") || game.iventory.contains("Stone", 20)
+    }) || game.iventory.contains("Stone", 20)
 };
 
 let playerHasWoodItems = (game: Game) => {
-    return game.iventory.containItems(
+    return game.player.equip.hasEquipables(
         {
             "Wood Sword": 2,
             "Stone Pickaxe": 1,
             "Stone Axe": 1
-        }, "\\*?") || game.iventory.contains("Wood", 15)
+        }) || game.iventory.contains("Wood", 15)
 };
 
 let playerHasTinderItems = (game: Game) => {
-    return game.iventory.containItems({
+    return game.player.equip.hasEquipables({
         "Grass Band": 2,
         "Pelt Armor": 1,
-    }, "\\*?") || game.iventory.contains("Tinder", 4)
+    }) || game.iventory.contains("Tinder", 4)
+};
+
+
+let playerHasPeltItems = (game: Game) => {
+    return game.player.equip.hasEquipables({
+        "Pelt Armor": 1,
+    }) || game.iventory.contains("Pelt", 2)
 };
 
 
@@ -54,18 +62,27 @@ export let reachLevel15 = [
     {type: UpgradeSkills, state: {skills: [upgrades.hp, upgrades.ups, upgrades.exp, upgrades.attack, upgrades.defense, upgrades.weight, upgrades.precision, upgrades.crit, upgrades.star]}},
 
 
+    {type: EquipItem, state: {item: ["Grass Band"], two: true}},
+    {type: EquipItem, state: {item: ["Pelt Armor"]}},
+
+    // Crafting
+
     {type: CraftItem, state: {items: [{tpl: "stone_pickaxe"}]}},
     {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
     {type: CraftItem, state: {items: [{tpl: "wood_sword", quantity: 2}]}},
     {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
     {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
 
-    {type: EquipItem, state: {item: ["Grass Band"], two: true}},
-    {type: EquipItem, state: {item: ["Pelt Armor"]}},
-
+    {type: LootItems, state: {filter: "^Pelt$", radius: 10, until: playerHasPeltItems }},
     {type: GrindResource, state: {resource: "Plain Rock", items: {Stone: 20}, until: playerHasStoneTools}},
     {type: GrindResource, state: {resource: "Fir Tree", items: {Wood: 30}, until: playerHasWoodItems}},
     {type: GrindResource, state: {resource: "\\w* Bush", items: {Tinder: 4}, until: playerHasTinderItems}},
+
+
+    // //  //  //  //  //  //  //   //
+
+
+    // Hunting
 
     {type: EquipItem, state: {item: ["Wood Sword"]}},
 
@@ -73,9 +90,12 @@ export let reachLevel15 = [
     {type: TargetCreature, state: { retarget : true ,filters: ["Snake", "Bee" ,"Chicken", "Water \\w*","Raccoon"]}},
     {type: TargetCreature, state: { range : 3 ,filters: [""]}},
 
-    {type: LootItemQuantity, state: {radius: 5, items: {Pelt: 2, Salmonberry: 10, "Healing Potion" : 0, "Feather" : 0, Worms : 0}}},
+    {type: LootItemQuantity, state: {radius: 5, items: {Salmonberry: 10, "Healing Potion" : 0, "Feather" : 0, Worms : 0}}},
     {type: DropItem, state: {items: {Pelt: 2, Bone: 0, "Raw Meat": 0, "Carrot Seed": 0, Mud : 0}}},
     {type: FollowTarget, state: {}},
+
+    // //  //  //  //  //  //  //   //
+
 
     {type: FollowWaypoint, state: waypointState},
     {type: AdvanceWaypoint, state: waypointState},

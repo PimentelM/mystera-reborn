@@ -59,7 +59,7 @@ export class GrindResource extends StateDefinition{
         if(this.game.player.isAdjacentTo(tilePoint)) {
             if(this.game.player.mob.dir == this.game.player.dirTo(tilePoint)){
                 if (tool) {
-                    await this.game.player.equip.best(tool);
+                    await this.game.player.equip.bestTool(tool);
                 }
                 if(!this.game.player.isDoingAction || (!this.game.window.action && this.resendActionCooldown())){
                     this.game.player.keepAction();

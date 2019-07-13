@@ -6,16 +6,14 @@ import {IventoryItem} from "../../../game/Types";
 export interface EquipItemState {
     item : string[],
     two? : boolean,
-    cooldown: number;
 
-    lastUse? : number
 }
 
 export class EquipItem extends StateDefinition{
     public state: EquipItemState;
 
     readonly defaultParams: EquipItemState = {
-        item : [], cooldown: 1000
+        item : []
     };
 
     async isReached(): Promise<boolean> {
@@ -26,10 +24,6 @@ export class EquipItem extends StateDefinition{
         // If item is already equipped.
         if (item.eqp) return true;
 
-
-        if(new Date().valueOf() - this.state.lastUse < this.state.cooldown) return true;
-
-
         return false;
     }
 
@@ -37,16 +31,15 @@ export class EquipItem extends StateDefinition{
         let item = this.findItem();
 
         if(item){
-            this.game.iventory.equip(item);
-            this.state.lastUse = new Date().valueOf();
+            await this.game.iventory.equip(item);
         }
 
         return true;
     }
 
-    findItem(){
-        for (let item of this.state.item ){
-            let founds = this.game.iventory.findItem(item + "\\*?" , true);
+    findItem() : IventoryItem{
+        for (let itemName of this.state.item ){
+            let founds = this.game.player.equip.getEquipables(itemName);
             let found = founds.shift();
 
             if(this.state.two && found && !!found.eqp){

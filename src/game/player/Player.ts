@@ -94,7 +94,7 @@ export class Player {
 
     public async attack(mob: Mob) {
         let attack = () => {
-            if (mob.title)
+            if (mob && mob.title)
                 this.game.window.info_pane.set_info(mob);
         };
 

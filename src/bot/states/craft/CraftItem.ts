@@ -11,6 +11,7 @@ type ItemSpec = {
 export interface CraftItemState {
     items : ItemSpec[],
 
+    equipable : boolean
     itemToCraft? : string
 }
 
@@ -18,7 +19,7 @@ export class CraftItem extends StateDefinition{
     public state: CraftItemState;
 
     readonly defaultParams: CraftItemState = {
-        items : []
+        items : [], equipable : true
     };
 
     async isReached(): Promise<boolean> {
@@ -47,7 +48,7 @@ export class CraftItem extends StateDefinition{
 
             if(this.game.player.mob.level < level) continue;
 
-            let itemCount = this.game.iventory.count(name);
+            let itemCount = this.state.equipable ? this.game.player.equip.countEquipable(name) : this.game.iventory.count(name);
             if (itemCount >= (quantity || 1) )  continue;
 
             if (!this.game.iventory.containItems(recipe)) continue;
