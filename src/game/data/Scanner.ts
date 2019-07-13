@@ -22,6 +22,12 @@ export class Scanner {
     public ObjectIntoPaths = (obj, condition: (x) => boolean = (x) => false, root = "root", maxDepth: number = this.maxDepth, depth: number = 1) => {
         let result = {};
 
+        for (let [_,value] of Object.entries(this.rootPathTable)){
+            if (value === obj) {
+                return {};
+            }
+        }
+
         this.rootPathTable[root] = obj;
 
         if (depth > maxDepth) return result;
@@ -73,6 +79,8 @@ export class Scanner {
     };
 
     public scan(object, f, maxDepth = this.maxDepth) {
+        let isEqualTo = (a) => (x) => x==a;
+        if (this.acceptedTypes[typeof f]) f = isEqualTo(f);
         this.rootPathTable = {};
         this.results = this.ObjectIntoPaths(object, f, "root", maxDepth);
         return this.results;
