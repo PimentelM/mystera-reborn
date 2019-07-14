@@ -18,6 +18,24 @@ export class Scanner {
 
     separator: string = ".";
 
+    pathsToExclude = {
+        Player : true,
+        GameMap : true,
+        Iventory : true,
+        Creatures : true,
+        Game : true,
+        Bot : true,
+        Craft : true,
+        Equip : true,
+        Upgrades : true,
+        Scanner : true,
+        PathFinder : true,
+        StateController : true,
+        StateFactory : true,
+    };
+
+
+
 
     public ObjectIntoPaths = (obj, condition: (x) => boolean = (x) => false, root = "root", maxDepth: number = this.maxDepth, depth: number = 1) => {
         let result = {};
@@ -36,8 +54,9 @@ export class Scanner {
 
             for (let [fieldName, value] of Object.entries(obj)) {
                 if (!this.acceptedTypes[typeof value]) continue;
-
+                if (this.pathsToExclude[fieldName]) continue;
                 if (fieldName.indexOf(this.separator) > -1) console.log(`Separator "${this.separator}" found at ${root} in property ${fieldName}`);
+
                 if (typeof value == typeof {}) {
                     Object.assign(result, this.ObjectIntoPaths(value, condition, root + this.separator + fieldName, maxDepth, depth + 1))
                 } else {
@@ -79,7 +98,7 @@ export class Scanner {
     };
 
     public scan(object, f, maxDepth = this.maxDepth) {
-        let isEqualTo = (a) => (x) => x==a;
+        let isEqualTo = (a) => (x) => x===a;
         if (this.acceptedTypes[typeof f]) f = isEqualTo(f);
         this.rootPathTable = {};
         this.results = this.ObjectIntoPaths(object, f, "root", maxDepth);
