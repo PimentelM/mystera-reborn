@@ -1,12 +1,15 @@
 import {IventoryItem, Mob, Point, PointMap, Tile} from "./Types";
 import "./Types"
 import {ControllerState} from "../bot/states/StateController";
+import {ParserState} from "./Parser";
 
 
 
 // Persistent data from the bot
 export interface IGameWindow {
     controllerState : object | ControllerState
+
+    parsersState: object | ParserState
 
     isUpdatingMap : boolean
     didBotUpgrade : number
@@ -30,6 +33,7 @@ export interface IGameWindow {
     PathFinder : any,
     StateController : any,
     StateFactory : any,
+    Parser : any
 }
 
 
@@ -46,7 +50,7 @@ export interface IGameWindow {
     dlevel : string,
 
     target : {id:number}
-
+    parse : (object : object) => any
     mob_ref: Mob[]
     me: number
     mx: number

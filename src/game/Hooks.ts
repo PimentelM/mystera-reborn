@@ -22,11 +22,25 @@ export class Hooks {
 
 
         this.showUpgradeDialog();
-
+        this.gamePacketParserHook();
 
         this.areHooksInstalled = true;
     }
 
+    private gamePacketParserHook(){
+
+
+        let originalParser = this.game.window.parse;
+
+        let newParser = (packet : object) => {
+            packet = this.game.parser.executeParsers(packet);
+
+            originalParser(packet);
+        };
+
+        this.game.window.parse = newParser;
+
+    }
 
     private showUpgradeDialog() {
 
