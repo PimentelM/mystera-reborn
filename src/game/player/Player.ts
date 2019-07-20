@@ -25,6 +25,9 @@ export class Player {
 
     public lastSendAction: number;
 
+    public unwalkCount : {[tile : number] : number} = {};
+    private maximumAttemptsToWalkIntoTile: number = 30;
+
     constructor(game: Game) {
         this.game = game;
         this.status = new Status(game);
@@ -226,7 +229,21 @@ export class Player {
             return false;
         }
 
-        await until(() => !this.isMoving(), 5, 1000);
+        let didWalk = await until(() => !this.isMoving(), 5, 1000);
+
+        let index = x * 1e4 + y;
+        if (!didWalk) {
+            if (!this.unwalkCount[index]) this.unwalkCount[index] = 1;
+            else this.unwalkCount[index] += 1;
+
+            if (this.unwalkCount[index] >= this.maximumAttemptsToWalkIntoTile) {
+                this.game.map.getTile(p).block = true;
+            }
+        } else {
+            this.unwalkCount[index] = 0;
+        }
+
+        return didWalk
 
     }
 
