@@ -99,7 +99,7 @@ export class Player {
         };
 
         attack();
-        setTimeout(() => attack(), 500);
+        setTimeout(() => attack(), 100);
     }
 
     public hasTarget(): boolean {
@@ -128,7 +128,7 @@ export class Player {
 
         this.game.send({"type": "m", "x": this.mob.x, "y": this.mob.y, d});
 
-        return await until(()=>changedDir(),100,1500);
+        return await until(()=>changedDir(),100,500);
     }
 
     public isMoving() {

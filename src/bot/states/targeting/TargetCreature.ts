@@ -25,7 +25,7 @@ export class TargetCreature extends StateDefinition{
     game: Game;
 
     readonly defaultParams: TargetCreatureState = {
-        filters : [""], retarget : false, cooldown: 2000, range : 9
+        filters : [""], retarget : true, cooldown: 2000, range : 15
     };
 
     async isReached(): Promise<boolean> {

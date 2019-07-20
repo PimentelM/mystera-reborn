@@ -3,7 +3,9 @@ import {IventoryItem} from "./Types";
 
 
 let successEquipRegex = (itemName) => new RegExp(`You (hold|wear|equip) [a|the] ${itemName}`);
-let requiresLevelToEquipRegex = (itemName) => new RegExp(`${itemName} requires level \\d*\\.`);
+let requiresLevelToEquipRegex = (itemName) => new RegExp(`.* requires level \\d*\\.`);
+
+
 
 
 export class Iventory {

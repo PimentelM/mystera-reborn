@@ -72,6 +72,8 @@ export class Upgrades{
     public async canUpgrade(skillName: string, remainMist = 0){
         if(!this.data) await this.updateData();
 
+        if(!this.data) return false;
+
         let skillData = this.data.find(x=>x.name == skillName);
         if(skillData){
             if (skillData.cost <= (this.myst + remainMist)){
@@ -84,6 +86,9 @@ export class Upgrades{
 
     public async upgradeSkill(skillName : string){
         if(!this.data) await this.updateData();
+
+        if(!this.data) return false;
+
         let currentLevel = this.data.find(x=>x.name == skillName).level;
 
         this.game.send({type: "c", r: "ub", u: skillName});

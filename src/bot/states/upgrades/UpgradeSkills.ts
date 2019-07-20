@@ -23,7 +23,7 @@ export class UpgradeSkills extends StateDefinition{
     public state: UpgradeSkillsState;
 
     readonly defaultParams: UpgradeSkillsState = {
-        skills : [], remainMyst: 30, cooldown: 2000
+        skills : [], remainMyst: 30, cooldown: 10000
     };
 
     async isReached(): Promise<boolean> {

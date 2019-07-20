@@ -6,6 +6,7 @@ import {IventoryItem} from "../../../game/Types";
 export interface EquipItemState {
     item : string[],
     two? : boolean,
+    condition? : (game : Game) => boolean,
 
 }
 
@@ -17,6 +18,11 @@ export class EquipItem extends StateDefinition{
     };
 
     async isReached(): Promise<boolean> {
+        // if condition is not met
+        if(this.state.condition && !this.state.condition(this.game)) {
+            return true;
+        }
+
         let item = this.findItem();
         // If there is no item
         if (!item) return true;
