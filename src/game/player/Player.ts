@@ -223,27 +223,30 @@ export class Player {
         let {x, y} = p;
         if (this.mob.x == x && this.mob.y == y) return true;
 
+
         this.mob.move(x, y);
 
         if (!this.game.map.isTileWalkable(p)) {
             return false;
         }
 
-        let didWalk = await until(() => !this.isMoving(), 5, 1000);
+        let result =  await until(() => !this.isMoving(), 5, 1000);
 
-        let index = x * 1e4 + y;
-        if (!didWalk) {
-            if (!this.unwalkCount[index]) this.unwalkCount[index] = 1;
-            else this.unwalkCount[index] += 1;
+        // let didWalk = x != this.mob.x || y != this.mob.y;
+        //
+        // let index = x * 1e4 + y;
+        // if (!didWalk) {
+        //     if (!this.unwalkCount[index]) this.unwalkCount[index] = 1;
+        //     else this.unwalkCount[index] += 1;
+        //     console.log(`Could not walk to ${p.x} ${p.y}`);
+        //     if (this.unwalkCount[index] >= this.maximumAttemptsToWalkIntoTile) {
+        //         this.game.map.getTile(p).block = true;
+        //     }
+        // } else {
+        //     this.unwalkCount[index] = 0;
+        // }
 
-            if (this.unwalkCount[index] >= this.maximumAttemptsToWalkIntoTile) {
-                this.game.map.getTile(p).block = true;
-            }
-        } else {
-            this.unwalkCount[index] = 0;
-        }
-
-        return didWalk
+        return result
 
     }
 

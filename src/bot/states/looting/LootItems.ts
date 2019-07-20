@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {Mob, TilePoint} from "../../../game/Types";
@@ -7,15 +7,10 @@ export interface LootItemsState {
     filter : string,
     radius : number,
     pickTimeoout : number,
-
-
-    condition? : (game : Game) => boolean,
-    until? : (game : Game) => boolean,
-
     tileWithItem? : TilePoint
 }
 
-export class LootItems extends StateDefinition{
+export class LootItems extends StateUnitClass{
     state: LootItemsState;
     readonly defaultParams: LootItemsState = {
         filter: null,
@@ -24,18 +19,6 @@ export class LootItems extends StateDefinition{
     };
 
     async isReached(): Promise<boolean> {
-        // If condition to loot item is not met.
-        if(this.state.condition && !this.state.condition(this.game)) {
-            return true;
-        }
-
-        // If desired state is already met
-        if(this.state.until && this.state.until(this.game)) {
-            return true;
-        }
-
-
-
         this.state.tileWithItem = await this.game.map.getReachableItemPosition(this.state.filter,this.state.radius);
         // If cannot find items on ground
         if(!this.state.tileWithItem) {

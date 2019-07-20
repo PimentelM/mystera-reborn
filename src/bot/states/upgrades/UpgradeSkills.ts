@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {upgrades} from "../../../game/Upgrades";
@@ -19,11 +19,11 @@ export interface UpgradeSkillsState {
 
 }
 
-export class UpgradeSkills extends StateDefinition{
+export class UpgradeSkills extends StateUnitClass{
     public state: UpgradeSkillsState;
 
     readonly defaultParams: UpgradeSkillsState = {
-        skills : [], remainMyst: 30, cooldown: 10000
+        skills : [], remainMyst: 30, cooldown: 5000
     };
 
     async isReached(): Promise<boolean> {
@@ -45,7 +45,7 @@ export class UpgradeSkills extends StateDefinition{
 
     async getNextUpgrade(){
         for (let skill of this.state.skills){
-            if (await this.game.upgrades.canUpgrade(skill,this.state.remainMyst)){
+            if (!!await this.game.upgrades.canUpgrade(skill,this.state.remainMyst)){
                 return skill;
             }
         }

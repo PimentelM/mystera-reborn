@@ -76,7 +76,7 @@ export class Upgrades{
 
         let skillData = this.data.find(x=>x.name == skillName);
         if(skillData){
-            if (skillData.cost <= (this.myst + remainMist)){
+            if (skillData.cost <= (this.myst - remainMist)){
                 return skillName;
             }
         }

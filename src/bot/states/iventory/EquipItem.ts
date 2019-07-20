@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {IventoryItem} from "../../../game/Types";
@@ -6,11 +6,10 @@ import {IventoryItem} from "../../../game/Types";
 export interface EquipItemState {
     item : string[],
     two? : boolean,
-    condition? : (game : Game) => boolean,
 
 }
 
-export class EquipItem extends StateDefinition{
+export class EquipItem extends StateUnitClass{
     public state: EquipItemState;
 
     readonly defaultParams: EquipItemState = {
@@ -18,11 +17,6 @@ export class EquipItem extends StateDefinition{
     };
 
     async isReached(): Promise<boolean> {
-        // if condition is not met
-        if(this.state.condition && !this.state.condition(this.game)) {
-            return true;
-        }
-
         let item = this.findItem();
         // If there is no item
         if (!item) return true;

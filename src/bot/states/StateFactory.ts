@@ -1,109 +1,72 @@
 import {Game} from "../../game/Game";
-import {TargetCreature} from "./targeting/TargetCreature";
-import {FollowTarget} from "./walking/FollowTarget";
-import {StateDefinition} from "../Interfaces";
-import {fillInto} from "../../Utils";
-import {LootItems} from "./looting/LootItems";
-import {EatFood} from "./misc/EatFood";
-import {HealOnFountain} from "./healing/HealOnFountain";
-import {EquipItem} from "./iventory/EquipItem";
-import {CraftItem} from "./craft/CraftItem";
 import {examples} from "./Examples";
-import {LootItemQuantity} from "./looting/LootItemQuantity";
-import {DropItem} from "./iventory/DropItem";
-import {HealWithItem} from "./healing/HealWithItem";
-import {GrindResource} from "./grind/GrindResource";
+import {StateMachine, StateUnitClass} from "../Interfaces";
+import {fillInto} from "../../Utils";
 
+type UnitTypeConstructor = new () => StateUnitClass;
 
-type UnitTypeConstructor = new () => StateDefinition;
-export type UnitType = UnitTypeConstructor | string;
+export type UnitType = UnitTypeConstructor;
 
-export type Unit = {
-    type: UnitType, state: {}
+export type StateUnitDescriptor = {
+    type: UnitType, state: {}, until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
+}
+
+export type StateMachineDescriptor = {
+    name : string, stateDescriptors : ( StateUnitDescriptor |  StateMachineDescriptor) [], until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
 }
 
 
 export class StateFactory {
 
     public examples = examples;
-    private game: Game;
-
-    public states = {
-        craft: {
-            craftItem: CraftItem
-        },
-        grind: {
-            grindResource: GrindResource
-        },
-        healing: {
-            healOnFountain: HealOnFountain,
-            healWithItem: HealWithItem,
-        },
-        iventory: {
-            equipItem: EquipItem,
-            dropItem: DropItem
-        },
-        looting: {
-            lootItems: LootItems,
-            lootItemQuantity: LootItemQuantity
-        },
-        misc: {
-            eatFood: EatFood,
-        },
-        targeting: {
-            targetCreature: TargetCreature,
-        },
-        walking: {
-            followTarget: FollowTarget,
-        },
-    };
+    private readonly game: Game;
 
     public constructor(game: Game) {
         this.game = game;
     }
 
-    public build(unitInitiators: (Unit | UnitType)[]): StateDefinition[] {
-        let builtUnits = [];
+    public build(machineDescriptor: StateMachineDescriptor) : StateMachine {
+        let {name, stateDescriptors , until, condition} = machineDescriptor;
 
-        for (let unit of unitInitiators) {
-            // Unit
-            if ((unit as Unit).type) {
-                let {type, state} = (unit as Unit);
-                builtUnits.push(this.buildUnit(type, state));
-                continue;
+        let stateUnits = null;
+        let stateMachines = [];
+
+        for (let stateDescriptor of stateDescriptors){
+            // If it is a state machine descriptor
+            if((stateDescriptor as StateMachineDescriptor).stateDescriptors){
+                stateMachines.push( this.build(stateDescriptor as StateMachineDescriptor) )
+            } else if ((stateDescriptor as StateUnitDescriptor).type){
+                stateMachines.push(this.buildUnit(stateDescriptor as StateUnitDescriptor))
             }
-
-            //UnitType
-            builtUnits.push(this.buildUnit((unit as UnitType), {}));
         }
 
-        return builtUnits;
+        return new StateMachine(name, stateMachines, condition,until);
     }
 
 
-    private buildUnit(type: UnitType, state: object): StateDefinition {
-        type = this.typeFromString(type);
+    private buildUnits(unitDescriptors: StateUnitDescriptor[]): StateUnitClass[] {
+        let builtUnits = [];
+        for (let unitDescriptor of unitDescriptors) {
+            // Unit
+            if (unitDescriptor.type) {
+                builtUnits.push(this.buildUnit(unitDescriptor));
+            }
+        }
+        return builtUnits;
+    }
+
+    private buildUnit(unitDescriptor : StateUnitDescriptor): StateUnitClass {
+        let {type , state , until, condition} = unitDescriptor;
 
         let unit = new type();
         unit.state = state;
         unit.game = this.game;
+        if(condition) unit.condition = condition;
+        if(until) unit.until = until;
         fillInto(unit.defaultParams, unit.state);
         return unit;
     }
 
-    private typeFromString(path: string | UnitTypeConstructor): UnitTypeConstructor {
-        if (typeof path !== "string") return path;
-
-        let pathParts = path.split(".");
-        let type = this.states[pathParts.shift()];
-
-        for (let part of pathParts) {
-            type = type[part];
-            if (!type) throw new Error(`Could not find a UnitType from the provided path "${path}"`);
-        }
-
-        return type;
-    }
 
 
 }

@@ -1,13 +1,10 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {TilePoint} from "../../../game/Types";
 
 export interface GrindResourceState {
     resource : string,
-
-    condition? : (game : Game) => boolean,
-    until? : (game : Game) => boolean,
 
     tileToGather? : TilePoint
 
@@ -20,7 +17,7 @@ let whichTool = (resourceName ) => {
     return null
 };
 
-export class GrindResource extends StateDefinition{
+export class GrindResource extends StateUnitClass{
     public state: GrindResourceState;
     game: Game;
 
@@ -31,15 +28,6 @@ export class GrindResource extends StateDefinition{
     };
 
     async isReached(): Promise<boolean> {
-        // If condition to grind is not met.
-        if(this.state.condition && !this.state.condition(this.game)) {
-            return true;
-        }
-
-        // If desired state is already met
-        if(this.state.until && this.state.until(this.game)) {
-            return true;
-        }
 
         this.state.tileToGather = await this.getResourceTile();
         // If cannot find the resource on the ground

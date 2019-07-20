@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {IventoryItem} from "../../../game/Types";
@@ -8,11 +8,11 @@ export interface EatFoodState {
     minHunger : number,
 }
 
-export class EatFood extends StateDefinition{
+export class EatFood extends StateUnitClass{
     public state: EatFoodState;
 
     readonly defaultParams: EatFoodState = {
-        foods : ["Salmonberry", "Cooked \\w*"], minHunger : 75
+        foods : ["^Salmonberry$", "Cooked \\w*", "^Carrot$"], minHunger : 75
     };
 
     async isReached(): Promise<boolean> {

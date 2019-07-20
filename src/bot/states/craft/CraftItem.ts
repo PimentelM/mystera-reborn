@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {TilePoint} from "../../../game/Types";
@@ -15,7 +15,7 @@ export interface CraftItemState {
     itemToCraft? : string
 }
 
-export class CraftItem extends StateDefinition{
+export class CraftItem extends StateUnitClass{
     public state: CraftItemState;
 
     readonly defaultParams: CraftItemState = {

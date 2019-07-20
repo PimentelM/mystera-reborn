@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../../Interfaces";
+import {StateUnitClass} from "../../../Interfaces";
 import {Game} from "../../../../game/Game";
 import {Player} from "../../../../game/player/Player";
 import {Point} from "../../../../game/Types";
@@ -6,7 +6,7 @@ import {defaultParams, WaypointState} from "./Common";
 
 
 
-export class FollowWaypoint extends StateDefinition{
+export class FollowWaypoint extends StateUnitClass{
     state: WaypointState;
     game: Game;
 

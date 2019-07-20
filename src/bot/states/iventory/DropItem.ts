@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {IventoryItem} from "../../../game/Types";
@@ -11,7 +11,7 @@ export interface DropItemState {
     lastDrop? : number
 }
 
-export class DropItem extends StateDefinition {
+export class DropItem extends StateUnitClass {
     public state: DropItemState;
 
     readonly defaultParams: DropItemState = {

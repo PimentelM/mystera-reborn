@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 
@@ -6,7 +6,7 @@ export interface ZState {
 
 }
 
-export class Z extends StateDefinition{
+export class Z extends StateUnitClass{
     game: Game;
     public state: ZState;
 

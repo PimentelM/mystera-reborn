@@ -1,10 +1,10 @@
-import {StateDefinition} from "../../../Interfaces";
+import {StateUnitClass} from "../../../Interfaces";
 import {Game} from "../../../../game/Game";
 import {Player} from "../../../../game/player/Player";
 import {Point} from "../../../../game/Types";
 import {defaultParams, WaypointState} from "./Common";
 
-export class AdvanceWaypoint extends StateDefinition {
+export class AdvanceWaypoint extends StateUnitClass {
     state: WaypointState;
     game: Game;
 

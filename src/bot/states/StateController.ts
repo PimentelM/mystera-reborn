@@ -1,14 +1,14 @@
 import {Game} from "../../game/Game";
-import {StateDefinition} from "../Interfaces";
+import {IStateMachine, StateUnitClass} from "../Interfaces";
 import {doWhen, fillInto, sleep} from "../../Utils";
 
 
 export interface ControllerState {
     isActivated: boolean;
     delay: number
-    stateDefinitions: StateDefinition[];
-    lastStateExecuted: StateDefinition;
-
+    stateMachine: IStateMachine;
+    lastStateExecuted: StateUnitClass;
+    lastExecutedMachine: string,
     didReload?: boolean
 
 }
@@ -38,7 +38,7 @@ export class StateController {
     }
 
     public getDefaultState(): ControllerState {
-        return {delay: 200, isActivated: false, stateDefinitions: [], lastStateExecuted: null}
+        return {delay: 200, isActivated: false, stateMachine: null, lastStateExecuted: null, lastExecutedMachine: null}
     }
 
     public async updateApi(game: Game) {
@@ -51,7 +51,7 @@ export class StateController {
     }
 
     public async start() {
-        if (this.state.stateDefinitions.length == 0) return;
+        if (!this.state.stateMachine) return;
         await this.stop();
         this.state.isActivated = true;
         this.loopPromise = this.loop();
@@ -65,8 +65,8 @@ export class StateController {
         }
     }
 
-    public async execute(stateDefinitions: StateDefinition[]) {
-        this.state.stateDefinitions = stateDefinitions;
+    public async execute(stateMachine: IStateMachine) {
+        this.state.stateMachine = stateMachine;
         return await this.start();
     }
 
@@ -79,24 +79,55 @@ export class StateController {
         return this.state.isActivated && isCurrentInstance;
     }
 
+    // Returns true if some state unit is executed.
+    private async executeStateMachine(stateMachine : IStateMachine) : Promise<boolean>{
+
+        // Conditions to execute state machine
+        if (stateMachine.condition && !(await stateMachine.condition(this.game))) return false;
+        if (stateMachine.until && (await stateMachine.until(this.game))) return false;
+
+
+        if(stateMachine.isComposite){
+            for (let innerStateMachine of stateMachine.stateMachines){
+                if (await this.executeStateMachine(innerStateMachine)) {
+                    if(innerStateMachine.name && innerStateMachine.name != this.state.lastExecutedMachine) {
+                        // console.log(innerStateMachine.name);
+                        this.state.lastExecutedMachine = innerStateMachine.name
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        for (let state of stateMachine.stateUnits) {
+
+            // Conditions to execute state unit
+            if (state.condition && !(await state.condition(this.game))) continue;
+            if (state.until && (await state.until(this.game))) continue;
+
+            if (!(await state.isReached())) {
+                await state.reach();
+                if (this.state.lastStateExecuted != state) console.log(state);
+                this.state.lastStateExecuted = state;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private async loop() {
         try {
             while (this.canRun()) {
-                for (let state of this.state.stateDefinitions) {
-                    if (!(await state.isReached())) {
-                        await state.reach();
-                        if (this.state.lastStateExecuted != state) console.log(state);
-                        this.state.lastStateExecuted = state;
-                        break;
-                    }
-                }
+                await this.executeStateMachine(this.state.stateMachine);
                 await sleep(this.state.delay);
             }
 
             if (!this.isCurrentInstance()) this.state.didReload = true;
 
         } catch (e) {
-            console.log("Exception while running StateController script.");
+            console.log("Exception while running State Machine.");
             console.log(e.message);
             console.log(e.stack);
             this.stop();

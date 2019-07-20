@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 import {CreatureFilter} from "../../../game/Creatures";
@@ -20,7 +20,7 @@ export interface TargetCreatureState {
 
 // Currently, retargeting is an expensive feature computationally speaking, so we need to examine it later to improve it's performance.
 
-export class TargetCreature extends StateDefinition {
+export class TargetCreature extends StateUnitClass {
     state: TargetCreatureState;
     game: Game;
 
@@ -29,7 +29,7 @@ export class TargetCreature extends StateDefinition {
     };
 
     resendAttackPacket = () => {
-        if (new Date().valueOf() - this.state.lastResend >= this.state.cooldown) {
+        if (!this.state.lastResend || new Date().valueOf() - this.state.lastResend >= this.state.cooldown) {
             this.game.send({type: "t", t: this.game.player.getTarget().id});
             this.state.lastResend = new Date().valueOf();
         }
@@ -49,7 +49,7 @@ export class TargetCreature extends StateDefinition {
             if (!this.state.retarget) return true;
 
             // If retarget is in cooldown
-            if (new Date().valueOf() - this.state.lastRetarget < this.state.cooldown) return true;
+            if (!this.state.lastRetarget || new Date().valueOf() - this.state.lastRetarget < this.state.cooldown) return true;
 
 
             this.state.bestTarget = await this.getReachableCreature();

@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 
@@ -10,11 +10,11 @@ export interface HealWithItemState {
     lastUse? : number
 }
 
-export class HealWithItem extends StateDefinition{
+export class HealWithItem extends StateUnitClass{
     public state: HealWithItemState;
 
     readonly defaultParams: HealWithItemState = {
-        hppc: 24.99, item: "Healing Potion", cooldown: 1000
+        hppc: 24.99, item: "Healing Potion", cooldown: 3000
     };
 
     async isReached(): Promise<boolean> {

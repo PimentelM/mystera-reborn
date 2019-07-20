@@ -179,7 +179,13 @@ export class Map {
 
                 let tile = this.game.window.map_index[index];
 
-                xTiles.push(tile ? tile.block : 1)
+                let result;
+
+                if (!tile) result = 1;
+                else if ( this.isTileWalkable({x,y}, considerMobs)) result = 0;
+                else result = 1;
+
+                xTiles.push(result)
             }
             grid.push(xTiles);
         }

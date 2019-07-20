@@ -1,4 +1,4 @@
-import {StateDefinition} from "../../Interfaces";
+import {StateUnitClass} from "../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Player} from "../../../game/player/Player";
 
@@ -7,7 +7,7 @@ export interface FollowTargetState{
     maxDistance: number
 }
 
-export class FollowTarget extends StateDefinition{
+export class FollowTarget extends StateUnitClass{
     state: FollowTargetState;
 
     readonly defaultParams: FollowTargetState = {
