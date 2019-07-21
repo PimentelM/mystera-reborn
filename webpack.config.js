@@ -25,7 +25,7 @@ let isDev = true;
 module.exports = {
     entry: {
         polyfill: '@babel/polyfill',
-        main: helpers.root('src', 'main'),
+        main: helpers.root('src/client'),
     },
     resolve: {
         extensions: ['.js', '.vue', '.ts', '.tsx'],
