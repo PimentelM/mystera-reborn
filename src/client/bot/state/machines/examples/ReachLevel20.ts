@@ -75,6 +75,10 @@ let playerHasTarget = async (game: Game) => {
     return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 5;
 };
 
+let playerHasCloseTarget = async (game: Game) => {
+    return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 1;
+};
+
 
 ///// Waypoints
 
@@ -126,7 +130,7 @@ let waypointState: WaypointState = {
 
 let EquipWeapon = {
     name: "Equip Weapon",
-    condition: playerHasTarget,
+    condition: playerHasCloseTarget,
     stateDescriptors: [
         {type: EquipItem, state: {item: ["Flint Dagger", "Wood Sword", "Bone Axe", "Stone Axe"]}}
     ]
