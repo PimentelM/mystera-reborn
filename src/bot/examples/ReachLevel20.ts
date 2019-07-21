@@ -186,7 +186,8 @@ let CraftThings = {
 };
 
 
-let GatherInitialResources = {
+
+let GatherResources = {
     stateDescriptors : [
         {
             name: "Grind for Initial Tools",
@@ -199,12 +200,7 @@ let GatherInitialResources = {
                 WalkAroundAttackingOnlyMobsThatAttackYou
             ]
 
-        }
-    ]
-};
-
-let GatherResources = {
-    stateDescriptors : [
+        },
         {
             name: "Grind for Better Tools",
             condition : playerIsAtMediumLevel,
@@ -259,13 +255,12 @@ export let reachLevel20 : StateMachineDescriptor = {
       PlayerHealth,
       NewbyeVillageHealOnFountain,
       EquipArmorAndAcessories,
-      DropThings,
       CraftThings,
       TargetMobs,
       EquipWeapon,
-      GatherInitialResources,
       GatherResources,
       LootThings,
+      DropThings,
       FollowTargets,
       WalkAroundAttackingOnlyMobsThatAttackYou,
   ]
