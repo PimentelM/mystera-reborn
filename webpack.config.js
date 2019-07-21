@@ -8,6 +8,7 @@ const webpack = require('webpack');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 
 
@@ -30,7 +31,7 @@ let isDev = true;
 
 let srcPath = 'src/client';
 
-let iconPath = helpers.root( 'myst.png');
+let iconPath = helpers.root( 'mysteraLegacySquare.png');
 
 module.exports = {
     entry: {
@@ -136,20 +137,78 @@ module.exports = {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
-        new FaviconsWebpackPlugin(iconPath),
+        new FaviconsWebpackPlugin({
+            // Your source logo
+            logo: iconPath,
+            // The prefix for all image files (might be a folder or a name)
+            prefix: 'favicons-webpack-[hash]/',
+            // Emit all stats of the generated icons
+            emitStats: false,
+            // The name of the json containing all favicon information
+            statsFilename: 'faviconstats-[hash].json',
+            // Generate a cache file with control hashes and
+            // don't rebuild the favicons until those hashes change
+            persistentCache: true,
+            // Inject the html into the html-webpack-plugin
+            // favicon background color (see https://github.com/haydenbleasel/favicons#usage)
+            // favicon app title (see https://github.com/haydenbleasel/favicons#usage)
+            title: 'Mystera Reborn',
+            // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
+            icons: {
+                android: true,
+                appleIcon: true,
+                appleStartup: false,
+                coast: false,
+                favicons: true,
+                firefox: true,
+                opengraph: false,
+                twitter: false,
+                yandex: false,
+                windows: false
+            }
+        }),
+        new FaviconsWebpackPlugin({
+            // Your source logo
+            logo: helpers.root('splash.png'),
+            // The prefix for all image files (might be a folder or a name)
+            prefix: 'favicons-webpack-[hash]/',
+            // Emit all stats of the generated icons
+            emitStats: false,
+            // The name of the json containing all favicon information
+            statsFilename: 'faviconstats-[hash].json',
+            // Generate a cache file with control hashes and
+            // don't rebuild the favicons until those hashes change
+            persistentCache: true,
+            // Inject the html into the html-webpack-plugin
+            // favicon background color (see https://github.com/haydenbleasel/favicons#usage)
+            // favicon app title (see https://github.com/haydenbleasel/favicons#usage)
+            title: 'Mystera Reborn',
+            // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
+            icons: {
+                android: false,
+                appleIcon: false,
+                appleStartup: {background: "black"},
+                coast: false,
+                favicons: false,
+                firefox: false,
+                opengraph: false,
+                twitter: false,
+                yandex: false,
+                windows: false
+            }
+        }),
         new WebpackPwaManifest({
             name: 'Mystera Reborn',
             short_name: 'MysteraReborn',
             description: 'Enhanced client for Mystera Legacy!',
-            background_color: '#000',
-            orientation: "landscape",
-            theme_color : '#000',
-            icons: [
-                {
-                    src: iconPath,
-                    sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
-                }
-            ]
+            background_color: '#000000',
+            orientation: "omit",
+            theme_color : '#000000',
+            inject: true,
+            ios: {
+                'apple-mobile-web-app-title': 'Mystera Reborn',
+                'apple-mobile-web-app-status-bar-style': 'black'
+            }
         }),
         new SWPrecacheWebpackPlugin(
             {
@@ -157,11 +216,14 @@ module.exports = {
                 dontCacheBustUrlsMatching: /\.\w{8}\./,
                 filename: 'service-worker.js',
                 minify: true,
+                importScripts : ['serviceWorker.js'],
                 navigateFallback: '/',
                 staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/]
             }
         ),
-
+        new CopyPlugin([
+            { from: helpers.root("src/client/serviceWorker.js"), to: helpers.root('public/serviceWorker.js') },
+        ])
 
 
     ]
