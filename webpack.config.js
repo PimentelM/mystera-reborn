@@ -30,7 +30,7 @@ let isDev = true;
 
 let srcPath = 'src/client';
 
-let iconPath = helpers.root( 'reborn.png');
+let iconPath = helpers.root( 'myst.png');
 
 module.exports = {
     entry: {
