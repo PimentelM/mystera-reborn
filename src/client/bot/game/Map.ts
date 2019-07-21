@@ -67,13 +67,16 @@ export class Map {
      * Returns a tile containing a item you can reach.
      * @param filter is a regex string used to find the item on the ground
      * @param radius is the radius around the player where the search is allowed
+     * @param pickupable tells if the item must be pickuable
      * @returns a point you can walk to adjacently or not depending on the type of item.
      */
-    public async getReachableItemPosition(filter : string, radius : number = Infinity) : Promise<TilePoint> {
+    public async getReachableItemPosition(filter : string, radius : number = Infinity, pickupable : boolean = false) : Promise<TilePoint> {
         await until(()=>this.game.window.isUpdatingMap == false,20,1000);
 
         if(!filter) return null;
         let tiles = this.findTilesWithItem(filter,radius);
+        if(pickupable) tiles = tiles.filter(x=>x.o.length >= 1 && !!x.o.slice(-1).pop().can_pickup);
+
         if(tiles.length == 0) return null;
 
         // It will be adjacent search if all found items are on unwalkable tiles.

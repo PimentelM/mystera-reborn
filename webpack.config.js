@@ -5,6 +5,8 @@ const path = require('path');
 const HTMLPlugin = require('html-webpack-plugin');
 const proxy = require('http-proxy-middleware');
 const webpack = require('webpack');
+let FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+
 
 var getWsProxy = (srv) => proxy('/ws/' + srv, {
     target: `wss://${srv}.mysteralegacy.com`,
@@ -124,9 +126,13 @@ module.exports = {
     },
 
     plugins: [
-        new HTMLPlugin(),
+        new HTMLPlugin({
+            title : "Mystera Reborn"
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
+        new FaviconsWebpackPlugin( helpers.root( 'reborn.png'))
+
 
 
     ]

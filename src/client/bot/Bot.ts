@@ -1,8 +1,8 @@
 import {Connection} from "./Connection";
 import {Game} from "./game/Game";
-import {StateController} from "./states/StateController";
+import {StateController} from "./state/StateController";
 import {IGameWindow} from "./game/Interfaces";
-import {StateFactory} from "./states/StateFactory";
+import {StateFactory} from "./state/StateFactory";
 
 export class Bot {
 

@@ -1,6 +1,6 @@
 import {IventoryItem, Mob, Point, PointMap, Tile} from "./Types";
 import "./Types"
-import {ControllerState} from "../states/StateController";
+import {ControllerState} from "../state/StateController";
 import {ParserState} from "./Parser";
 
 
