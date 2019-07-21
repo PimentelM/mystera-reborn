@@ -96,7 +96,7 @@ module.exports = {
         compress: true,
         port: 8000,
 
-        setup: function (app) {
+        before: function (app) {
 
             for (let server of servers){
                 app.use(getWsProxy(server));

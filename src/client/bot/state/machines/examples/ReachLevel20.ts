@@ -194,7 +194,7 @@ let CraftThings = {
             stateDescriptors: [
                 {type: CraftItem, state: {items: [{tpl: "bone_pickaxe"}]}},
                 {type: CraftItem, state: {items: [{tpl: "bone_axe"}]}},
-                {type: CraftItem, state: {items: [{tpl: "flint_dagger", quantity: 2}]}},
+                {type: CraftItem, state: {items: [{tpl: "flint_dagger"}]}},
             ]
 
         },
@@ -238,7 +238,7 @@ let GatherResources = {
         {
             name: "Grind for Basic Equips",
             stateDescriptors: [
-                {type: GrindResource, state: {resource: "\\w* Bush"}}
+                {type: GrindResource, state: {resource: "\\w* Bush"}, until: playerHasTinderItems}
             ]
         }
 
@@ -262,11 +262,12 @@ let LootThings = {
             type: LootItemQuantity, state: {
                 radius: 8, items:
                     {
-                        Salmonberry: 30,
+                        Salmonberry: 20,
                         "Healing Potion": 0,
                         "Feather": 0,
                         Worms: 0,
-                        ".* seed$": 0,
+                        "(Holly|Tomato|Aloe) seed$": 0,
+                        "carrot seed$": 30,
                         Pinecone: 0,
                         Clay: 0,
                         "Withered Crop": 0,
@@ -300,7 +301,7 @@ let DropThings = {
                 },
             ]
         },
-        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud: 0, Potato: 0}}},
+        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud: 0, Potato: 0, "Carrot seed$" : 30}}},
 
     ]
 };

@@ -8,6 +8,7 @@ export interface ControllerState {
     delay: number
     stateMachine: IStateMachine;
     lastStateExecuted: StateUnitClass;
+    lastExecutionTimestamp: number
     lastExecutedMachine: string,
     didReload?: boolean
 
@@ -38,7 +39,7 @@ export class StateController {
     }
 
     public getDefaultState(): ControllerState {
-        return {delay: 200, isActivated: false, stateMachine: null, lastStateExecuted: null, lastExecutedMachine: null}
+        return {delay: 200, isActivated: false, stateMachine: null, lastStateExecuted: null, lastExecutedMachine: null, lastExecutionTimestamp: 0}
     }
 
     public async updateApi(game: Game) {
@@ -108,7 +109,10 @@ export class StateController {
 
             if (!(await state.isReached())) {
                 await state.reach();
-                if (this.state.lastStateExecuted != state) console.log(state);
+                let now = new Date().valueOf();
+                let elapsedTime = now - this.state.lastExecutionTimestamp - this.state.delay;
+                this.state.lastExecutionTimestamp = new Date().valueOf();
+                if (this.state.lastStateExecuted != state) console.log(state, `${elapsedTime}ms`);
                 this.state.lastStateExecuted = state;
                 return true;
             }

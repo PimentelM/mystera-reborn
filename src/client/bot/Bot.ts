@@ -28,6 +28,9 @@ export class Bot {
         this.stateFactory = new StateFactory(this.game);
         this.window.StateFactory = this.stateFactory;
 
+        // Temporary mute on global chat for f2p players
+        this.game.muteF2PPlayers();
+
     }
 
     public async reloadBotObjects() {
