@@ -113,7 +113,6 @@ do_resize = function()
 
 	if(h / w <= 0.562)
 		alc.style.height = h+"px"//"100%";
-		alc.style.width  = (w*0.8).toPrecision(1)+"px";
 	else if(h / w > 0.562)
 		alc.style.height = (alc.clientWidth*0.562) + "px";
 }
