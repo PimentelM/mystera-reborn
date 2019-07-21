@@ -5,7 +5,10 @@ const path = require('path');
 const HTMLPlugin = require('html-webpack-plugin');
 const proxy = require('http-proxy-middleware');
 const webpack = require('webpack');
-let FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+
 
 
 var getWsProxy = (srv) => proxy('/ws/' + srv, {
@@ -26,6 +29,8 @@ let isDev = true;
 
 
 let srcPath = 'src/client';
+
+let iconPath = helpers.root( 'reborn.png');
 
 module.exports = {
     entry: {
@@ -131,7 +136,31 @@ module.exports = {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
-        new FaviconsWebpackPlugin( helpers.root( 'myst.png'))
+        new FaviconsWebpackPlugin(iconPath),
+        new WebpackPwaManifest({
+            name: 'Mystera Reborn',
+            short_name: 'MysteraReborn',
+            description: 'Enhanced client for Mystera Legacy!',
+            background_color: '#000',
+            orientation: "landscape",
+            theme_color : '#000',
+            icons: [
+                {
+                    src: iconPath,
+                    sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
+                }
+            ]
+        }),
+        new SWPrecacheWebpackPlugin(
+            {
+                cacheId: '4.9.1',
+                dontCacheBustUrlsMatching: /\.\w{8}\./,
+                filename: 'service-worker.js',
+                minify: true,
+                navigateFallback: '/',
+                staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/]
+            }
+        ),
 
 
 

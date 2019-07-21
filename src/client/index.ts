@@ -13,6 +13,17 @@ if (module.hot) {
     updateBotInstance();
 }
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+        });
+    });
+}
+
+
 // @ts-ignore
 window.p = (x, y) => {
     return {x, y}
@@ -75,7 +86,9 @@ function renderGame() {
 <link rel="apple-touch-icon-precomposed" href="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" />
 <meta name="msapplication-TileImage" content="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" />
 
-<style>body{margin:0;padding:0;background-color:black}</style>
+<style>
+body{margin:0;padding:0;background-color:black}
+</style>
 <script type="text/javascript" src="/pixi.min.js"></script>
 <script>document.write('<script src="/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>');</script>
 <script>if(typeof(mlmeta) === 'undefined') {document.write('<script src="http://50.116.42.127/metaconfig.js?ver='+(new Date()).getTime()+'"><\\/script>')}</script>
@@ -100,6 +113,7 @@ do_resize = function()
 
 	if(h / w <= 0.562)
 		alc.style.height = h+"px"//"100%";
+		alc.style.width  = (w*0.8).toPrecision(1)+"px";
 	else if(h / w > 0.562)
 		alc.style.height = (alc.clientWidth*0.562) + "px";
 }
@@ -116,7 +130,7 @@ window.addEventListener("orientationchange",function(){
 
 
 
-<div style="width:80%;height:100%;margin:0;padding:0;" id="all_container">
+<div style="width: 100%;height:100%;margin:0;padding:0;" id="all_container">
 	<canvas tabindex=0 id='jv' style="background-color:black;width:100%;height:100%;margin:0;min-width:740px;min-height:416px;"></canvas>
 </div>
 
