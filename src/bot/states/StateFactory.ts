@@ -12,7 +12,7 @@ export type StateUnitDescriptor = {
 }
 
 export type StateMachineDescriptor = {
-    name : string, stateDescriptors : ( StateUnitDescriptor |  StateMachineDescriptor) [], until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
+    name? : string, stateDescriptors : ( StateUnitDescriptor |  StateMachineDescriptor) [], until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
 }
 
 
@@ -40,7 +40,7 @@ export class StateFactory {
             }
         }
 
-        return new StateMachine(name, stateMachines, condition,until);
+        return new StateMachine(name || null, stateMachines, condition,until);
     }
 
 

@@ -18,6 +18,10 @@ import {UpgradeSkills} from "../states/upgrades/UpgradeSkills";
 import {upgrades} from "../../game/Upgrades";
 
 
+
+
+//// Predicates
+
 let playerHasStoneTools = async (game: Game) => {
     return game.player.equip.hasEquipables({
         "Stone Pickaxe": 1,
@@ -63,6 +67,20 @@ let playerHasFlintDagger = async (game: Game) => {
         }) || game.iventory.contains("Flint", 8)
 };
 
+
+let playerIsAtMediumLevel = async (game : Game) => {
+    return game.player.mob.level >= 7
+};
+
+
+let playerHasTarget = async (game : Game) => {
+    return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 5;
+};
+
+
+
+///// Waypoints
+
 let waypoints = [{"dlevel":"newbie","x":28,"y":42,"radius":3},{"dlevel":"newbie","x":41,"y":42,"radius":3},{"dlevel":"newbie","x":50,"y":33,"radius":3},{"dlevel":"newbie","x":49,"y":42,"radius":3},{"dlevel":"newbie","x":61,"y":42,"radius":3},{"dlevel":"newbie","x":69,"y":44,"radius":3},{"dlevel":"newbie","x":62,"y":35,"radius":3},{"dlevel":"newbie","x":70,"y":27,"radius":3},{"dlevel":"newbie","x":71,"y":19,"radius":3},{"dlevel":"newbie","x":61,"y":14,"radius":3},{"dlevel":"newbie","x":48,"y":15,"radius":3},{"dlevel":"newbie","x":41,"y":21,"radius":3},{"dlevel":"newbie","x":51,"y":26,"radius":3},{"dlevel":"newbie","x":44,"y":37,"radius":3},{"dlevel":"newbie","x":37,"y":42,"radius":3}];
 let waypointState : WaypointState = {
     loop: true,
@@ -70,8 +88,14 @@ let waypointState : WaypointState = {
     waypoints: waypoints
 };
 
+
+
+///// State Machines
+
+
 let EquipWeapon = {
     name : "Equip Weapon",
+    condition : playerHasTarget,
     stateDescriptors: [
         {type: EquipItem, state: {item: ["Flint Dagger","Wood Sword", "Bone Axe", "Stone Axe"]}}
     ]
@@ -88,7 +112,7 @@ let WalkAroundAttackingOnlyMobsThatAttackYou : StateMachineDescriptor = {
     ]
 };
 
-let Healing: StateMachineDescriptor = {
+let PlayerHealth: StateMachineDescriptor = {
     name : "Player Health",
     stateDescriptors : [
         {type: HealWithItem, state: {}},
@@ -113,110 +137,136 @@ let EquipArmorAndAcessories : StateMachineDescriptor = {
     ]
 };
 
+let DropThings = {
+    stateDescriptors: [
+        {
+            name : "Drop old tools",
+            condition : playerIsAtMediumLevel,
+            stateDescriptors : [
+                {type: DropItem, state: {items: { "Stone Pickaxe" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Bone Pickaxe", 1) },
+                {type: DropItem, state: {items: { "Stone Axe" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Bone Axe", 1) },
+                {type: DropItem, state: {items: { "Wood Sword" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Flint Dagger", 1) },
+            ]
+        },
+        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud : 0, Potato : 0}}},
 
-let InitialCraftGrind : StateMachineDescriptor = {
-    name: "Grind for Initial Tools",
-    until : async (game) => game.player.mob.level >= 7 || (await playerHasWoodItems(game) && await playerHasStoneTools(game)),
-    stateDescriptors : [
-
-        {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasStoneTools},
-        {type: GrindResource, state: {resource: "Fir Tree"}, until: playerHasWoodItems},
-
-        WalkAroundAttackingOnlyMobsThatAttackYou
-    ]
-
-};
-
-let InitialCraft : StateMachineDescriptor = {
-    name : "Craft Initial Tools",
-    until : async  (game) => game.player.mob.level >= 7,
-    stateDescriptors : [
-        {type: CraftItem, state: {items: [{tpl: "stone_pickaxe"}]}},
-        {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
-        {type: CraftItem, state: {items: [{tpl: "wood_sword"}]}},
     ]
 };
 
 
+let CraftThings = {
+  stateDescriptors: [
+      {
+          name : "Craft Basic Equips",
+          stateDescriptors : [
+              {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
+              {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
+          ]
+      },
+      {
+          name: "Craft Better Tools",
+          condition : playerIsAtMediumLevel ,
+          stateDescriptors : [
+              {type: CraftItem, state: {items: [{tpl: "bone_pickaxe"}]}},
+              {type: CraftItem, state: {items: [{tpl: "bone_axe"}]}},
+              {type: CraftItem, state: {items: [{tpl: "flint_dagger", quantity : 2}]}},
+          ]
 
-let BetterCraftGrind : StateMachineDescriptor = {
-    name: "Grind for Better Tools",
-    condition : async (game) => game.player.mob.level >= 7,
-    stateDescriptors : [
-
-        {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasFlintDagger},
-        {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasStoneTools},
-        {type: GrindResource, state: {resource: "Fir Tree"}, until: playerHasWoodItems},
-    ]
-
-};
-
-let BetterCraft : StateMachineDescriptor = {
-    name: "Craft Better Tools",
-    condition : async (game) => game.player.mob.level >= 7,
-    stateDescriptors : [
-        {type: CraftItem, state: {items: [{tpl: "bone_pickaxe"}]}},
-        {type: CraftItem, state: {items: [{tpl: "bone_axe"}]}},
-        {type: CraftItem, state: {items: [{tpl: "flint_dagger", quantity : 2}]}},
-    ]
-
-};
-
-let BasicEquipCraft : StateMachineDescriptor = {
-    name : "Craft Basic Equips",
-    stateDescriptors : [
-        {type: CraftItem, state: {items: [{tpl: "pelt_armor"}]}},
-        {type: CraftItem, state: {items: [{tpl: "grass_band", quantity: 2}]}},
-
-        {type: GrindResource, state: {resource: "\\w* Bush", items: {Tinder: 4}}, until: playerHasTinderItems},
-    ]
+      },
+      {
+          name : "Craft Initial Tools",
+          until : playerIsAtMediumLevel,
+          stateDescriptors : [
+              {type: CraftItem, state: {items: [{tpl: "stone_pickaxe"}]}},
+              {type: CraftItem, state: {items: [{tpl: "stone_axe"}]}},
+              {type: CraftItem, state: {items: [{tpl: "wood_sword"}]}},
+          ]
+      },
+  ]
 };
 
 
-let HuntMobs : StateMachineDescriptor = {
-    name : "Hunt",
+let GatherInitialResources = {
     stateDescriptors : [
+        {
+            name: "Grind for Initial Tools",
+            until : async (game) => await playerIsAtMediumLevel(game) || (await playerHasWoodItems(game) && await playerHasStoneTools(game)),
+            stateDescriptors : [
 
-        EquipWeapon,
+                {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasStoneTools},
+                {type: GrindResource, state: {resource: "Fir Tree"}, until: playerHasWoodItems},
 
-        {type: TargetCreature, state: { retarget : true, range : 3 ,filters: ["Hornet", "Snake"]}},
-        {type: TargetCreature, state: { retarget : true ,filters: ["Chicken", "Water \\w*"]}},
-        {type: TargetCreature, state: { retarget : true, range: 7,filters: ["Raccoon"]}},
-        {type: TargetCreature, state: { retarget : true, range : 3 ,filters: [""]}},
+                WalkAroundAttackingOnlyMobsThatAttackYou
+            ]
 
+        }
+    ]
+};
+
+let GatherResources = {
+    stateDescriptors : [
+        {
+            name: "Grind for Better Tools",
+            condition : playerIsAtMediumLevel,
+            stateDescriptors : [
+                {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasFlintDagger},
+                {type: GrindResource, state: {resource: "Plain Rock"}, until: playerHasStoneTools},
+                {type: GrindResource, state: {resource: "Fir Tree"}, until: playerHasWoodItems},
+            ]
+
+        },
+        {
+            name : "Grind for Basic Equips",
+            stateDescriptors : [
+                {type: GrindResource, state: {resource: "\\w* Bush", items: {Tinder: 4}}, until: playerHasTinderItems},
+            ]
+        }
+
+    ]
+};
+
+let TargetMobs = {
+  stateDescriptors : [
+      {type: TargetCreature, state: { retarget : true, range : 5 ,filters: ["Hornet", "Snake"]}},
+      {type: TargetCreature, state: { retarget : true ,range: 17, filters: ["Chicken", "Water \\w*"]}},
+      {type: TargetCreature, state: { retarget : true, range: 7,filters: ["Raccoon"]}},
+      {type: TargetCreature, state: { retarget : true, range : 3 ,filters: [""]}},
+  ]
+};
+
+let LootThings = {
+    stateDescriptors : [
         {type: LootItems, state: {filter: "^Bone$", radius: 10}, until: playerHasBoneItems },
         {type: LootItems, state: {filter: "^Pelt$", radius: 10}, until: playerHasPeltItems },
-
-        {type: LootItemQuantity, state: {radius: 5, items: {Salmonberry: 30, "Healing Potion" : 0, "Feather" : 0, Worms : 0, ".* seed$" : 0, Pinecone : 0 }}},
-        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud : 0}}},
-        {type: FollowTarget, state: {}},
+        {type: LootItemQuantity, state: {radius: 8, items: {Salmonberry: 30, "Healing Potion" : 0, "Feather" : 0, Worms : 0, ".* seed$" : 0, Pinecone : 0, Clay : 0 }}},
     ]
 };
 
 
-let DropOldToolsIfPlayerHasNewOnes : StateMachineDescriptor = {
-    name : "Drop old tools",
-    condition : async (game) => game.player.mob.level >= 7,
+let FollowTargets = {
     stateDescriptors : [
-        {type: DropItem, state: {items: { "Stone Pickaxe" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Bone Pickaxe", 1) },
-        {type: DropItem, state: {items: { "Stone Axe" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Bone Axe", 1) },
-        {type: DropItem, state: {items: { "Wood Sword" : 0}   } , condition : async (game) => game.player.equip.hasEquipable("Flint Dagger", 1) },
+        {type : FollowTarget, state : {}}
     ]
 };
+
+
+
+//// Full state machine
 
 export let reachLevel20 : StateMachineDescriptor = {
-    name: "Reach Level 20",
-    stateDescriptors: [
-        Healing,
-        NewbyeVillageHealOnFountain,
-        EquipArmorAndAcessories,
-        DropOldToolsIfPlayerHasNewOnes,
-        InitialCraft,
-        BetterCraft,
-        BasicEquipCraft,
-        InitialCraftGrind,
-        BetterCraftGrind,
-        HuntMobs,
-        WalkAroundAttackingOnlyMobsThatAttackYou
-    ]
+  name : "Reach Level 20",
+  stateDescriptors: [
+      PlayerHealth,
+      NewbyeVillageHealOnFountain,
+      EquipArmorAndAcessories,
+      DropThings,
+      CraftThings,
+      TargetMobs,
+      EquipWeapon,
+      GatherInitialResources,
+      GatherResources,
+      LootThings,
+      FollowTargets,
+      WalkAroundAttackingOnlyMobsThatAttackYou,
+  ]
 };
