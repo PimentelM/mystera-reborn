@@ -131,7 +131,7 @@ module.exports = {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
-        new FaviconsWebpackPlugin( helpers.root( 'reborn.png'))
+        new FaviconsWebpackPlugin( helpers.root( 'myst.png'))
 
 
 
