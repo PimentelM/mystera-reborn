@@ -7,6 +7,7 @@ import proxy from 'http-proxy-middleware';
 const path = require('path');
 
 
+const http = axios;
 
 let app = express();
 
@@ -48,6 +49,12 @@ for (let server of servers){
 
 app.use(proxy(['!/',...servers.map(x=>"!/ws-"+x),'**'],httpProxy));
 
+// Keep heroku free app online
+if (process.env.PORT){
+    setInterval(function() {
+        http.get(`http://mystera-reborn.herokuapp.com`);
+    }, 300000);
+}
 
 
 let port = process.env.PORT || 80;

@@ -30,7 +30,7 @@ let playerHasStoneTools = async (game: Game) => {
 let playerHasWoodItems = async (game: Game) => {
     return game.player.equip.hasEquipables(
         {
-            "Wood Sword": 2,
+            "Wood Sword": 1,
             "Stone Pickaxe": 1,
             "Stone Axe": 1
         }) || game.iventory.contains("Wood", 15)
@@ -61,7 +61,7 @@ let playerHasBoneItems = async (game: Game) => {
 let playerHasFlintDagger = async (game: Game) => {
     return game.player.equip.hasEquipables(
         {
-            "Flint Dagger": 2,
+            "Flint Dagger": 1,
         }) || game.iventory.contains("Flint", 8)
 };
 
@@ -214,6 +214,12 @@ let CraftThings = {
 let GatherResources = {
     stateDescriptors: [
         {
+            name: "Get Spices",
+            stateDescriptors: [
+                {type: GrindResource, state: {resource: "^Spice Bush$"}}
+            ]
+        },
+        {
             name: "Grind for Initial Tools",
             until: async (game) => await playerIsAtMediumLevel(game) || (await playerHasWoodItems(game) && await playerHasStoneTools(game)),
             stateDescriptors: [
@@ -321,13 +327,17 @@ export let reachLevel20: StateMachineDescriptor = {
     stateDescriptors: [
         PlayerHealth,
         NewbyeVillageHealOnFountain,
+
         EquipArmorAndAcessories,
         CraftThings,
+
         TargetMobs,
         EquipWeapon,
+
         GatherResources,
         LootThings,
         DropThings,
+
         FollowTargets,
         WalkAroundAttackingOnlyMobsThatAttackYou,
     ]
