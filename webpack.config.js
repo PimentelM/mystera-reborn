@@ -17,7 +17,7 @@ var getWsProxy = (srv) => proxy('/ws/' + srv, {
     }
 });
 
-let servers = ["ust", "usw", "use", "eu", "br",  "ldn", "use2", "usw2", /*"sea", "sa"*/];
+let servers = ["ust", "usw", "use", "eu", "br",  "ldn", "use2", "usw2", "sea", "sa"];
 
 let mystera = "http://www.mysteralegacy.com/";
 let isDev = true;
@@ -114,7 +114,7 @@ module.exports = {
         }
     },
     output: {
-        path: helpers.root('dist'),
+        path: helpers.root('public'),
         publicPath: '/',
         filename: 'js/[name].bundle.js',
         chunkFilename: 'js/[id].chunk.js'

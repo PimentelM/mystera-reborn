@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack --mode production"
+    "dev": "webpack-dev-server",
+    "build": "webpack --mode production && tsc -p tsconfig.json -inlineSourceMap -outDir private",
+    "start": "node ./private/server/Index.js"
   },
   "devDependencies": {
     "@babel/core": "~7.2",
@@ -43,6 +44,8 @@
     "axios": "^0.19.0",
     "easystarjs": "^0.4.3",
     "expressjs": "^1.0.1",
+    "mongoose": "^5.6.5",
+    "morgan": "^1.9.1",
     "vue": "~2.6",
     "vue-router": "~3.0"
   }
