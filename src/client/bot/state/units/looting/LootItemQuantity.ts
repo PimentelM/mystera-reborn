@@ -42,19 +42,23 @@ export class LootItemQuantity extends StateUnitClass {
     }
 
     private async getReachableItemPosition(): Promise<TilePoint> {
+        let filters = [];
+
         for (let [item, count] of Object.entries(this.state.items)) {
             if (!count || this.game.iventory.count(item) < count) {
-                let tiles = this.game.map.findTilesWithItem(item, this.state.radius);
-
-
-                // This is to avoid trying to pickup underground seeds.
-                tiles = tiles.filter(x=>x.o.length >= 1 && !!x.o.slice(-1).pop().can_pickup);
-
-
-                if (tiles.length > 0) {
-                    return await this.game.player.nearestReachablePoint(tiles, false);
-                }
+                filters.push(item);
             }
+        }
+
+        if (filters.length == 0) return null;
+
+        let filter = `(${filters.join(`)|(`)})`;
+        let hasPickupableItem = x => x.o.length >= 1 && !!x.o.slice(-1).pop().can_pickup;
+
+        let tiles = this.game.map.findTilesWithItem(filter, this.state.radius).filter(hasPickupableItem);
+
+        if (tiles.length > 0) {
+            return await this.game.player.nearestReachablePoint(tiles, false);
         }
 
         return null

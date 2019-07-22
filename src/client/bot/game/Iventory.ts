@@ -39,9 +39,9 @@ export class Iventory {
         return this.game.window.item_data;
     }
 
-    public use(item: IventoryItem | string ){
+    public use(item: IventoryItem | string, exact = false ){
         if (typeof item == "string"){
-            item = this.findItem(item).shift();
+            item = this.findItem(item, exact).shift();
             if(!item) return false;
         }
 

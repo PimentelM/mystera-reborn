@@ -60,6 +60,16 @@ export class Player {
     }
 
 
+    public async canReach(point : Point, adjacent : boolean) : Promise<boolean>{
+        let path = [];
+        if (adjacent) {
+            path = await this.game.pathfinder.findAdjacentPath(point);
+        } else {
+            path = await this.game.pathfinder.findPath(point);
+        }
+        return path.length > 0;
+    }
+
     // Get the closest walkable point.
     public async nearestReachablePoint<T extends Point>(points: T[], adjacent): Promise<T> {
         points = this.sortByDistance(points);

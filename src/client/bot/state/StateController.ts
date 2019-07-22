@@ -10,7 +10,9 @@ export interface ControllerState {
     lastStateExecuted: StateUnitClass;
     lastExecutionTimestamp: number
     lastExecutedMachine: string,
+    debug: boolean,
     didReload?: boolean
+
 
 }
 
@@ -34,12 +36,23 @@ export class StateController {
         if (this.state.isActivated) {
             // If it was activated before reload, wait for a maximum of 3 cycles for the reload to take effect and re-start.
             // Also resets reload flag.
-            doWhen(() => {this.start(); this.state.didReload = false;}, () => this.state.didReload, this.state.delay, this.state.delay * 3);
+            doWhen(() => {
+                this.start();
+                this.state.didReload = false;
+            }, () => this.state.didReload, this.state.delay, this.state.delay * 3);
         }
     }
 
     public getDefaultState(): ControllerState {
-        return {delay: 200, isActivated: false, stateMachine: null, lastStateExecuted: null, lastExecutedMachine: null, lastExecutionTimestamp: 0}
+        return {
+            delay: 200,
+            isActivated: false,
+            stateMachine: null,
+            lastStateExecuted: null,
+            lastExecutedMachine: null,
+            lastExecutionTimestamp: 0,
+            debug: false
+        }
     }
 
     public async updateApi(game: Game) {
@@ -81,17 +94,25 @@ export class StateController {
     }
 
     // Returns true if some state unit is executed.
-    private async executeStateMachine(stateMachine : IStateMachine) : Promise<boolean>{
+    private async executeStateMachine(stateMachine: IStateMachine): Promise<boolean> {
 
         // Conditions to execute state machine
-        if (stateMachine.condition && !(await stateMachine.condition(this.game))) return false;
-        if (stateMachine.until && (await stateMachine.until(this.game))) return false;
+        if (stateMachine.condition && !(await stateMachine.condition(this.game))) {
+            if(this.state.debug)
+                console.log(`Did not met condition for "${stateMachine.name || stateMachine.constructor.name}" state machine.`, stateMachine.condition);
+            return false;
+        }
+        if (stateMachine.until && (await stateMachine.until(this.game))){
+            if(this.state.debug)
+                console.log(`Already fulfulled purpose of "${stateMachine.name || stateMachine.constructor.name}" state machine`, stateMachine.until);
+            return false;
+        }
 
 
-        if(stateMachine.isComposite){
-            for (let innerStateMachine of stateMachine.stateMachines){
+        if (stateMachine.isComposite) {
+            for (let innerStateMachine of stateMachine.stateMachines) {
                 if (await this.executeStateMachine(innerStateMachine)) {
-                    if(innerStateMachine.name && innerStateMachine.name != this.state.lastExecutedMachine) {
+                    if (innerStateMachine.name && innerStateMachine.name != this.state.lastExecutedMachine) {
                         // console.log(innerStateMachine.name);
                         this.state.lastExecutedMachine = innerStateMachine.name
                     }
@@ -107,12 +128,23 @@ export class StateController {
             if (state.condition && !(await state.condition(this.game))) continue;
             if (state.until && (await state.until(this.game))) continue;
 
-            if (!(await state.isReached())) {
+            let before = new Date().valueOf();
+            let isStateReached = (await state.isReached());
+            let after = new Date().valueOf();
+
+            let elapsedtime = after - before;
+
+            if (this.state.debug) console.log(`Eval of: `, state.constructor.name, `${elapsedtime}ms`);
+
+
+            if (!isStateReached) {
+                let before = new Date().valueOf();
                 await state.reach();
                 let now = new Date().valueOf();
-                let elapsedTime = now - this.state.lastExecutionTimestamp - this.state.delay;
+                let elapsedtime = now - before;
+                let elapsedTimeSinceLastExecution = now - this.state.lastExecutionTimestamp - this.state.delay;
                 this.state.lastExecutionTimestamp = new Date().valueOf();
-                if (this.state.lastStateExecuted != state) console.log(state, `${elapsedTime}ms`);
+                if (this.state.lastStateExecuted != state || this.state.debug) console.log(state, `${elapsedTimeSinceLastExecution}ms`, `${elapsedtime}ms`);
                 this.state.lastStateExecuted = state;
                 return true;
             }

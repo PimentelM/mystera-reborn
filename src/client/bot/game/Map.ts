@@ -85,6 +85,38 @@ export class Map {
     }
 
 
+    public findTilesWithTemplate(template : string, radius : number = Infinity): TilePoint[]{
+        let tiles = [];
+
+
+        let rX = 16;
+        let rY = 13;
+
+        if(radius && radius < 13){
+            rX = radius;
+            rY = radius;
+        }
+
+        for (let oX = -rX; oX <= rX; oX++) {
+            for (let oY = -rY; oY <= rY; oY++) {
+                let x = this.game.player.mob.x + oX;
+                let y = this.game.player.mob.y + oY;
+                let tile = this.game.window.map_index[x * 1e4 + y];
+
+                if(tile && tile.template == template){
+                    (tile as TilePoint).x = x;
+                    (tile as TilePoint).y = y;
+                    tiles.push(tile);
+                }
+
+            }
+        }
+
+
+        return tiles;
+    }
+
+
     public findTilesWithItem(regExp : string, radius : number = Infinity): TilePoint[] {
         let tiles = [];
 

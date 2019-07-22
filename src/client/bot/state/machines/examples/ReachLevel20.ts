@@ -16,6 +16,7 @@ import {DropItem} from "../../units/iventory/DropItem";
 import {FollowTarget} from "../../units/walking/FollowTarget";
 import {UpgradeSkills} from "../../units/upgrades/UpgradeSkills";
 import {upgrades} from "../../../game/Upgrades";
+import {PlantSeed} from "../../units/farming/PlantSeed";
 
 
 //// Predicates
@@ -32,7 +33,8 @@ let playerHasWoodItems = async (game: Game) => {
         {
             "Wood Sword": 1,
             "Stone Pickaxe": 1,
-            "Stone Axe": 1
+            "Stone Axe": 1,
+            "Flint Dagger" : 1,
         }) || game.iventory.contains("Wood", 15)
 };
 
@@ -67,7 +69,7 @@ let playerHasFlintDagger = async (game: Game) => {
 
 
 let playerIsAtMediumLevel = async (game: Game) => {
-    return game.player.mob.level >= 7
+    return game.player.mob.level >= 8
 };
 
 
@@ -77,6 +79,10 @@ let playerHasTarget = async (game: Game) => {
 
 let playerHasCloseTarget = async (game: Game) => {
     return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 1;
+};
+
+let playerHasNoCloseTarget = async (game: Game) => {
+    return !(game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 2);
 };
 
 
@@ -106,6 +112,16 @@ let waypoints = [{"dlevel": "newbie", "x": 28, "y": 42, "radius": 3}, {
     "dlevel": "newbie",
     "x": 61,
     "y": 14,
+    "radius": 3
+}, {"dlevel": "newbie", "x": 48, "y": 15, "radius": 3}, {
+    "dlevel": "newbie",
+    "x": 41,
+    "y": 21,
+    "radius": 3
+}, {"dlevel": "newbie", "x": 38, "y": 15, "radius": 3}, {
+    "dlevel": "newbie",
+    "x": 41,
+    "y": 21,
     "radius": 3
 }, {"dlevel": "newbie", "x": 48, "y": 15, "radius": 3}, {
     "dlevel": "newbie",
@@ -151,11 +167,11 @@ let PlayerHealth: StateMachineDescriptor = {
     name: "Player Health",
     stateDescriptors: [
         {type: HealWithItem, state: {}},
-        {type: EatFood, state: {minHunger : 98, foods : ["^Carrot$"]}},
+        {type: EatFood, state: {minHunger: 98, foods: ["^Carrot$"]}},
         {type: EatFood, state: {}},
         {
             type: UpgradeSkills,
-            state: {skills: [upgrades.weight, upgrades.hp, upgrades.ups, upgrades.exp, upgrades.attack, upgrades.defense, upgrades.star, upgrades.precision]}
+            state: {skills: [upgrades.weight, upgrades.hp, upgrades.ups, upgrades.exp, upgrades.star]}
         },
 
     ]
@@ -177,8 +193,6 @@ let EquipArmorAndAcessories: StateMachineDescriptor = {
 };
 
 
-
-
 let CraftThings = {
     stateDescriptors: [
         {
@@ -192,8 +206,8 @@ let CraftThings = {
             name: "Craft Better Tools",
             condition: playerIsAtMediumLevel,
             stateDescriptors: [
-                {type: CraftItem, state: {items: [{tpl: "bone_pickaxe"}]}},
                 {type: CraftItem, state: {items: [{tpl: "bone_axe"}]}},
+                {type: CraftItem, state: {items: [{tpl: "bone_pickaxe"}]}},
                 {type: CraftItem, state: {items: [{tpl: "flint_dagger"}]}},
             ]
 
@@ -212,6 +226,7 @@ let CraftThings = {
 
 
 let GatherResources = {
+    condition: playerHasNoCloseTarget,
     stateDescriptors: [
         {
             name: "Get Spices",
@@ -252,6 +267,7 @@ let GatherResources = {
 };
 
 let TargetMobs = {
+    name: "Target Mobs",
     stateDescriptors: [
         {type: TargetCreature, state: {retarget: true, range: 5, filters: ["Hornet", "Snake"]}},
         {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*"]}},
@@ -261,6 +277,7 @@ let TargetMobs = {
 };
 
 let LootThings = {
+    name: "Loot Things",
     stateDescriptors: [
         {type: LootItems, state: {filter: "^Bone$", radius: 10}, until: playerHasBoneItems},
         {type: LootItems, state: {filter: "^Pelt$", radius: 10}, until: playerHasPeltItems},
@@ -273,11 +290,11 @@ let LootThings = {
                         "Feather": 0,
                         Worms: 0,
                         "(Holly|Tomato|Aloe) seed$": 0,
-                        "carrot seed$": 30,
+                        "carrot seed$": 80,
                         Pinecone: 0,
                         Clay: 0,
                         "Withered Crop": 0,
-                        "^Carrot$" : 0
+                        "^Carrot$": 0
                     }
             }
         },
@@ -285,6 +302,7 @@ let LootThings = {
 };
 
 let DropThings = {
+    name: "Drop things",
     stateDescriptors: [
         {
             name: "Drop old tools",
@@ -307,19 +325,25 @@ let DropThings = {
                 },
             ]
         },
-        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud: 0, Potato: 0, "Carrot seed$" : 30}}},
+        {type: DropItem, state: {items: {Pelt: 2, Bone: 25, "Raw Meat": 0, Mud: 0, Potato: 0, "Carrot seed$": 100}}},
 
     ]
 };
 
 
 let FollowTargets = {
+    name: "Follow Target",
     stateDescriptors: [
         {type: FollowTarget, state: {}}
     ]
 };
 
-
+let PlantSeeds = {
+    name: "Plant Seeds",
+    stateDescriptors: [
+        {type: PlantSeed, state: { seed : "Carrot Seed", min : 30 }}
+    ]
+};
 //// Full state machine
 
 export let reachLevel20: StateMachineDescriptor = {
@@ -337,6 +361,8 @@ export let reachLevel20: StateMachineDescriptor = {
         GatherResources,
         LootThings,
         DropThings,
+
+        PlantSeeds,
 
         FollowTargets,
         WalkAroundAttackingOnlyMobsThatAttackYou,

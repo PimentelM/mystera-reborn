@@ -5,7 +5,7 @@ import {TilePoint} from "../../../game/Types";
 
 export interface GrindResourceState {
     resource : string,
-
+    radius : number
     tileToGather? : TilePoint
 
 }
@@ -24,7 +24,7 @@ export class GrindResource extends StateUnitClass{
     private lastResend : number = 0;
 
     readonly defaultParams: GrindResourceState = {
-        resource : ""
+        resource : "", radius: 10
     };
 
     async isReached(): Promise<boolean> {
@@ -74,7 +74,7 @@ export class GrindResource extends StateUnitClass{
 
     // Returns the tile with the desired resource
     async getResourceTile(){
-        return await this.game.map.getReachableItemPosition(this.state.resource);
+        return await this.game.map.getReachableItemPosition(this.state.resource,this.state.radius);
     }
 
 
