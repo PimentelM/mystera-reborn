@@ -96,6 +96,12 @@ export class StateController {
     // Returns true if some state unit is executed.
     private async executeStateMachine(stateMachine: IStateMachine): Promise<boolean> {
 
+        // If it is in cooldown, continue.
+        if(stateMachine.checkerCooldown){
+            if(!stateMachine.checkerCooldown.canUse()) return false;
+            else stateMachine.checkerCooldown.use()
+        }
+
         // Conditions to execute state machine
         if (stateMachine.condition && !(await stateMachine.condition(this.game))) {
             if(this.state.debug)
@@ -138,6 +144,7 @@ export class StateController {
 
 
             if (!isStateReached) {
+                state.checkerCooldown && state.checkerCooldown.deactivate();
                 let before = new Date().valueOf();
                 await state.reach();
                 let now = new Date().valueOf();
@@ -147,7 +154,7 @@ export class StateController {
                 if (this.state.lastStateExecuted != state || this.state.debug) console.log(state, `${elapsedTimeSinceLastExecution}ms`, `${elapsedtime}ms`);
                 this.state.lastStateExecuted = state;
                 return true;
-            }
+            } else state.checkerCooldown && state.checkerCooldown.activate();
         }
 
         return false;

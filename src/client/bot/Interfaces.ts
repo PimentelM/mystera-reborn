@@ -1,4 +1,5 @@
 import {Game} from "./game/Game";
+import {Cooldown} from "../../Utils";
 
 
 export type  GamePredicate = (game : Game) => Promise<boolean>
@@ -11,6 +12,8 @@ export abstract class StateUnitClass implements IStateMachine{
     abstract async reach() : Promise<boolean>
     condition: GamePredicate;
     until: GamePredicate;
+
+    checkerCooldown: Cooldown = null;
 
     isComposite: boolean = false;
     name: string = null;
@@ -26,6 +29,7 @@ export interface IStateMachine {
     condition: GamePredicate;
     until: GamePredicate;
     isComposite : boolean
+    checkerCooldown : Cooldown;
 }
 
 export class StateMachine implements IStateMachine{
@@ -35,12 +39,14 @@ export class StateMachine implements IStateMachine{
     stateMachines : IStateMachine[];
     condition: GamePredicate;
     until: GamePredicate;
+    checkerCooldown : Cooldown = null;
 
-    public constructor(name : string, stateMachines : IStateMachine[] , condition : GamePredicate , until : GamePredicate){
+    public constructor(name : string, stateMachines : IStateMachine[] , condition : GamePredicate , until : GamePredicate, checkerCooldown : number){
         this.name = name ;
         this.stateMachines = stateMachines;
         this.condition = condition;
         this.until = until;
+        this.checkerCooldown = checkerCooldown == 0 ? null : new Cooldown(checkerCooldown);
     }
 }
 

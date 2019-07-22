@@ -4180,7 +4180,7 @@ var parse = function(json) {
             for (i = 0; i < jv.abl.length || i < jv.ability.length; i++)
                 jv.abl[i] ? (jv.ability[i] ? jv.ability[i].spr !== jv.abl[i].spr && (jv.ability[i].icon.texture = items[jv.abl[i].spr % 16][Math.floor(jv.abl[i].spr / 16)]) : jv.ability[i] = jv.AbilityButton.create(520 - 68 * i, 362, jv.abl[i].spr, static_container),
                 jv.ability[i].ready && (Date.now() - jv.abl[i].c) / (1e3 * jv.abl[i].cd) < 1 && jv.ability[i].activate(),
-                    jv.ability[i].cooldown = 1e3 * jv.abl[i].cd,
+                    jv.ability[i].checkerCooldown = 1e3 * jv.abl[i].cd,
                     jv.ability[i].last_click = jv.abl[i].c,
                     jv.ability[i].spr = jv.abl[i].spr,
                     jv.ability[i].ind = i,

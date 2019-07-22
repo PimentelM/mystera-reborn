@@ -68,3 +68,35 @@ export function getTimeout(ms, value = false){
     return new Promise<any>((resolve)=>setTimeout(()=>resolve(value),ms));
 
 }
+
+export class Cooldown{
+    cooldown : number;
+    lastUse : number = 0;
+    active : boolean;
+
+    public constructor(cooldown : number){
+        this.cooldown = cooldown;
+    }
+
+
+    public canUse(){
+        return !this.active || new Date().valueOf() - this.lastUse > this.cooldown;
+    }
+
+    public use(){
+        if(!this.canUse()) throw new Error("Cooldown is not ready, can't use.");
+        this.lastUse = new Date().valueOf();
+    }
+
+    public setCooldown(coooldown : number){
+        this.cooldown = coooldown;
+    }
+
+    public deactivate(){
+        this.active = false;
+    }
+
+    public activate() {
+        this.active = true;
+    }
+}

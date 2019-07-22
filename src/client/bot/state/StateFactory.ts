@@ -1,18 +1,18 @@
 import {Game} from "../game/Game";
 import {examples} from "./machines/Examples";
 import {StateMachine, StateUnitClass} from "../Interfaces";
-import {fillInto} from "../../../Utils";
+import {Cooldown, fillInto} from "../../../Utils";
 
 type UnitTypeConstructor = new () => StateUnitClass;
 
 export type UnitType = UnitTypeConstructor;
 
 export type StateUnitDescriptor = {
-    type: UnitType, state: {}, until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
+    type: UnitType, state: {}, checkerCooldown? : number,  until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
 }
 
 export type StateMachineDescriptor = {
-    name? : string, stateDescriptors : ( StateUnitDescriptor |  StateMachineDescriptor) [], until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
+    name? : string, stateDescriptors : ( StateUnitDescriptor |  StateMachineDescriptor) [], checkerCooldown? : number, until? : (game : Game) => Promise<boolean>, condition? : (game : Game) => Promise<boolean>
 }
 
 
@@ -26,7 +26,7 @@ export class StateFactory {
     }
 
     public build(machineDescriptor: StateMachineDescriptor) : StateMachine {
-        let {name, stateDescriptors , until, condition} = machineDescriptor;
+        let {name, stateDescriptors , until, condition, checkerCooldown} = machineDescriptor;
 
         let stateUnits = null;
         let stateMachines = [];
@@ -40,7 +40,7 @@ export class StateFactory {
             }
         }
 
-        return new StateMachine(name || null, stateMachines, condition,until);
+        return new StateMachine(name || null, stateMachines, condition,until, checkerCooldown || 0);
     }
 
 
@@ -56,11 +56,12 @@ export class StateFactory {
     }
 
     private buildUnit(unitDescriptor : StateUnitDescriptor): StateUnitClass {
-        let {type , state , until, condition} = unitDescriptor;
+        let {type , state , until, condition, checkerCooldown} = unitDescriptor;
 
         let unit = new type();
         unit.state = state;
         unit.game = this.game;
+        if(checkerCooldown) unit.checkerCooldown = new Cooldown(checkerCooldown);
         if(condition) unit.condition = condition;
         if(until) unit.until = until;
         fillInto(unit.defaultParams, unit.state);

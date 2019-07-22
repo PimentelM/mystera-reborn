@@ -96,7 +96,7 @@ export class PathFinder {
         let {destination} = points;
 
         if (!destination) {
-            console.log("Point not found.");
+            //console.log("Point not found.");
             return [];
         }
 

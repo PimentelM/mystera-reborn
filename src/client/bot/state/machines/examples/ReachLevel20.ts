@@ -270,8 +270,7 @@ let TargetMobs = {
     name: "Target Mobs",
     stateDescriptors: [
         {type: TargetCreature, state: {retarget: true, range: 5, filters: ["Hornet", "Snake"]}},
-        {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*"]}},
-        {type: TargetCreature, state: {retarget: true, range: 7, filters: ["Raccoon"]}},
+        {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*","Raccoon"]}},
         {type: TargetCreature, state: {retarget: true, range: 3, filters: [""]}},
     ]
 };
