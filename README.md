@@ -13,4 +13,4 @@ The modified version of the game will be avaliable at `http://localhot:8000`
 
 ## Website
 
-- [Mystera Legacy](https://www.mysteralegacy.com/)
+- [Mystera Reborn](http://mystera-reborn.herokuapp.com)
