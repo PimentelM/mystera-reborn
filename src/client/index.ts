@@ -56,6 +56,7 @@ function updateBotInstance() {
     window[botVar] = bot;
     console.log("window.bot instance updated.")
 
+    // @ts-ignore
     if(!window.vue_app){
         let app = new Vue({
             el: '#app',
@@ -63,6 +64,7 @@ function updateBotInstance() {
             template: '<App/>'
         });
         console.log(app);
+        // @ts-ignore
         window.vue_app = app;
     }
 
