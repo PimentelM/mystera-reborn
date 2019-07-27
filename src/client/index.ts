@@ -3,7 +3,8 @@ import axios from "axios";
 import {setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 import {Connection} from "./bot/Connection";
 import {doWhen} from "../Utils";
-
+import Vue from "vue";
+import App from "./App.vue"
 //hmrLogLevel('error');
 
 // @ts-ignore
@@ -55,6 +56,17 @@ function updateBotInstance() {
     window[botVar] = bot;
     console.log("window.bot instance updated.")
 
+    if(!window.vue_app){
+        let app = new Vue({
+            el: '#app',
+            components: { App },
+            template: '<App/>'
+        });
+        console.log(app);
+        window.vue_app = app;
+    }
+
+
     // else {
     //
     //     if (window[botVar] && window[botVar]["reloadBotObjects"]) {
@@ -97,7 +109,7 @@ body{margin:0;padding:0;background-color:black}
     let update_map_hook = '<script>window.jv_updateMap = jv.update_map;jv.update_map = (e)=>{isUpdatingMap=true;jv_updateMap(e);isUpdatingMap = false}<\\/script>';  
     let on_login_hook = '<script>window._init_network = window.init_network; window.init_network = ()=>{_init_network(); window.bot = makeBot();}<\\/script>';
     let clearConsole = ''||  '<script>window.console.clear()<\\/script>'
-    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + init_dialogs_hook + on_login_hook + update_map_hook + clearConsole)}
+    if(typeof(mlmeta) !== 'undefined') {document.write('<script src="/play/ml.min.js?ver='+mlmeta.version+'"><\\/script>' + init_dialogs_hook + on_login_hook + update_map_hook)}
     else document.write('<script src="/play/ml.min.js"><\\/script>');
 </script>
 <script src="/ph/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -133,6 +145,10 @@ window.addEventListener("orientationchange",function(){
 	<canvas tabindex=0 id='jv' style="background-color:black;width:100%;height:100%;margin:0;min-width:740px;min-height:416px;"></canvas>
 </div>
 
+<div id="app">
+
+</div>
+
 
 <input type="text" id="script_name" value="" style="margin:0;display:none;">
 <div id="script_code" style="margin:0;width:100%;height:600px;display:none;"></div>
@@ -156,4 +172,5 @@ for (let i = 1; i <= 10; i++){
 }
 
 if (!window['game-is-rendered']) renderGame();
+
 

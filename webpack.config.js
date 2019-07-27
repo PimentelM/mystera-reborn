@@ -11,7 +11,6 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 
-
 var getWsProxy = (srv) => proxy('/ws/' + srv, {
     target: `wss://${srv}.mysteralegacy.com`,
     changeOrigin: true, // for vhosted sites, changes host header to match to target's host
@@ -23,7 +22,7 @@ var getWsProxy = (srv) => proxy('/ws/' + srv, {
     }
 });
 
-let servers = ["ust", "usw", "use", "eu", "br",  "ldn", "use2", "usw2", "sea", "sa"];
+let servers = ["ust", "usw", "use", "eu", "br", "ldn", "use2", "usw2", "sea", "sa"];
 
 let mystera = "http://www.mysteralegacy.com/";
 let isDev = true;
@@ -31,7 +30,7 @@ let isDev = true;
 
 let srcPath = 'src/client';
 
-let iconPath = helpers.root( 'mysteraLegacySquare.png');
+let iconPath = helpers.root('mysteraLegacySquare.png');
 
 module.exports = {
     entry: {
@@ -41,7 +40,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.vue', '.ts', '.tsx'],
         alias: {
-            'vue$': isDev ? 'vue/dist/vue.runtime.js' : 'vue/dist/vue.runtime.min.js',
+            'vue$': isDev ? 'vue/dist/vue.esm.js' : 'vue/dist/vue.runtime.min.js',
             '@': helpers.root(srcPath)
         }
     },
@@ -50,14 +49,22 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                use: ["ts-loader"],
-                exclude: /node_modules/
-            },
-            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
+                options: {
+                    esModule: true
+                },
                 include: [helpers.root(srcPath)]
+            },
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                options: {
+                    appendTsSuffixTo: [/\.vue$/]
+                },
+                exclude: /node_modules/,
+
+
             },
             {
                 test: /\.js$/,
@@ -98,7 +105,7 @@ module.exports = {
 
         before: function (app) {
 
-            for (let server of servers){
+            for (let server of servers) {
                 app.use(getWsProxy(server));
             }
 
@@ -106,7 +113,7 @@ module.exports = {
         },
         proxy: [
             {
-                context: ['**', '!/',...servers.map(x=>"!/ws-"+x)],
+                context: ['**', '!/', ...servers.map(x => "!/ws-" + x)],
                 "changeOrigin": true,
                 "cookieDomainRewrite": "localhost",
                 "target": mystera,
@@ -133,7 +140,7 @@ module.exports = {
 
     plugins: [
         new HTMLPlugin({
-            title : "Mystera Reborn"
+            title: "Mystera Reborn"
         }),
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
@@ -203,7 +210,7 @@ module.exports = {
             description: 'Enhanced client for Mystera Legacy!',
             background_color: '#000000',
             orientation: "omit",
-            theme_color : '#000000',
+            theme_color: '#000000',
             inject: true,
             ios: {
                 'apple-mobile-web-app-title': 'Mystera Reborn',
@@ -216,13 +223,13 @@ module.exports = {
                 dontCacheBustUrlsMatching: /\.\w{8}\./,
                 filename: 'service-worker.js',
                 minify: true,
-                importScripts : ['serviceWorker.js'],
+                importScripts: ['serviceWorker.js'],
                 navigateFallback: '/',
                 staticFileGlobsIgnorePatterns: [/\.map$/, /manifest\.json$/]
             }
         ),
         new CopyPlugin([
-            { from: helpers.root("src/client/serviceWorker.js"), to: helpers.root('public/serviceWorker.js') },
+            {from: helpers.root("src/client/serviceWorker.js"), to: helpers.root('public/serviceWorker.js')},
         ])
 
 
