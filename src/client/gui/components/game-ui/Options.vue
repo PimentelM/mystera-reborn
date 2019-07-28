@@ -26,5 +26,7 @@
 </script>
 
 <style scoped>
-
+button{
+    display: block;
+}
 </style>
