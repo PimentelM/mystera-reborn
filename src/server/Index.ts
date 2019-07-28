@@ -1,10 +1,10 @@
-import axios from 'axios';
 import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import proxy from 'http-proxy-middleware';
 const path = require('path');
+const axios = require('axios');
 
 
 const http = axios;
