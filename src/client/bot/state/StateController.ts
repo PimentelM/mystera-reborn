@@ -93,6 +93,10 @@ export class StateController {
         return this.state.isActivated && isCurrentInstance;
     }
 
+    get isActivated(){
+        return this.state.isActivated;
+    }
+
     // Returns true if some state unit is executed.
     private async executeStateMachine(stateMachine: IStateMachine): Promise<boolean> {
 

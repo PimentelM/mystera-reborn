@@ -4,7 +4,7 @@ import {setLogLevel as hmrLogLevel} from 'webpack/hot/log';
 import {Connection} from "./bot/Connection";
 import {doWhen} from "../Utils";
 import Vue from "vue";
-import App from "./App.vue"
+import App from "./gui/App.vue"
 //hmrLogLevel('error');
 
 // @ts-ignore

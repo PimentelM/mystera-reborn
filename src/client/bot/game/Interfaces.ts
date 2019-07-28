@@ -1,12 +1,13 @@
 import {IventoryItem, Mob, Point, PointMap, Tile} from "./Types";
 import "./Types"
-import {ControllerState} from "../state/StateController";
+import {ControllerState, StateController} from "../state/StateController";
 import {ParserState} from "./Parser";
+import {StateFactory} from "../state/StateFactory";
 
 
 
 // Persistent data from the bot
-export interface IGameWindow {
+export interface IBotState {
     controllerState : object | ControllerState
 
     parsersState: object | ParserState
@@ -19,7 +20,7 @@ export interface IGameWindow {
 
 
 // global variables from the bot
-export interface IGameWindow {
+export interface IGameWindow extends IBotState{
     Player : any,
     GameMap : any,
     Iventory : any,
@@ -31,8 +32,8 @@ export interface IGameWindow {
     Upgrades : any,
     Scanner : any
     PathFinder : any,
-    StateController : any,
-    StateFactory : any,
+    StateController : StateController,
+    StateFactory : StateFactory,
     Parser : any
 }
 
