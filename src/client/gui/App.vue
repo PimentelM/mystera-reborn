@@ -27,8 +27,8 @@
     }
 
     #OptionsButton {
-        position: relative;
-        top: 85%;
+        position: absolute;
+        top: 87%;
         left: 92%;
     }
 
