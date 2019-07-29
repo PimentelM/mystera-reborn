@@ -74,7 +74,7 @@ let playerIsAtMediumLevel = async (game: Game) => {
 
 
 let playerIsAtLowLevel = async (game: Game) => {
-    return game.player.mob.level <= 5
+    return game.player.mob.level < 5
 };
 
 let playerHasCloseTarget = async (game: Game) => {
