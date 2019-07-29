@@ -73,8 +73,8 @@ let playerIsAtMediumLevel = async (game: Game) => {
 };
 
 
-let playerHasTarget = async (game: Game) => {
-    return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 5;
+let playerIsAtLowLevel = async (game: Game) => {
+    return game.player.mob.level <= 5
 };
 
 let playerHasCloseTarget = async (game: Game) => {
@@ -82,7 +82,7 @@ let playerHasCloseTarget = async (game: Game) => {
 };
 
 let playerHasNoCloseTarget = async (game: Game) => {
-    return !(game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 2);
+    return !(game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 1);
 };
 
 
@@ -269,9 +269,11 @@ let GatherResources = {
 let TargetMobs = {
     name: "Target Mobs",
     stateDescriptors: [
-        {type: TargetCreature, state: {retarget: true, range: 5, filters: ["Hornet", "Snake"]}},
-        {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*","Raccoon"]}},
-        {type: TargetCreature, state: {retarget: true, range: 3, filters: [""]}},
+        {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Rat"]}, condition : playerIsAtLowLevel },
+        {type: TargetCreature, state: {retarget: true, range: 5, filters: ["Hornet", "Snake"]}, condition : playerIsAtMediumLevel},
+        {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*"]}},
+        {type: TargetCreature, state: {retarget: true, range: 8, filters: ["Raccoon"]}},
+        {type: TargetCreature, state: {retarget: true, range: 2, filters: [""]}},
     ]
 };
 
