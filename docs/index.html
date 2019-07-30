@@ -2,12 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Mystera Reborn</title>
 </head>
 <body>
 
+<div class="container">
+    <div class="vertical-center">
+        <h1>Mystera Reborn</h1>
+        <div>
+            <p>Mystera reborn is a mod project for the game Mystera Legacy.</p>
+            <p>The goal of this project is to build a suitable laboratory for experiments with artificial inteligence.</p>
+            <p>Here will be placed all the documentation and content regarding this project.</p>
+        </div>
+
+        <h1>Access</h1>
+        <div>
+            <p>You can click <a href="http://mystera-reborn.herokuapp.com">here</a> if you want to access the online version of this mod.</p>
+            <p>For now, you can explore the mod API capbilities by playing with the object <strong>Bot</strong> avaiable at the console window.</p>
+            <p>Start by executing the command <strong>Bot.game.player.say("Hello World")</strong></p>
+        </div>
+
+        <h1>Source Code</h1>
+        <div>
+            <p>You can have access to the source code repository if you are a recruiter or just a curious person.</p>
+            <p>Contact me at <a href="mailto:mateus.pimentel.w@gmail.com">mateus.pimentel.w@gmail.com</a></p>
+        </div>
+    </div>
+</div>
+
+
 </body>
 <script>
-    window.location = `http://mystera-reborn.herokuapp.com`;
+    // window.location = `http://mystera-reborn.herokuapp.com`;
 </script>
+<style>
+    .vertical-center {
+        margin: 0;
+        position: absolute;
+        top: 40%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+</style>
 </html>
