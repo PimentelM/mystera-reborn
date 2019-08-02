@@ -15,7 +15,7 @@ let predicateIt = (test: CreatureFilter): MobPredicate => {
 
     if (typeof test === "string") {
         let regexp = test;
-        test = (x: Mob) => new RegExp(regexp, "i").test(x.name);
+        test = (x: Mob) => new RegExp(`^${regexp}$`, "i").test(x.name);
     }
 
     return test as MobPredicate

@@ -13,7 +13,7 @@ export class Map {
 
 
     get dlevel() {
-        return this.game.window.dlevel;
+        return this.game.window.dlevel || "";
     }
 
     public getTile(p : Point): Tile {
@@ -47,7 +47,7 @@ export class Map {
     public getItemAt(tile : Tile, regExp : string) : GroundItem{
 
         let test = (name: string, regExp: string): boolean => {
-            return new RegExp(regExp,"i").test(name);
+            return new RegExp(`^${regExp}$`,"i").test(name);
         };
 
         if (!tile || !tile.o) return null;

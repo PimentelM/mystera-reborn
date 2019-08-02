@@ -18,13 +18,13 @@ export abstract class StateUnitClass implements IStateMachine{
     isComposite: boolean = false;
     name: string = null;
     stateMachines: StateMachine[] = null;
-    stateUnits: StateUnitClass[] = [this];
+    stateUnit: StateUnitClass = this;
 }
 
 
 export interface IStateMachine {
     name : string;
-    stateUnits : StateUnitClass[];  // Execute individual state units
+    stateUnit : StateUnitClass;  // Execute individual state units
     stateMachines : IStateMachine[]; // But if there are state machines, the controller will execute them instead, recursively
     condition: GamePredicate;
     until: GamePredicate;
@@ -35,7 +35,7 @@ export interface IStateMachine {
 export class StateMachine implements IStateMachine{
     name : string;
     isComposite : boolean = true;
-    stateUnits : StateUnitClass[] = null;  // This state machine class is always "composite"
+    stateUnit : StateUnitClass = null;  // This state machine class is always "composite"
     stateMachines : IStateMachine[];
     condition: GamePredicate;
     until: GamePredicate;
