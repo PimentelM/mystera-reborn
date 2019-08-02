@@ -5,7 +5,17 @@ import {Connection} from "./bot/Connection";
 import {doWhen} from "../Utils";
 import Vue from "vue";
 import App from "./gui/App.vue"
+import VueStates from '@sum.cumo/vue-states'
+
+Vue.use(
+    VueStates
+);
+
 //hmrLogLevel('error');
+
+
+// @ts-ignore
+window._Map = window.Map;
 
 // @ts-ignore
 if (module.hot) {
@@ -33,6 +43,9 @@ window.p = (x, y) => {
 let bot : Bot;
 
 function updateBotInstance() {
+    // @ts-ignore
+    window.Map = window._Map;
+
     if (!window['connection']) {
         console.log("No mystera websocket.");
         return;
@@ -59,10 +72,9 @@ function updateBotInstance() {
     // @ts-ignore
     if(!window.vue_app){
         let app = new Vue({
-            el: '#app',
-            components: { App },
-            template: '<App/>'
-        });
+            render: h => h(App),
+        }).$mount('#app');
+
         console.log(app);
         // @ts-ignore
         window.vue_app = app;
@@ -171,6 +183,7 @@ for (let i = 1; i <= 10; i++){
 <html>
 `);
     window['game-is-rendered'] = true;
+    window.Map = window._Map;
 }
 
 if (!window['game-is-rendered']) renderGame();

@@ -13,7 +13,7 @@ export class Map {
 
 
     get dlevel() {
-        return this.game.window.dlevel;
+        return this.game.window.dlevel || "";
     }
 
     public getTile(p : Point): Tile {

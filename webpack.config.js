@@ -57,6 +57,11 @@ module.exports = {
                 include: [helpers.root(srcPath)]
             },
             {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                include: [helpers.root(srcPath)]
+            },
+            {
                 test: /\.tsx?$/,
                 loader: "ts-loader",
                 options: {
@@ -65,11 +70,6 @@ module.exports = {
                 exclude: /node_modules/,
 
 
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                include: [helpers.root(srcPath)]
             },
             {
                 test: /\.css$/,
@@ -103,6 +103,11 @@ module.exports = {
         compress: true,
         port: 8000,
         host: "0.0.0.0",
+
+        watchOptions: {
+            aggregateTimeout: 300,
+            poll: 1000
+        },
 
         before: function (app) {
 

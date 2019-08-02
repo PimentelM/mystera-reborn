@@ -97,7 +97,7 @@ export class Scanner {
         return value;
     };
 
-    public scan(object, f, maxDepth = this.maxDepth) {
+    public scan(f,object = window, maxDepth = this.maxDepth) {
         let isEqualTo = (a) => (x) => x===a;
         if (this.acceptedTypes[typeof f]) f = isEqualTo(f);
         this.rootPathTable = {};

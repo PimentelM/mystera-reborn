@@ -1,24 +1,29 @@
 <template>
     <div>
-        <button @click="execute">Run</button>
-        <button @click="stop">Stop</button>
+        <button class="stopButton" v-if="Controller.isActivated" @click="stop">Stop</button>
+        <button class="startButton" v-else @click="execute">Start</button>
     </div>
 </template>
 
-<script lang="ts">
+<script>
     import {IGameWindow} from "../../../bot/game/Interfaces";
     import {ControllerState, StateController} from "../../../bot/state/StateController";
 
     export default {
         name: "Options",
+
+        injectModels: [
+            'Controller',
+        ],
+
         methods: {
-            execute() {
-                (window as unknown as IGameWindow).StateController.execute(
-                    (window as unknown as IGameWindow).StateFactory.build(
-                        (window as unknown as IGameWindow).StateFactory.examples.reachLevel20));
+            async execute() {
+                window.StateController.execute(
+                    window.StateFactory.build(
+                        window.StateFactory.examples.reachLevel20));
             },
             stop() {
-                (window as unknown as IGameWindow).StateController.stop();
+                window.StateController.stop();
             }
         }
 
@@ -26,7 +31,4 @@
 </script>
 
 <style scoped>
-button{
-    display: block;
-}
 </style>
