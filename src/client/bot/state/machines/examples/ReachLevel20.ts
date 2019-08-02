@@ -280,18 +280,19 @@ let TargetMobs = {
 let LootThings = {
     name: "Loot Things",
     stateDescriptors: [
-        {type: LootItems, state: {filter: "^Bone$", radius: 10}, until: playerHasBoneItems},
-        {type: LootItems, state: {filter: "^Pelt$", radius: 10}, until: playerHasPeltItems},
+        {type: LootItems, state: {filter: "Bone", radius: 10}, until: playerHasBoneItems},
+        {type: LootItems, state: {filter: "Pelt", radius: 10}, until: playerHasPeltItems},
         {
             type: LootItemQuantity, state: {
                 radius: 8, items:
                     {
+                        "Silver.*" : 0,
                         Salmonberry: 20,
                         "Healing Potion": 0,
                         "Feather": 0,
                         Worms: 0,
-                        "(Holly|Tomato|Aloe) seed$": 0,
-                        "carrot seed$": 80,
+                        "(Holly|Tomato|Aloe) seed": 0,
+                        "carrot seed": 80,
                         Pinecone: 0,
                         Clay: 0,
                         "Withered Crop": 0,
