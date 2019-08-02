@@ -132,11 +132,11 @@ export class StateController {
             return false;
         }
 
-        for (let state of stateMachine.stateUnits) {
-
+        {
+            let state = stateMachine.stateUnit;
             // Conditions to execute state unit
-            if (state.condition && !(await state.condition(this.game))) continue;
-            if (state.until && (await state.until(this.game))) continue;
+            if (state.condition && !(await state.condition(this.game))) return false;
+            if (state.until && (await state.until(this.game))) return false;
 
             let before = new Date().valueOf();
             let isStateReached = (await state.isReached());
