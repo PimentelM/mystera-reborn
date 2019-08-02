@@ -5,7 +5,14 @@ import {Connection} from "./bot/Connection";
 import {doWhen} from "../Utils";
 import Vue from "vue";
 import App from "./gui/App.vue"
+import VueStates from '@sum.cumo/vue-states'
+
+Vue.use(
+    VueStates
+);
+
 //hmrLogLevel('error');
+
 
 // @ts-ignore
 window._Map = window.Map;
@@ -65,10 +72,9 @@ function updateBotInstance() {
     // @ts-ignore
     if(!window.vue_app){
         let app = new Vue({
-            el: '#app',
-            components: { App },
-            template: '<App/>'
-        });
+            render: h => h(App),
+        }).$mount('#app');
+
         console.log(app);
         // @ts-ignore
         window.vue_app = app;

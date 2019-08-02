@@ -1,27 +1,27 @@
 <template>
-    <div v-if="mob">
-<!--        <p><strong>Player:</strong> {{mob.name}}</p>-->
-<!--        <p><strong>Level:</strong> {{mob.level}}</p>-->
-<!--        <p><strong>Position:</strong> {{mob.x}} {{mob.y}}</p>-->
-        <p><strong>Map:</strong> {{dlevel}}</p>
+    <div>
+        <div class="lastStateMachineExecuted" v-if="Controller.isActivated">
+            {{Controller.lastStateExecuted}}
+        </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: "Hud.vue",
-        computed : {
-            mob(){
-                return true || window.Player.mob;
-            },
-            dlevel(){
-                return window.dlevel;
-            }
+        name: "Hud",
 
-        }
+        injectModels: [
+            'Controller',
+        ],
+
     }
 </script>
 
 <style scoped>
+
+    .lastStateMachineExecuted{
+        color: white;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    }
 
 </style>
