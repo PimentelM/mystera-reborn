@@ -4,7 +4,7 @@ import {TilePoint} from "./Types";
 let wood = ["Fir tree"];
 let stone = ["Plain Rock"];
 
-let listToRegex = (list) => `(${list.join(")|(")})`;
+let listToRegex = (list) => `(^${list.join("$)|(^")}$)`;
 
 export class Resouces {
     public game: Game;

@@ -18,7 +18,7 @@ export class Iventory {
         this.game = game;
     }
 
-    public findItem(regExp: string, exact = false): IventoryItem[] {
+    public findItem(regExp: string, exact = true): IventoryItem[] {
         let items: IventoryItem[] = [];
 
         let test = (str1: string, regExp: string): boolean => {
