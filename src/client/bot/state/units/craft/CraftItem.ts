@@ -42,11 +42,9 @@ export class CraftItem extends StateUnitClass{
     private async getItemToCraft() : Promise<string>{
         for (let {tpl,quantity} of this.state.items){
 
-            let {name,recipe, level} = await this.game.craft.getInfo(tpl);
+            let {name,recipe} = await this.game.craft.getInfo(tpl);
 
             if(!name) continue;
-
-            if(this.game.player.mob.level < level) continue;
 
             let itemCount = this.state.equipable ? this.game.player.equip.countEquipable(name) : this.game.iventory.count(name);
             if (itemCount >= (quantity || 1) )  continue;

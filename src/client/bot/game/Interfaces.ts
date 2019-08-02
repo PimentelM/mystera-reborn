@@ -50,6 +50,8 @@ export interface IGameWindow {
 
     dlevel : string,
 
+    build_data : {t : string, r : {[material : string] : number}, n : string}[],
+
     target : {id:number}
     parse : (object : object) => any
     mob_ref: Mob[]

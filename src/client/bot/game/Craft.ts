@@ -1,7 +1,7 @@
 import {Game} from "./Game";
 import {getTimeout} from "../../../Utils";
 
-type ItemData = {name : string, recipe : {[material : string] : number}, level : number}
+type ItemData = {name : string, recipe : {[material : string] : number}}
 export class Craft{
     private game : Game;
     private cache : {[tpl :string] : ItemData} = {};
@@ -19,6 +19,13 @@ export class Craft{
 
     public async getInfo(tpl : string) : Promise<ItemData>{
         if (this.cache[tpl] !== undefined) return this.cache[tpl];
+        let localData = this.game.window.build_data.find(x=>x.t == tpl);
+        if (localData){
+            return {
+                name : localData.n,
+                recipe : localData.r,
+            }
+        }
 
         let recipeFromResponse = (response) => {
             let recipe = {};
@@ -42,8 +49,7 @@ export class Craft{
                         let response = regex.exec(data)[0];
                         let name = response.split("<strong>")[1].split("</strong>")[0];
                         let recipe = recipeFromResponse(response.split("requires: ")[1]);
-                        let level = Number(response.split("Level: ")[1]) || 0;
-                        remoteResolve.resolve({name,recipe,level});
+                        remoteResolve.resolve({name,recipe});
                     }
                 }
             }
