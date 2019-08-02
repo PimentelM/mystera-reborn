@@ -8,6 +8,9 @@ import App from "./gui/App.vue"
 //hmrLogLevel('error');
 
 // @ts-ignore
+window._Map = window.Map;
+
+// @ts-ignore
 if (module.hot) {
     // @ts-ignore
     module.hot.accept();
@@ -33,6 +36,9 @@ window.p = (x, y) => {
 let bot : Bot;
 
 function updateBotInstance() {
+    // @ts-ignore
+    window.Map = window._Map;
+
     if (!window['connection']) {
         console.log("No mystera websocket.");
         return;
@@ -171,6 +177,7 @@ for (let i = 1; i <= 10; i++){
 <html>
 `);
     window['game-is-rendered'] = true;
+    window.Map = window._Map;
 }
 
 if (!window['game-is-rendered']) renderGame();
