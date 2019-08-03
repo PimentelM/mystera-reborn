@@ -1,4 +1,4 @@
 
 export default {
-    db_conn : process.env.db_conn
+    database : process.env.db_conn
 }
