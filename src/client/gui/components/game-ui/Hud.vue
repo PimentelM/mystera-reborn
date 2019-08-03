@@ -22,6 +22,7 @@
     .lastStateMachineExecuted{
         color: white;
         text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        font-size: 120%;
     }
 
 </style>

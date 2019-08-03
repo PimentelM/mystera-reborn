@@ -22,5 +22,15 @@ export default {
         isActivated(){
             return this.state.isActivated;
         }
+    },
+    methods: {
+        async execute() {
+            window.StateController.execute(
+                window.StateFactory.build(
+                    window.StateFactory.examples.reachLevel20));
+        },
+        stop() {
+            window.StateController.stop();
+        }
     }
 }

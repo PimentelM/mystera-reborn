@@ -11,8 +11,8 @@
 
 
             <div>
-                <md-button class="md-mini md-raised md-error" v-if="Controller.isActivated" @click="stop">Stop</md-button>
-                <md-button class="md-mini md-raised md-primary" v-else @click="execute">Start</md-button>
+                <md-button class="md-mini md-raised md-error" v-if="Controller.isActivated" @click="Controller.stop">Stop</md-button>
+                <md-button class="md-mini md-raised md-primary" v-else @click="Controller.execute">Start</md-button>
             </div>
 
 
@@ -31,17 +31,6 @@
 
         name: "Main",
 
-
-        methods: {
-            async execute() {
-                window.StateController.execute(
-                    window.StateFactory.build(
-                        window.StateFactory.examples.reachLevel20));
-            },
-            stop() {
-                window.StateController.stop();
-            }
-        }
     }
 </script>
 

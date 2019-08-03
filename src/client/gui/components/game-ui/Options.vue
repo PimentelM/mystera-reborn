@@ -1,11 +1,26 @@
 <template>
 
-    <md-button id="openGui" @click="Gui.open" class="md-icon-button">
-        <md-icon class="">
-            whatshot
-        </md-icon>
-    </md-button>
+    <div>
 
+        <div v-if="demo">
+            <md-button class="md-mini md-raised md-accent md-icon-button" v-if="Controller.isActivated" @click="Controller.stop">
+                <md-icon>stop</md-icon>
+            </md-button>
+            <md-button class="md-mini md-raised md-primary md-icon-button" v-else @click="Controller.execute">
+                <md-icon>play_arrow</md-icon>
+            </md-button>
+        </div>
+
+        <div v-else>
+            <md-button id="openGui" @click="Gui.open" class="md-icon-button">
+                <md-icon class="">
+                    whatshot
+                </md-icon>
+            </md-button>
+        </div>
+
+
+    </div>
 </template>
 
 <script>
@@ -16,8 +31,14 @@
         name: "Options",
 
         injectModels: [
-            'Gui',
+            'Gui',"Controller"
         ],
+
+        data(){
+            return {
+                demo : true
+            }
+        }
     }
 
 </script>
