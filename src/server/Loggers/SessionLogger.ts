@@ -11,28 +11,33 @@ export type SessionInfo = {
 
 export type Message = {
     type : MessageType,
-    data : Buffer
+    data : Buffer,
+    timestamp : number
 }
 
 export class SessionLogger {
     info : SessionInfo;
-
+    timestamp : number;
     sessionData : Message[];
 
     constructor(info : SessionInfo){
         this.info = info;
+        this.timestamp = Date.now();
     }
 
+    private log(type,data){
+        this.sessionData.push({type , data, timestamp : Date.now()})
+
+    }
     public upstreamLogger(data){
-        this.sessionData.push({type : MessageType.up, data})
+        this.log(MessageType.up, data)
     }
 
     public downstreamLogger(data){
-        this.sessionData.push({type : MessageType.down, data})
+        this.log(MessageType.down, data)
     }
-
-
-    close() {
+    
+    public close() {
 
     }
 }
