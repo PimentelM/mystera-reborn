@@ -6,7 +6,8 @@ enum MessageType {
 
 export type SessionInfo = {
     headers : object,
-    server : string
+    server : string,
+    ip : string
 }
 
 export type Message = {
@@ -18,7 +19,8 @@ export type Message = {
 export class SessionLogger {
     info : SessionInfo;
     timestamp : number;
-    sessionData : Message[];
+    sessionData : Message[] = [];
+    isActive : boolean = true;
 
     constructor(info : SessionInfo){
         this.info = info;
@@ -36,8 +38,8 @@ export class SessionLogger {
     public downstreamLogger(data){
         this.log(MessageType.down, data)
     }
-    
-    public close() {
 
+    public close() {
+        this.isActive = false;
     }
 }

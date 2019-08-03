@@ -43,6 +43,7 @@ var getWsProxy = (srv) => {
             let info = {
                 headers : req.headers,
                 server : options.target.host,
+                ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress || "::1"
             };
 
             let sessionLogger = new SessionLogger(info);
