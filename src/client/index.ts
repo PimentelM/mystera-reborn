@@ -20,7 +20,7 @@ Vue.use(
     VueMaterial
 );
 
-//hmrLogLevel('error');
+hmrLogLevel('error');
 
 
 // @ts-ignore

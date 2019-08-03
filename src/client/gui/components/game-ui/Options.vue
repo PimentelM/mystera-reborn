@@ -1,7 +1,7 @@
 <template>
 
     <md-button id="openGui" @click="Gui.open" class="md-icon-button">
-        <md-icon>
+        <md-icon class="">
             whatshot
         </md-icon>
     </md-button>
@@ -23,7 +23,5 @@
 </script>
 
 <style scoped>
-    i{
-        color: deepskyblue !important;
-    }
+
 </style>
