@@ -57,6 +57,7 @@
     "http-proxy-middleware": "^0.19.1",
     "mongoose": "^5.6.5",
     "morgan": "^1.9.1",
+    "simples": "^0.8.8",
     "sw-precache-webpack-plugin": "^0.11.5",
     "vue": "~2.6",
     "vue-material": "^1.0.0-beta-11",
