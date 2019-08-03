@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <Main v-if="Gui.isOpen"></Main>
+        <Main id="Main" v-if="Gui.isOpen"></Main>
         <Options v-else id="OptionsButton"></Options>
         <Hud id="Hud"></Hud>
     </div>
@@ -42,7 +42,7 @@
     #OptionsButton {
         position: absolute;
         top: 87%;
-        left: 92%;
+        left: 93%;
     }
 
     #Hud {

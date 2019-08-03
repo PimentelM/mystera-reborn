@@ -1,5 +1,5 @@
 <template>
-    <div id="Main">
+    <div>
 
         <md-content id="rootMenu">
             <md-toolbar class="md-dense">

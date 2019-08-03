@@ -104,10 +104,6 @@ module.exports = {
         port: 8000,
         host: "0.0.0.0",
 
-        watchOptions: {
-            aggregateTimeout: 300,
-            poll: 1000
-        },
 
         before: function (app) {
 
@@ -148,7 +144,7 @@ module.exports = {
         new HTMLPlugin({
             title: "Mystera Reborn"
         }),
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
         new FaviconsWebpackPlugin({
             // Your source logo
