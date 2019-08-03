@@ -38,7 +38,6 @@
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2",
-    "webpack-hot-middleware": "~2.24",
     "webpack-merge": "~4.2",
     "webpack-pwa-manifest": "^4.0.0"
   },

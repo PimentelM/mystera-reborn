@@ -1,26 +1,25 @@
 import Vue from "vue"
 
-let Gui =  {
+let Gui = {
     name: "Gui",
-    data() {
-        return {
-            ready: false,
-            state: {
-                isOpen: false,
-            }
+    data: {
+        ready: false,
+        state: {
+            isOpen: false,
         }
+
     },
     computed: {
-        isOpen(){
+        isOpen() {
             return this.state.isOpen;
         }
     },
 
-    methods : {
-        open(){
+    methods: {
+        open() {
             this.state.isOpen = true;
         },
-        close(){
+        close() {
             this.state.isOpen = false;
         }
     }

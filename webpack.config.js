@@ -127,12 +127,12 @@ module.exports = {
             }
         ]
     },
-    optimization: {
-        runtimeChunk: 'single',
-        splitChunks: {
-            chunks: 'all'
-        }
-    },
+    // optimization: {
+    //     runtimeChunk: 'single',
+    //     splitChunks: {
+    //         chunks: 'all'
+    //     }
+    // },
     output: {
         path: helpers.root('public'),
         publicPath: '/',
