@@ -60,7 +60,7 @@ var getWsProxy = (srv) => {
             });
 
             proxySocket.on('close', () => {
-                sessionLogger.close();
+                sessionLogger.stop();
             });
 
             sessions.push(sessionLogger);

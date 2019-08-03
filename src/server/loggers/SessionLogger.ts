@@ -53,11 +53,14 @@ export class SessionLogger {
     storeMessage : IStoreSessionMessages;
 
     maxBufferSize : number = 20;
+    maxSessionSize : number = 1000;
 
     id : string = null;
 
     upSeq = 0;
     downSeq = 0;
+
+    allSeq = 0;
 
     constructor(info : SessionInfo){
         this.info = info;
@@ -76,11 +79,20 @@ export class SessionLogger {
 
     private log = (type, data, seq) => {
         if(!this.isActive) return;
+        if(this.allSeq > this.maxSessionSize){
+            return this.stop();
+        }
+
+        if(data.length == 0) {
+            data = new Buffer([0])
+        }
 
         this.sessionData.push({type , data, seq, timestamp : Date.now()});
         if(this.sessionData.length > this.maxBufferSize ){
             this.storeSessionData();
         }
+
+        this.allSeq++;
     };
     public upstreamLogger = data => {
         this.log(MessageType.up, data, this.upSeq++ )
@@ -90,7 +102,7 @@ export class SessionLogger {
         this.log(MessageType.down, data, this.downSeq++ )
     };
 
-    public close() {
+    public stop() {
         this.isActive = false;
 
         // Tries to store session data for two minutes.
@@ -98,7 +110,7 @@ export class SessionLogger {
     }
 
     private storeSessionData = async () => {
-        if (this.id){
+        if (this.id && this.sessionData.length > 0){
             let messages = this.sessionData;
             this.sessionData = [];
             this.storeMessage(messages, this.id);
