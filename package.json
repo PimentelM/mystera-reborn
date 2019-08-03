@@ -2,6 +2,9 @@
   "name": "mystera-typescript",
   "version": "0.0.1",
   "main": "index.js",
+  "engines": {
+    "node": "8.11.4"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development webpack-dev-server",

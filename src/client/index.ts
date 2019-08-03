@@ -193,6 +193,7 @@ for (let i = 1; i <= 10; i++){
 <html>
 `);
     window['game-is-rendered'] = true;
+    // @ts-ignore
     window.Map = window._Map;
 }
 
