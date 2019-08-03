@@ -57,7 +57,8 @@ export class PlantSeed extends StateUnitClass{
     }
 
     private async findSoil() {
-        return await this.game.player.nearestReachablePoint(this.game.map.findTilesWithTemplate(this.state.soilTemplate,this.state.radius),false)
+        let soilTiles = this.game.map.findTilesWithTemplate(this.state.soilTemplate,this.state.radius).filter(x=>x.o.length == 0);
+        return await this.game.player.nearestReachablePoint(soilTiles,false)
     }
 
 
