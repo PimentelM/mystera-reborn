@@ -1,16 +1,10 @@
 import express from 'express';
-import {SetupWsProxy} from "./Setup/WsProxy";
-import {SetupHttpProxy} from "./Setup/HttpProxy";
-import {SetupHttpServer} from "./Setup/HttpServer";
+import {SetupWsProxy} from "./setup/http-server/WsProxy";
+import {SetupHttpProxy} from "./setup/http-server/HttpProxy";
+import {SetupHttpServer} from "./setup/http-server/HttpServer";
+import "./setup/Database";
 
 let app = express();
-
-
-SetupWsProxy(app);
-
-SetupHttpProxy(app);
-
-
 
 
 SetupHttpServer(app);

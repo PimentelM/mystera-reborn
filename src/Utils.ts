@@ -2,10 +2,10 @@ import {async} from "q";
 
 
 export function sleep(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function doWhen(action: () => any, when : () => boolean, period : number, timeout : number = Infinity) : Promise<boolean>{
+export async function doWhen(action: () => any, when: () => boolean, period: number, timeout: number = Infinity): Promise<boolean> {
 
     let elapsedtime = 0;
     while (true) {
@@ -21,7 +21,7 @@ export async function doWhen(action: () => any, when : () => boolean, period : n
 
 }
 
-export async function until( event : () => boolean, period : number, timeout : number = Infinity) : Promise<boolean>{
+export async function until(event: () => boolean, period: number, timeout: number = Infinity): Promise<boolean> {
 
     let elapsedtime = 0;
     while (true) {
@@ -36,14 +36,31 @@ export async function until( event : () => boolean, period : number, timeout : n
 
 }
 
-export function isArray (value) {
+export async function repeatUntil(action: () => void, until: () => boolean, period: number, timeout: number = Infinity): Promise<boolean> {
+
+    let elapsedtime = 0;
+    while (true) {
+        if (until()) {
+            return true;
+        } else if (elapsedtime > timeout) {
+            return false;
+        } else{
+          action();
+        }
+        await sleep(period);
+        elapsedtime += period;
+    }
+
+}
+
+export function isArray(value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
 
 
-export function fillInto(sourceObject : object, destinationObject : object) : void {
-    for (let [key,value] of Object.entries(sourceObject)){
-        if(!destinationObject[key]){
+export function fillInto(sourceObject: object, destinationObject: object): void {
+    for (let [key, value] of Object.entries(sourceObject)) {
+        if (!destinationObject[key]) {
             destinationObject[key] = value;
         }
     }
@@ -51,11 +68,11 @@ export function fillInto(sourceObject : object, destinationObject : object) : vo
 
 export function dynamicSort(property) {
     var sortOrder = 1;
-    if(property[0] === "-") {
+    if (property[0] === "-") {
         sortOrder = -1;
         property = property.substr(1);
     }
-    return function (a,b) {
+    return function (a, b) {
         /* next line works with strings and numbers,
          * and you may want to customize it to your needs
          */
@@ -64,39 +81,50 @@ export function dynamicSort(property) {
     }
 }
 
-export function getTimeout(ms, value = false){
-    return new Promise<any>((resolve)=>setTimeout(()=>resolve(value),ms));
+export function getTimeout(ms, value = false) {
+    return new Promise<any>((resolve) => setTimeout(() => resolve(value), ms));
 
 }
 
-export class Cooldown{
-    cooldown : number;
-    lastUse : number = 0;
-    active : boolean;
+export class Cooldown {
+    cooldown: number;
+    lastUse: number = 0;
+    active: boolean;
 
-    public constructor(cooldown : number){
+    public constructor(cooldown: number) {
         this.cooldown = cooldown;
     }
 
 
-    public canUse(){
+    public canUse() {
         return !this.active || new Date().valueOf() - this.lastUse > this.cooldown;
     }
 
-    public use(){
-        if(!this.canUse()) throw new Error("Cooldown is not ready, can't use.");
+    public use() {
+        if (!this.canUse()) throw new Error("Cooldown is not ready, can't use.");
         this.lastUse = new Date().valueOf();
     }
 
-    public setCooldown(coooldown : number){
+    public setCooldown(coooldown: number) {
         this.cooldown = coooldown;
     }
 
-    public deactivate(){
+    public deactivate() {
         this.active = false;
     }
 
     public activate() {
         this.active = true;
+    }
+}
+
+
+export function decodeBase64(data, encoding = 'ascii') {
+    try {
+        let buff = new Buffer(data, 'base64');
+        let text = buff.toString(encoding);
+        return text
+    } catch (e) {
+        return null;
     }
 }
