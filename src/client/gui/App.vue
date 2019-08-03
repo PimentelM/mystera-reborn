@@ -1,6 +1,7 @@
 <template>
     <div id="app">
-        <Options id="OptionsButton"></Options>
+        <Main v-if="Gui.isOpen"></Main>
+        <Options v-else id="OptionsButton"></Options>
         <Hud id="Hud"></Hud>
     </div>
 </template>
@@ -8,14 +9,19 @@
 <script lang="ts">
     import Options from "./components/game-ui/Options.vue"
     import Hud from "./components/game-ui/Hud.vue"
+    import Main from "./components/bot-gui/Main.vue";
+
+
     import Controller from "./view-model/Controller";
+    import Gui from "./view-model/Gui";
 
     export default {
         name: "App",
         models : {
-            Controller,
+            Controller, Gui
+
         },
-        components: {Hud, Options},
+        components: {Main, Hud, Options},
     }
 </script>
 
@@ -44,6 +50,14 @@
         position: absolute;
         top: 11%;
         left: 45.3%;
+    }
+
+    #Main {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 
 

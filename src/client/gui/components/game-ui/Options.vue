@@ -1,8 +1,5 @@
 <template>
-    <div>
-        <button class="stopButton" v-if="Controller.isActivated" @click="stop">Stop</button>
-        <button class="startButton" v-else @click="execute">Start</button>
-    </div>
+    <button @click="Gui.open">Open</button>
 </template>
 
 <script>
@@ -13,20 +10,8 @@
         name: "Options",
 
         injectModels: [
-            'Controller',
+            'Gui',
         ],
-
-        methods: {
-            async execute() {
-                window.StateController.execute(
-                    window.StateFactory.build(
-                        window.StateFactory.examples.reachLevel20));
-            },
-            stop() {
-                window.StateController.stop();
-            }
-        }
-
     }
 </script>
 

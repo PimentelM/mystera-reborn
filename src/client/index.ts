@@ -6,9 +6,18 @@ import {doWhen} from "../Utils";
 import Vue from "vue";
 import App from "./gui/App.vue"
 import VueStates from '@sum.cumo/vue-states'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+// import 'vue-material/dist/theme/default.css'
+import 'vue-material/dist/theme/default-dark.css'
+
 
 Vue.use(
     VueStates
+);
+
+Vue.use(
+    VueMaterial
 );
 
 //hmrLogLevel('error');
@@ -110,6 +119,7 @@ function renderGame() {
 <link rel="icon" href="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" sizes="32x32" />
 <link rel="icon" href="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" sizes="192x192" />
 <link rel="apple-touch-icon-precomposed" href="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" />
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
 <meta name="msapplication-TileImage" content="http://www.mysteralegacy.com/wp-content/uploads/2016/03/favicon.png" />
 
 <style>
