@@ -24,7 +24,7 @@ hmrLogLevel('error');
 
 
 // @ts-ignore
-window._Map = window.Map;
+window['_Map'] = window['Map'];
 
 // @ts-ignore
 if (module.hot) {
@@ -53,7 +53,7 @@ let bot : Bot;
 
 function updateBotInstance() {
     // @ts-ignore
-    window.Map = window._Map;
+    window['Map'] = window['_Map'];
 
     if (!window['connection']) {
         console.log("No mystera websocket.");
