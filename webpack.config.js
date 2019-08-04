@@ -93,6 +93,17 @@ module.exports = {
                     {loader: 'css-loader', options: {sourceMap: isDev}},
                     {loader: 'sass-loader', options: {sourceMap: isDev}}
                 ]
+            },{
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'fonts/'
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -127,12 +138,12 @@ module.exports = {
             }
         ]
     },
-    // optimization: {
-    //     runtimeChunk: 'single',
-    //     splitChunks: {
-    //         chunks: 'all'
-    //     }
-    // },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all'
+        }
+    },
     output: {
         path: helpers.root('public'),
         publicPath: '/',
