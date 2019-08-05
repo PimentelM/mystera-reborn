@@ -25,7 +25,7 @@ export class TargetCreature extends StateUnitClass {
     game: Game;
 
     readonly defaultParams: TargetCreatureState = {
-        filters: [""], retarget: true, cooldown: 2000, range: 15
+        filters: [".*"], retarget: true, cooldown: 2000, range: 15
     };
 
     resendAttackPacket = () => {

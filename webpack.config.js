@@ -44,7 +44,7 @@ module.exports = {
             '@': helpers.root(srcPath)
         }
     },
-    devtool: "cheap-module-eval-source-map",
+    devtool: "cheap-module-source-map",
     mode: 'development',
     module: {
         rules: [

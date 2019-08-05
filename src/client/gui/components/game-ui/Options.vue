@@ -1,8 +1,8 @@
 <template>
 
-    <div>
+    <div v-if="!Gui.isOpen">
 
-        <div v-if="demo">
+        <div>
             <md-button class="md-mini md-raised md-accent md-icon-button" v-if="Controller.isActivated" @click="Controller.stop">
                 <md-icon>stop</md-icon>
             </md-button>
@@ -11,7 +11,7 @@
             </md-button>
         </div>
 
-        <div v-else>
+        <div>
             <md-button id="openGui" @click="Gui.open" class="md-icon-button">
                 <md-icon class="">
                     whatshot
@@ -24,8 +24,9 @@
 </template>
 
 <script>
-    import {IGameWindow} from "../../../bot/game/Interfaces";
-    import {ControllerState, StateController} from "../../../bot/state/StateController";
+    import {IGameWindow} from "@/bot/game/Interfaces";
+    import {ControllerState, StateController} from "@/bot/state/StateController";
+    import config from "@/gui/config"
 
     export default {
         name: "Options",
@@ -36,7 +37,7 @@
 
         data(){
             return {
-                demo : true
+                demo : config.demo
             }
         }
     }
@@ -44,5 +45,7 @@
 </script>
 
 <style scoped>
-
+ #openGui{
+     transform: translateX(50%) scale(0.9);
+ }
 </style>
