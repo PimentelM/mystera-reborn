@@ -17,11 +17,15 @@ export class Bot {
         this.connection = connection;
         this.window = eval(`window`);
 
+
         this.window.Bot = this;
 
         this.game = new Game(this.connection, this.window);
 
         if(!this.window.controllerState) this.window.controllerState = {};
+        if(!this.window.hudData) this.window.hudData = { x: 0, y:0, dlevel : ""};
+
+
         this.stateController = new StateController(this.game, this.window.controllerState);
         this.window.StateController = this.stateController;
 

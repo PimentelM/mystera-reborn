@@ -3,7 +3,6 @@ import Vue from "vue"
 let Gui = {
     name: "Gui",
     data: {
-        ready: false,
         state: {
             isOpen: false,
         }

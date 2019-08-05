@@ -24,7 +24,7 @@ export class GrindResource extends StateUnitClass{
     private lastResend : number = 0;
 
     readonly defaultParams: GrindResourceState = {
-        resource : "", radius: 10
+        resource : "", radius: Infinity
     };
 
     async isReached(): Promise<boolean> {
