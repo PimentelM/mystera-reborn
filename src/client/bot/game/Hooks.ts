@@ -20,12 +20,13 @@ export class Hooks {
     }
 
     public installHooks() {
+        this.updateReactiveDataHook();
+
         if (this.areHooksInstalled) return true;
 
 
         this.showUpgradeDialog();
         this.gamePacketParserHook();
-        this.updateReactiveDataHook();
 
         this.areHooksInstalled = true;
     }
