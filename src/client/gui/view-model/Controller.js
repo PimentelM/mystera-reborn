@@ -19,7 +19,7 @@ export default {
     },
     computed: {
         lastStateExecuted() {
-            return this.state.lastStateExecuted && this.state.lastStateExecuted.constructor.name
+            return this.state.lastStateExecuted && this.state.lastStateExecuted.constructor.name.length > 3 && this.state.lastStateExecuted.constructor.name || ""
         },
         lastStateMachineExecuted(){
             return this.state.lastExecutedMachine
