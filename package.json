@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development webpack-dev-server",
-    "build": "webpack --mode production && tsc -p tsconfig.json -inlineSourceMap -outDir private",
+    "build": "webpack --mode production && tsc -p tsconfig.json -outDir private",
     "start": "node ./private/server/Index.js"
   },
   "devDependencies": {
