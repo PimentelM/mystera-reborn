@@ -17,6 +17,7 @@ import {FollowTarget} from "../../units/walking/FollowTarget";
 import {UpgradeSkills} from "../../units/upgrades/UpgradeSkills";
 import {upgrades} from "../../../game/Upgrades";
 import {PlantSeed} from "../../units/farming/PlantSeed";
+import {playerHasCloseTarget, playerHasNoCloseTarget} from "./common/predicates";
 
 
 //// Predicates
@@ -77,13 +78,6 @@ let playerIsAtLowLevel = async (game: Game) => {
     return game.player.mob.level < 5
 };
 
-let playerHasCloseTarget = async (game: Game) => {
-    return game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 1;
-};
-
-let playerHasNoCloseTarget = async (game: Game) => {
-    return !(game.player.hasTarget() && game.player.distanceTo(game.player.getTarget()) <= 1);
-};
 
 
 ///// Waypoints
@@ -231,7 +225,7 @@ let GatherResources = {
         {
             name: "Get Spices",
             stateDescriptors: [
-                {type: GrindResource, state: {resource: "^Spice Bush$"}}
+                {type: GrindResource, state: {resource: "^Spice Bush$", radius : 8}}
             ]
         },
         {
@@ -273,7 +267,7 @@ let TargetMobs = {
         {type: TargetCreature, state: {retarget: true, range: 5, filters: ["Hornet", "Snake"]}, condition : playerIsAtMediumLevel},
         {type: TargetCreature, state: {retarget: true, range: 17, filters: ["Chicken", "Water \\w*"]}},
         {type: TargetCreature, state: {retarget: true, range: 8, filters: ["Raccoon"]}},
-        {type: TargetCreature, state: {retarget: true, range: 2, filters: [""]}},
+        {type: TargetCreature, state: {retarget: true, range: 2, filters: [".*"]}},
     ]
 };
 
@@ -348,7 +342,7 @@ let PlantSeeds = {
 };
 //// Full state machine
 
-export let reachLevel20: StateMachineDescriptor = {
+export let ReachLevel20: StateMachineDescriptor = {
     name: "Reach Level 20",
     stateDescriptors: [
         PlayerHealth,

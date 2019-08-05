@@ -102,7 +102,11 @@ export class StateController {
 
         // If it is in cooldown, continue.
         if(stateMachine.checkerCooldown){
-            if(!stateMachine.checkerCooldown.canUse()) return false;
+            if(!stateMachine.checkerCooldown.canUse()) {
+                if(this.state.debug)
+                    console.log(`State Machine "${stateMachine.name || stateMachine.constructor.name}" is in cooldown`, stateMachine.condition);
+                return false;
+            }
             else stateMachine.checkerCooldown.use()
         }
 

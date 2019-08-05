@@ -1,8 +1,12 @@
 <template>
     <div id="app">
+        <div v-if="GameData.ready">
+            <Options id="OptionsButton"></Options>
+            <Hud id="Hud"></Hud>
+        </div>
+
         <Main id="Main" v-if="Gui.isOpen"></Main>
-        <Options v-else id="OptionsButton"></Options>
-        <Hud id="Hud"></Hud>
+
     </div>
 </template>
 
@@ -14,11 +18,12 @@
 
     import Controller from "./view-model/Controller";
     import Gui from "./view-model/Gui";
+    import GameData from "./view-model/GameData";
 
     export default {
         name: "App",
-        models : {
-            Controller, Gui
+        models: {
+            Controller, Gui, GameData
 
         },
         components: {Main, Hud, Options},
@@ -26,7 +31,7 @@
 </script>
 
 <style scoped>
-    #app{
+    #app {
         width: 100%;
         height: 100%;
         position: absolute;
@@ -41,15 +46,17 @@
 
     #OptionsButton {
         position: absolute;
-        top: 87%;
-        left: 93%;
+        top: 83%;
+        left: 92%;
     }
 
     #Hud {
         pointer-events: none;
         position: absolute;
-        top: 11%;
-        left: 45.3%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 
     #Main {

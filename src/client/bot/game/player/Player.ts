@@ -36,6 +36,13 @@ export class Player {
     }
 
 
+    get x() {
+        return this.mob &&this.mob.x || 0;
+    }
+
+    get y(){
+        return this.mob && this.mob.y || 0;
+    }
 
     public isAdjacentTo(p: Point) {
         return this.distanceTo(p) == 1;
@@ -74,7 +81,7 @@ export class Player {
     public async nearestReachablePoint<T extends Point>(points: T[], adjacent): Promise<T> {
         points = this.sortByDistance(points);
 
-        let nearestPoint;
+        let nearestPoint = null;
         let smallestDistance = Infinity;
 
         for (let point of points) {
@@ -87,6 +94,8 @@ export class Player {
             } else {
                 path = await this.game.pathfinder.findPath(point);
             }
+
+            if (path.length == 0) continue;
 
             let manhathanDistanceToPoint = this.distanceTo(point);
 
@@ -379,6 +388,5 @@ export class Player {
     }
 
 }
-  
-  
-  
+
+
