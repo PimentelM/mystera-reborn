@@ -4,7 +4,7 @@ import {Iventory} from "../Iventory";
 import {dynamicSort, getTimeout} from "../../../../Utils";
 
 
-let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint", "Bone","Turtle", "Herald" ,"Blunt","Short", "Simple" , ""];
+let materialPriority = ["Steel", "Iron", "Bronze", "Copper", "Obsidian", "Flint", "Bone","Stone", "Turtle", "Herald" ,"Blunt","Short", "Simple" , ""];
 
 const defaultTimeout = 3000;
 
@@ -152,7 +152,7 @@ export class Equip {
     public async bestBow(timeout = defaultTimeout) : Promise<boolean>{
         return await this.bestTool("(bow)",timeout)
     }
-    
+
     public async bestKnuckles(timeout = defaultTimeout) : Promise<boolean>{
         let result =  await this.bestTool("(duster|knuckles)",timeout);
         if(!result) this.disarm();
