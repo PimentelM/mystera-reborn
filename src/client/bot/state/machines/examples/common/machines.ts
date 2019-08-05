@@ -17,7 +17,7 @@ let PlayerHealth: StateMachineDescriptor = {
 let TargetMobs: StateMachineDescriptor = {
     name: "Target Mobs",
     stateDescriptors: [
-        {type: TargetCreature, state: {retarget: false, range: 2, filters: [".*"]}},
+        {type: TargetCreature, state: {retarget: true, range: 2, filters: [".*"]}},
     ]
 };
 
