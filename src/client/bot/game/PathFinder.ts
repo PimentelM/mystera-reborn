@@ -3,6 +3,7 @@ import {promisify} from "util";
 import {Game} from "./Game";
 import {Point, PointMap, Tile, TilePoint} from "./Types";
 import {IWalkableTileMap} from "./Interfaces";
+import {Create2DArray} from "../../../Utils";
 
 export class PathFinder {
     private game: Game;
@@ -11,15 +12,16 @@ export class PathFinder {
         this.game = game;
     }
 
-    public async findPathIntoArea(p: Point, radius : number){
+    public async findPathIntoArea(p: Point, range : number){
         let {x,y} = p;
         // Get walkable tiles around the point
         let tiles: TilePoint[] = [];
 
+        let radius = range;
         for (let i = -radius; i <= radius; i++) {
             for (let j = -radius; j <= radius; j++) {
-                // Prevents distance from being bigger than radius.
-                if(Math.abs(i) + Math.abs(j) > radius) continue;
+                // Prevents distance from being bigger than range.
+                if(Math.abs(i) + Math.abs(j) > range) continue;
 
                 let tX = x+i;
                 let tY = y+j;
@@ -101,13 +103,13 @@ export class PathFinder {
             return [];
         }
 
-        if (grid[destination.y][destination.x] != 0) {
+        if (grid[destination.y][destination.x] <= 0) {
             return [];
         }
 
 
         pathFinder.setGrid(grid);
-        pathFinder.setAcceptableTiles([0]);
+        pathFinder.setAcceptableTiles([1]);
         pathFinder.disableDiagonals();
         pathFinder.disableCornerCutting();
 
@@ -117,7 +119,6 @@ export class PathFinder {
         });
 
         let path = [];
-
         try {
             path = await findPathAsync(origin.x, origin.y, destination.x, destination.y);
         } catch (e) {
@@ -143,62 +144,52 @@ export class PathFinder {
     }
 
     private getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {
-        let grid = [];
-        let mobs = {};
-
+        let grid = Create2DArray(36,26,0); // 36 x 26 map
         let origin = {x: -1, y: -1};
-
         let translatedPoints = {};
-
-        for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
-            if (!mob) continue;
-            mobs[mob.x * 1e4 + mob.y] = true;
-        }
 
         this.game.player.updateData();
         let {mx, my} = this.game.window;
         let {x, y} = this.game.player.mob;
         let pX = x;
         let pY = y;
-        for (let j = 0; j < 26; j++) {
-            let xTiles = [];
-            for (let i = 0; i < 36; i += 1) {
 
-                let x = (mx + i);
-                let y = (j + my);
-                let index = x * 1e4 + y;
+        for(let [coordinates,tile] of Object.entries(this.game.window.map_index)){
+            let x = Number(coordinates.slice(0,coordinates.length - 4));
+            let y = Number(coordinates.slice(4));
+            let i = x - mx;
+            let j = y - my;
 
-                for (let [pointName,point] of Object.entries(points)){
-                    if (point.x == x && point.y == y){
-                        translatedPoints[pointName] = {x: i, y:j};
-                    }
+            for (let [pointName,point] of Object.entries(points)){
+                if (point.x == x && point.y == y){
+                    translatedPoints[pointName] = {x: i, y:j};
                 }
-
-                if (x == pX && y == pY) {
-                    xTiles.push(2);
-                    origin.x = i;
-                    origin.y = j;
-                    continue;
-                }
-
-                if (considerMobs) {
-                    if (mobs[index]) {
-                        xTiles.push(-1);
-                        continue;
-                    }
-                }
-
-                let tile = this.game.window.map_index[index];
-
-                let result;
-
-                if (!tile) result = 1;
-                else if ( this.game.map.isTileWalkable({x,y}, considerMobs)) result = 0;
-                else result = 1;
-
-                xTiles.push(result)
             }
-            grid.push(xTiles);
+
+            if (x == pX && y == pY) {
+                grid[j][i] = -2;
+                origin.x = i;
+                origin.y = j;
+                continue;
+            }
+
+            if (x == pX && y == pY) {
+                grid[j][i] = -1;
+                origin.x = i;
+                origin.y = j;
+                continue;
+            }
+
+
+            let tile = this.game.window.map_index[coordinates];
+
+            if(!tile) continue;
+
+            if (this.game.map.isTileWalkable({x,y}, considerMobs))
+            {
+                grid[j][i] = 1;
+            }
+
         }
 
         return {grid, origin, points : translatedPoints};

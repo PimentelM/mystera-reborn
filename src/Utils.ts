@@ -36,6 +36,21 @@ export async function until(event: () => boolean, period: number, timeout: numbe
 
 }
 
+export function Create2DArray(columns,rows,initialValue = 0) {
+    let grid = [];
+
+    for (let i=0;i<rows;i++) {
+        let column = [];
+        for (let j=0;j<columns;j++){
+            column[j] = initialValue;
+        }
+        grid[i] = column;
+    }
+
+    return grid;
+}
+
+
 export async function repeatUntil(action: () => void, until: () => boolean, period: number, timeout: number = Infinity): Promise<boolean> {
 
     let elapsedtime = 0;
