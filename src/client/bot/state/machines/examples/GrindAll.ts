@@ -18,7 +18,7 @@ let GatherResources = {
         {
             name: "Grind Wood and Stone",
             stateDescriptors: [
-                {type: GrindResource, state: {resource: "(Fir Tree)|(.* Bush)|((Plain|Gold|Desert|Black|Crystal) Rock)"}}
+                {type: GrindResource, state: {resource: "(Fir Tree)|(.* Bush)|((Plain|Gold|Desert|Black|Crystal)?\\s?Rock)"}}
             ]
         },
 
