@@ -7,7 +7,7 @@ import {StateFactory} from "../state/StateFactory";
 export interface HudData {
     x: number,
     y: number,
-    dlevel: string
+    mapName: string
 }
 
 // Persistent data from the bot
@@ -71,7 +71,10 @@ export interface IGameWindow {
 
     action: number,
 
-    jv: { equip_sprite: number, upgrade_number: number }
+    jv: { equip_sprite: number,
+        upgrade_number: number,
+        map_title : { _text : string }
+    }
 }
 
 

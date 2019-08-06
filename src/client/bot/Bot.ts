@@ -23,7 +23,7 @@ export class Bot {
         this.game = new Game(this.connection, this.window);
 
         if(!this.window.controllerState) this.window.controllerState = {};
-        if(!this.window.hudData) this.window.hudData = { x: 0, y:0, dlevel : ""};
+        if(!this.window.hudData) this.window.hudData = { x: 0, y:0, mapName : ""};
 
 
         this.stateController = new StateController(this.game, this.window.controllerState);

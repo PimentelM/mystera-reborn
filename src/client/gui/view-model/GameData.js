@@ -8,7 +8,7 @@ let GameData = {
         state: {
             x: 0,
             y: 0,
-            dlevel: ""
+            mapName: ""
         }
 
     },
@@ -19,11 +19,6 @@ let GameData = {
             },
             () => !!window.Player.mob,
             100);
-    },
-    computed: {
-        isOpen() {
-            return this.state.isOpen;
-        }
     },
 
 };
