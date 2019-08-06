@@ -1,0 +1,31 @@
+diff --git a/node_modules/easystarjs/src/easystar.js b/node_modules/easystarjs/src/easystar.js
+index 8323066..cf948f1 100755
+--- a/node_modules/easystarjs/src/easystar.js
++++ b/node_modules/easystarjs/src/easystar.js
+@@ -34,6 +34,17 @@ EasyStar.js = function() {
+     var iterationsPerCalculation = Number.MAX_VALUE;
+     var acceptableTiles;
+     var diagonalsEnabled = false;
++    var isGoal = (nodeX,nodeY,targetX,targetY) => {
++        return nodeX === targetX && nodeY === targetY
++    };
++
++    /**
++     * Sets the goal function
++     * if you're into that sort of thing.
++     **/
++    this.setIsGoalFunction = function(newGoalFunction) {
++        isGoal = newGoalFunction;
++    };
+ 
+     /**
+     * Sets the collision grid that EasyStar uses.
+@@ -363,7 +374,7 @@ EasyStar.js = function() {
+             var searchNode = instance.openList.pop();
+ 
+             // Handles the case where we have found the destination
+-            if (instance.endX === searchNode.x && instance.endY === searchNode.y) {
++            if (isGoal(searchNode.x,searchNode.y,instance.endX,instance.endY)) {
+                 var path = [];
+                 path.push({x: searchNode.x, y: searchNode.y});
+                 var parent = searchNode.parent;
