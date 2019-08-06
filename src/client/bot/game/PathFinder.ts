@@ -1,7 +1,8 @@
 import * as EasyStar from "easystarjs";
 import {promisify} from "util";
 import {Game} from "./Game";
-import {Point, Tile, TilePoint} from "./Types";
+import {Point, PointMap, Tile, TilePoint} from "./Types";
+import {IWalkableTileMap} from "./Interfaces";
 
 export class PathFinder {
     private game: Game;
@@ -89,7 +90,7 @@ export class PathFinder {
     public async findPath(p : Point): Promise<Point[]> {
         let {x,y} = p;
         let pathFinder = new EasyStar.js();
-        let {grid, origin, points} = this.game.map.getWalkableTileMap({destination: {x, y}});
+        let {grid, origin, points} = this.getWalkableTileMap({destination: {x, y}});
 
         let gridStart = {x: this.game.player.mob.x - origin.x, y: this.game.player.mob.y - origin.y};
 
@@ -140,4 +141,68 @@ export class PathFinder {
 
         return path.slice(1);
     }
+
+    private getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {
+        let grid = [];
+        let mobs = {};
+
+        let origin = {x: -1, y: -1};
+
+        let translatedPoints = {};
+
+        for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
+            if (!mob) continue;
+            mobs[mob.x * 1e4 + mob.y] = true;
+        }
+
+        this.game.player.updateData();
+        let {mx, my} = this.game.window;
+        let {x, y} = this.game.player.mob;
+        let pX = x;
+        let pY = y;
+        for (let j = 0; j < 26; j++) {
+            let xTiles = [];
+            for (let i = 0; i < 36; i += 1) {
+
+                let x = (mx + i);
+                let y = (j + my);
+                let index = x * 1e4 + y;
+
+                for (let [pointName,point] of Object.entries(points)){
+                    if (point.x == x && point.y == y){
+                        translatedPoints[pointName] = {x: i, y:j};
+                    }
+                }
+
+                if (x == pX && y == pY) {
+                    xTiles.push(2);
+                    origin.x = i;
+                    origin.y = j;
+                    continue;
+                }
+
+                if (considerMobs) {
+                    if (mobs[index]) {
+                        xTiles.push(-1);
+                        continue;
+                    }
+                }
+
+                let tile = this.game.window.map_index[index];
+
+                let result;
+
+                if (!tile) result = 1;
+                else if ( this.game.map.isTileWalkable({x,y}, considerMobs)) result = 0;
+                else result = 1;
+
+                xTiles.push(result)
+            }
+            grid.push(xTiles);
+        }
+
+        return {grid, origin, points : translatedPoints};
+    }
+
+
 }
