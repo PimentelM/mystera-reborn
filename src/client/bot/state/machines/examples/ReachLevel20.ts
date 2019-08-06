@@ -18,6 +18,7 @@ import {UpgradeSkills} from "../../units/upgrades/UpgradeSkills";
 import {upgrades} from "../../../game/Upgrades";
 import {PlantSeed} from "../../units/farming/PlantSeed";
 import {playerHasCloseTarget, playerHasNoCloseTarget} from "./common/predicates";
+import {BasicHealthCare} from "./common/machines";
 
 
 //// Predicates
@@ -157,19 +158,18 @@ let WalkAroundAttackingOnlyMobsThatAttackYou: StateMachineDescriptor = {
     ]
 };
 
-let PlayerHealth: StateMachineDescriptor = {
-    name: "Player Health",
+
+
+let UpgradePlayerSkills = {
+    name: "Upgrade Skills",
     stateDescriptors: [
-        {type: HealWithItem, state: {}},
-        {type: EatFood, state: {minHunger: 98, foods: ["^Carrot$"]}},
-        {type: EatFood, state: {}},
         {
             type: UpgradeSkills,
             state: {skills: [upgrades.weight, upgrades.hp, upgrades.ups, upgrades.exp, upgrades.star]}
         },
-
     ]
 };
+
 
 let NewbyeVillageHealOnFountain: StateMachineDescriptor = {
     name: "Heal on Fountain",
@@ -345,20 +345,21 @@ let PlantSeeds = {
 export let ReachLevel20: StateMachineDescriptor = {
     name: "Reach Level 20",
     stateDescriptors: [
-        PlayerHealth,
+        BasicHealthCare,
+        UpgradePlayerSkills,
         NewbyeVillageHealOnFountain,
 
         EquipArmorAndAcessories,
         CraftThings,
-
-        TargetMobs,
-        EquipWeapon,
 
         GatherResources,
         LootThings,
         DropThings,
 
         PlantSeeds,
+
+        TargetMobs,
+        EquipWeapon,
 
         FollowTargets,
         WalkAroundAttackingOnlyMobsThatAttackYou,
