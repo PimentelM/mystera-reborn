@@ -4,6 +4,13 @@ import {Cooldown} from "../../Utils";
 
 export type  GamePredicate = (game : Game) => Promise<boolean>
 
+export enum tileType  {
+    obstacle = 0,
+    creature = -1,
+    player = -2,
+    self = -3
+};
+
 export abstract class StateUnitClass implements IStateMachine{
     abstract state : {};
     abstract game : Game;

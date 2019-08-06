@@ -4,17 +4,14 @@ import {Game} from "./Game";
 import {Point, PointMap, Tile, TilePoint} from "./Types";
 import {IWalkableTileMap} from "./Interfaces";
 import {Create2DArray} from "../../../Utils";
+import {tileType} from "../Interfaces";
 
+
+let MAP_WIDTH = 36;
+let MAP_HEIGH = 26;
 
 export class PathFinder {
     private game: Game;
-
-    tileType = {
-        obstacle : 0,
-        creature : -1,
-        player : -2,
-        self : -3
-    };
 
     constructor(game: Game) {
         this.game = game;
@@ -107,7 +104,6 @@ export class PathFinder {
         let {destination} = points;
 
         if (!destination) {
-            //console.log("Point not found.");
             return [];
         }
 
@@ -151,8 +147,8 @@ export class PathFinder {
         return path.slice(1);
     }
 
-    private getWalkableTileMap(points : PointMap = {}): IWalkableTileMap {
-        let grid = Create2DArray(38,28,0); // 38 x 28 map
+    public getWalkableTileMap(points : PointMap = {}): IWalkableTileMap {
+        let grid = Create2DArray(MAP_WIDTH,MAP_HEIGH,0); // MAP_WIDTH x MAP_HEIGH map
         let origin = {x: -1, y: -1};
         let translatedPoints = {};
         let mobs={};
@@ -176,7 +172,14 @@ export class PathFinder {
 
 
         for (let [pointName,point] of Object.entries(points)){
-            translatedPoints[pointName] = {x: point.x - mx, y: point.y - my};
+            let x = point.x - mx;
+            let y = point.y - my;
+
+            if(x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGH){
+                continue
+            }
+
+            translatedPoints[pointName] = {x, y};
         }
 
         for(let [coordinates,tile] of Object.entries(this.game.window.map_index)){
@@ -185,19 +188,19 @@ export class PathFinder {
             let i = x - mx;
             let j = y - my;
 
-            if(i < 0 || j < 0){
+            if(i < 0 || j < 0 || i >= MAP_WIDTH || j >= MAP_HEIGH){
                 continue
             }
 
             if (x == pX && y == pY) {
-                grid[j][i] = this.tileType.self;
+                grid[j][i] = tileType.self;
                 origin.x = i;
                 origin.y = j;
                 continue;
             } else if (mobs[coordinates]){
-                grid[j][i] = this.tileType.creature;
+                grid[j][i] = tileType.creature;
             } else if (players[coordinates]){
-                grid[j][i] = this.tileType.player;
+                grid[j][i] = tileType.player;
             }
 
             let tile = this.game.window.map_index[coordinates];
