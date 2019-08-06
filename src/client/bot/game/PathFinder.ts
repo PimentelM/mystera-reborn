@@ -154,17 +154,15 @@ export class PathFinder {
         let pX = x;
         let pY = y;
 
+        for (let [pointName,point] of Object.entries(points)){
+            translatedPoints[pointName] = {x: point.x - mx, y: point.y - my};
+        }
+
         for(let [coordinates,tile] of Object.entries(this.game.window.map_index)){
             let x = Number(coordinates.slice(0,coordinates.length - 4));
             let y = Number(coordinates.slice(4));
             let i = x - mx;
             let j = y - my;
-
-            for (let [pointName,point] of Object.entries(points)){
-                if (point.x == x && point.y == y){
-                    translatedPoints[pointName] = {x: i, y:j};
-                }
-            }
 
             if (x == pX && y == pY) {
                 grid[j][i] = -2;
@@ -179,7 +177,6 @@ export class PathFinder {
                 origin.y = j;
                 continue;
             }
-
 
             let tile = this.game.window.map_index[coordinates];
 
