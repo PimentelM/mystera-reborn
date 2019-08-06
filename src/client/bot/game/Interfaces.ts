@@ -31,6 +31,7 @@ export interface IGameWindow extends IBotState {
     GameMap: any,
     Iventory: any,
     Creatures: any,
+    Kitting: any,
     Game: any,
     Bot: any,
     Craft: any,
