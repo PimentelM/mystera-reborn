@@ -12,8 +12,14 @@ export class Map {
     }
 
 
-    get dlevel() {
-        return this.game.window.dlevel;
+    get name() {
+        let dlevel = this.game.window.dlevel;
+        let mapText = this.game.window.jv.map_title._text;
+
+        if(dlevel && dlevel !== "") return dlevel;
+        if(mapText) return mapText.toLowerCase().trim();
+
+        return null;
     }
 
     public getTile(p : Point): Tile {
