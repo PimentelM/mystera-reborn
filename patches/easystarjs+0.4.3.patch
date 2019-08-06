@@ -1,3 +1,20 @@
+diff --git a/node_modules/easystarjs/index.d.ts b/node_modules/easystarjs/index.d.ts
+index a31b48e..2694786 100644
+--- a/node_modules/easystarjs/index.d.ts
++++ b/node_modules/easystarjs/index.d.ts
+@@ -20,6 +20,12 @@ export class js {
+    */
+   setAcceptableTiles(tiles: number[] | number): void
+ 
++  /**
++   * Sets the goal function
++   * if you're into that sort of thing.
++   **/
++  setIsGoalFunction(newGoalFunction: (nodeX, nodeY, targetX, targetY) => boolean) : void
++
+   /**
+    * Enables sync mode for this EasyStar instance..
+    * if you're into that sort of thing.
 diff --git a/node_modules/easystarjs/src/easystar.js b/node_modules/easystarjs/src/easystar.js
 index 8323066..cf948f1 100755
 --- a/node_modules/easystarjs/src/easystar.js
