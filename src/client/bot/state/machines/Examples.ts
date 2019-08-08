@@ -3,6 +3,7 @@ import {GrindBush} from "./examples/GrindBush";
 import {GrindAll} from "./examples/GrindAll";
 import {GrindWood} from "./examples/GrindWood";
 import {GrindStone} from "./examples/GrindStone";
+import {KiteTarget} from "./examples/KiteTarget";
 
 
 export let examples = {
@@ -10,6 +11,7 @@ export let examples = {
     GrindBush,
     GrindAll,
     GrindWood,
-    GrindStone
+    GrindStone,
+    KiteTarget,
 };
 

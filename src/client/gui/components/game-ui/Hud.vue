@@ -5,7 +5,7 @@
                 {{GameData.state.x}} {{GameData.state.y}}
             </div>
             <div>
-                {{GameData.state.dlevel}}
+                {{GameData.state.mapName}}
             </div>
         </div>
 

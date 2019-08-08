@@ -346,6 +346,20 @@ export class Player {
         return await this.serialStepTo(path);
     }
 
+    public async kite(p:Point, steps = 1, spear = true, distance = 2) {
+        let {x, y} = p;
+
+        let path = await this.game.kitting.findKitingPath(p,spear,distance);
+
+        if (path.length == 0) return false;
+
+        if (steps > 0) {
+            path = path.slice(0, steps);
+        }
+
+        return await this.serialStepTo(path);
+    }
+
     public async walkAdjacentTo(p: Point, steps: number = 0) {
         let {x, y} = p;
         if (this.distanceTo(p) == 1) return true;

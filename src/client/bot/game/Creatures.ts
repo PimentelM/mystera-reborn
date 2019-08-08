@@ -44,16 +44,19 @@ export class Creatures {
 
     public findCreatures(test: CreatureFilter = all, range : number = 0): Mob[] {
         test = predicateIt(test);
-        let isCreature = (x) => typeof x.template == typeof "";
+        let isCreature = (x) => !this.isPlayer(x);
         let isInRange = (x) => !range || this.game.player.distanceTo(x) <= range;
         let testMob = x => isCreature(x) && isInRange(x) && (test as MobPredicate)(x);
         return this.find(testMob);
     }
 
+    public isPlayer(creature :Mob){
+        return typeof creature.template == "number";
+    }
 
     public findPlayers(test: CreatureFilter = all): Mob[] {
         test = predicateIt(test);
-        let isPlayer = (x) => typeof x.template == typeof 1;
+        let isPlayer = this.isPlayer;
         let testMob = x => isPlayer(x) && (test as MobPredicate)(x);
         return this.find(testMob);
     }

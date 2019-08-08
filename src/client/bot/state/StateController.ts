@@ -45,7 +45,7 @@ export class StateController {
 
     public getDefaultState(): ControllerState {
         return {
-            delay: 200,
+            delay: 50,
             isActivated: false,
             stateMachine: null,
             lastStateExecuted: null,
