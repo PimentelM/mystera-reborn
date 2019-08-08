@@ -29,6 +29,12 @@ export class Kitting{
         }
     }
 
+    private setMaxTileAtGrid(grid,x,y,value){
+        if(this.getTileAtGrid(grid,x,y) > value){
+            grid[y][x] = value;
+        }
+    }
+
 
     private updateKitingGrid(grid: number[][]) {
 
@@ -37,21 +43,23 @@ export class Kitting{
 
 
                 if (grid[y][x] == tileType.creature) {
-
-                    // 0 0 2 0 0
-                    // 0 3 4 3 0
-                    // 2 4 x 4 2
-                    // 0 3 4 3 0
-                    // 0 0 2 0 0
+                    let a = 2;
+                    let b = 1;
+                    let c = 1;
+                    // 0 0 c 0 0
+                    // 0 b a b 0
+                    // c a x a c
+                    // 0 b a b 0
+                    // 0 0 c 0 0
                     for (let i=-2; i <= 2; i++){
                         for (let j=-2; j<=2;j++){
                             // 2
                             if((Math.abs(i) == 2 && j == 0) || (Math.abs(j) == 2 && i == 0)){
-                                this.incrementTileAtGridBy(grid,x+i,y+j,2)
+                                this.incrementTileAtGridBy(grid,x+i,y+j,c)
                             }
                             // 3 & 4
                             if(Math.abs(i) <= 1 && Math.abs(j) <= 1){
-                                this.incrementTileAtGridBy(grid,x+i,y+j,i === j ? 3 : 4)
+                                this.incrementTileAtGridBy(grid,x+i,y+j,i === j ? b : a)
                             }
                         }
                     }
@@ -59,23 +67,27 @@ export class Kitting{
 
 
                 } else if (grid[y][x] == tileType.obstacle || grid[y][x] == tileType.player){
-                    // 0 0 1 0 0
-                    // 0 1 2 1 0
-                    // 1 2 x 2 1
-                    // 0 1 2 1 0
-                    // 0 0 1 0 0
+                    let a = 4;
+                    let b = 2;
+                    let c = 2;
+                    // 0 0 c 0 0
+                    // 0 b a b 0
+                    // c a x a c
+                    // 0 b a b 0
+                    // 0 0 c 0 0
                     for (let i=-2; i <= 2; i++){
                         for (let j=-2; j<=2;j++){
-                            // outer 1
+                            // 2
                             if((Math.abs(i) == 2 && j == 0) || (Math.abs(j) == 2 && i == 0)){
-                                this.incrementTileAtGridBy(grid,x+i,y+j,1)
+                                this.incrementTileAtGridBy(grid,x+i,y+j,c)
                             }
-                            // 1 & 2
+                            // 3 & 4
                             if(Math.abs(i) <= 1 && Math.abs(j) <= 1){
-                                this.incrementTileAtGridBy(grid,x+i,y+j,i === j ? 1 : 2)
+                                this.incrementTileAtGridBy(grid,x+i,y+j,i === j ? b : a)
                             }
                         }
                     }
+
 
                 }
 
@@ -117,11 +129,18 @@ export class Kitting{
 
         if(spear){
             pathFinder.setIsGoalFunction((cX,cY,tX,tY)=>{
-                let dX = Math.abs(cX - tX);
-                let dY = Math.abs(cY - tY);
+                let _dX = tX - cX;
+                let _dY = tY - cY;
+                let dX = Math.abs(_dX);
+                let dY = Math.abs(_dY);
 
-                if(dX === 0 && dY === 2) return true;
-                if(dX === 2 && dY === 0) return true;
+
+                if((dX === 0 && dY === 2) || (dX === 2 && dY === 0)){
+                    let tile = grid[cY + (_dY/2)] && grid[cY + (_dY/2)][cX + (_dX/2)] || 0;
+                    let res = tile == tileType.self || tile >0;
+                    console.log(cX,cY,tX,tY,res);
+                    return res;
+                }
 
                 return false;
             })
@@ -134,7 +153,7 @@ export class Kitting{
         }
 
 
-        let acceptableTiles = [1,2,3,4,5,6,7,8,9,10];
+        let acceptableTiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
         pathFinder.setAcceptableTiles(acceptableTiles);
         acceptableTiles.forEach(tile=>pathFinder.setTileCost(tile,tile));
 

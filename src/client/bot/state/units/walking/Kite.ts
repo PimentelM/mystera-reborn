@@ -17,7 +17,7 @@ export class Kite extends StateUnitClass{
     public state: KiteState;
 
     readonly defaultParams: KiteState = {
-        spear: true, distance: 3, steps: 1, kitePath : [], target: null,
+        spear: true, distance: 2, steps: 2, kitePath : [], target: null,
     };
 
     async isReached(): Promise<boolean> {
@@ -33,7 +33,7 @@ export class Kite extends StateUnitClass{
     }
 
     async reach(): Promise<boolean> {
-        await this.game.player.kite(this.state.target,this.state.steps, this.state.spear, this.state.distance);
+        this.game.player.kite(this.state.target,this.state.steps, this.state.spear, this.state.distance);
         return true;
     }
 
