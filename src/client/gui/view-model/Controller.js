@@ -40,7 +40,7 @@ export default {
         async execute() {
             let machineId = this.selectedMachine;
             window.StateController.execute(
-                window.StateFactory.build(
+                await window.StateFactory.buildAsync(
                     window.StateFactory.examples[machineId]
                 ));
         },

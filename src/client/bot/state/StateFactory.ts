@@ -25,6 +25,24 @@ export class StateFactory {
         this.game = game;
     }
 
+    public async buildAsync(machineDescriptor: StateMachineDescriptor) : Promise<StateMachine> {
+        let {name, stateDescriptors , until, condition, checkerCooldown} = machineDescriptor;
+
+        let stateUnits = null;
+        let stateMachines = [];
+
+        for (let stateDescriptor of stateDescriptors){
+            // If it is a state machine descriptor
+            if((stateDescriptor as StateMachineDescriptor).stateDescriptors){
+                stateMachines.push( await this.buildAsync(stateDescriptor as StateMachineDescriptor) )
+            } else if ((stateDescriptor as StateUnitDescriptor).type){
+                stateMachines.push( await this.buildUnitAsync(stateDescriptor as StateUnitDescriptor))
+            }
+        }
+
+        return new StateMachine(name || null, stateMachines, condition,until, checkerCooldown || 0);
+    }
+
     public build(machineDescriptor: StateMachineDescriptor) : StateMachine {
         let {name, stateDescriptors , until, condition, checkerCooldown} = machineDescriptor;
 
@@ -44,16 +62,6 @@ export class StateFactory {
     }
 
 
-    private buildUnits(unitDescriptors: StateUnitDescriptor[]): StateUnitClass[] {
-        let builtUnits = [];
-        for (let unitDescriptor of unitDescriptors) {
-            // Unit
-            if (unitDescriptor.type) {
-                builtUnits.push(this.buildUnit(unitDescriptor));
-            }
-        }
-        return builtUnits;
-    }
 
     private buildUnit(unitDescriptor : StateUnitDescriptor): StateUnitClass {
         let {type , state , until, condition, checkerCooldown} = unitDescriptor;
@@ -69,5 +77,7 @@ export class StateFactory {
     }
 
 
-
+    private async buildUnitAsync(unitDescriptor: StateUnitDescriptor) {
+        return this.buildUnit(unitDescriptor);
+    }
 }

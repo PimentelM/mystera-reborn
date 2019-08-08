@@ -153,7 +153,8 @@ module.exports = {
 
     plugins: [
         new HTMLPlugin({
-            title: "Mystera Reborn"
+            title: "Mystera Reborn",
+            template: helpers.root('src/client/Index.ejs'),
         }),
         // new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),

@@ -12,8 +12,14 @@ export class Map {
     }
 
 
-    get dlevel() {
-        return this.game.window.dlevel;
+    get name() {
+        let dlevel = this.game.window.dlevel;
+        let mapText = this.game.window.jv.map_title._text;
+
+        if(dlevel && dlevel !== "") return dlevel;
+        if(mapText) return mapText.toLowerCase().trim();
+
+        return null;
     }
 
     public getTile(p : Point): Tile {
@@ -166,67 +172,6 @@ export class Map {
         return !tile.block && tile.template != "325";
     }
 
-    public getWalkableTileMap(points : PointMap = {}, considerMobs = true): IWalkableTileMap {
-        let grid = [];
-        let mobs = {};
-
-        let origin = {x: -1, y: -1};
-
-        let translatedPoints = {};
-
-        for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
-            if (!mob) continue;
-            mobs[mob.x * 1e4 + mob.y] = true;
-        }
-
-        this.game.player.updateData();
-        let {mx, my} = this.game.window;
-        let {x, y} = this.game.player.mob;
-        let pX = x;
-        let pY = y;
-        for (let j = 0; j < 26; j++) {
-            let xTiles = [];
-            for (let i = 0; i < 36; i += 1) {
-
-                let x = (mx + i);
-                let y = (j + my);
-                let index = x * 1e4 + y;
-
-                for (let [pointName,point] of Object.entries(points)){
-                    if (point.x == x && point.y == y){
-                        translatedPoints[pointName] = {x: i, y:j};
-                    }
-                }
-
-                if (x == pX && y == pY) {
-                    xTiles.push(2);
-                    origin.x = i;
-                    origin.y = j;
-                    continue;
-                }
-
-                if (considerMobs) {
-                    if (mobs[index]) {
-                        xTiles.push(-1);
-                        continue;
-                    }
-                }
-
-                let tile = this.game.window.map_index[index];
-
-                let result;
-
-                if (!tile) result = 1;
-                else if ( this.isTileWalkable({x,y}, considerMobs)) result = 0;
-                else result = 1;
-
-                xTiles.push(result)
-            }
-            grid.push(xTiles);
-        }
-
-        return {grid, origin, points : translatedPoints};
-    }
 
 
 }

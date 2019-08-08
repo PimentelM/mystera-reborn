@@ -10,6 +10,7 @@ let PlayerHealth: StateMachineDescriptor = {
     stateDescriptors: [
         {type: HealWithItem, state: {}},
         {type: EatFood, state: {}},
+        {type: EatFood, state: {foods : ["Raw\\s.*"], minHunger : 1}},
     ]
 };
 
@@ -32,7 +33,7 @@ let EquipWeapon = {
 
 
 export let BasicHealthCare : StateMachineDescriptor = {
-    name: "Basic Health Care",
+    name: "Player Health",
     stateDescriptors: [
         PlayerHealth,
         TargetMobs,

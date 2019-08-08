@@ -35,7 +35,7 @@ export class Hooks {
         let update = () => {
             this.game.window.hudData.x = this.game.player.x;
             this.game.window.hudData.y = this.game.player.y;
-            this.game.window.hudData.dlevel = this.game.map.dlevel;
+            this.game.window.hudData.mapName = this.game.map.name;
         };
 
         update();

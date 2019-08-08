@@ -12,6 +12,7 @@ import {Scanner} from "./data/Scanner";
 import {Upgrades} from "./Upgrades";
 import {Hooks} from "./Hooks";
 import {Parser} from "./Parser";
+import {Kitting} from "./Kitting";
 
 export class Game {
     public window: IGameWindow;
@@ -27,6 +28,7 @@ export class Game {
     public upgrades: Upgrades;
     public hooks: Hooks;
     public parser : Parser;
+    public kitting : Kitting;
 
     public constructor(con: Connection, window: IGameWindow) {
         this.con = con;
@@ -42,6 +44,7 @@ export class Game {
         this.pathfinder = new PathFinder(this);
         this.resources = new Resouces(this);
         this.upgrades = new Upgrades(this);
+        this.kitting = new Kitting(this);
         this.parser = new Parser(this, (this.window.parsersState));
         this.craft = new Craft(this);
         this.hooks = new Hooks(this);
@@ -55,6 +58,7 @@ export class Game {
         this.window.Creatures = this.creatures;
         this.window.PathFinder = this.pathfinder;
         this.window.Upgrades = this.upgrades;
+        this.window.Kitting = this.kitting;
         this.window.Craft = this.craft;
         this.window.Parser = this.parser;
 
