@@ -159,7 +159,7 @@ export class StateController {
                 let elapsedtime = now - before;
                 let elapsedTimeSinceLastExecution = now - this.state.lastExecutionTimestamp - this.state.delay;
                 this.state.lastExecutionTimestamp = new Date().valueOf();
-                if (this.state.lastStateExecuted != state || this.state.debug) console.log(state, `${elapsedTimeSinceLastExecution}ms`, `${elapsedtime}ms`);
+                if (this.state.lastStateExecuted != state || this.state.debug && state.constructor.name.length > 2) console.log(state, `${elapsedTimeSinceLastExecution}ms`, `${elapsedtime}ms`);
                 this.state.lastStateExecuted = state;
                 return true;
             } else state.checkerCooldown && state.checkerCooldown.activate();
