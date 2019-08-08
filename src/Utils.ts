@@ -75,7 +75,7 @@ export function isArray(value) {
 
 export function fillInto(sourceObject: object, destinationObject: object): void {
     for (let [key, value] of Object.entries(sourceObject)) {
-        if (!destinationObject[key]) {
+        if (destinationObject[key] === undefined) {
             destinationObject[key] = value;
         }
     }
