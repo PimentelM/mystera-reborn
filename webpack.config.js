@@ -142,7 +142,8 @@ module.exports = {
         runtimeChunk: 'single',
         splitChunks: {
             chunks: 'all'
-        }
+        },
+
     },
     output: {
         path: helpers.root('public'),

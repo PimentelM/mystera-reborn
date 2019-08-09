@@ -16,7 +16,7 @@ interface SessionInfo {
 
 interface Message {
     type : MessageType,
-    data : Buffer,
+    data : string,
     timestamp : number,
     seq : number
 }
@@ -53,7 +53,7 @@ export class SessionLogger {
     storeMessage : IStoreSessionMessages;
 
     maxBufferSize : number = 20;
-    maxSessionSize : number = 1000;
+    maxSessionSize : number = 3000;
 
     id : string = null;
 
@@ -84,7 +84,7 @@ export class SessionLogger {
         }
 
         if(data.length == 0) {
-            data = new Buffer([0])
+            data = ""
         }
 
         this.sessionData.push({type , data, seq, timestamp : Date.now()});
