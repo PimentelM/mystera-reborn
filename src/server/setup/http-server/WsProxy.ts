@@ -44,7 +44,9 @@ var getWsProxy = (srv) => {
             let sessionLogger = new SessionLogger(info);
 
             parser.on('frame', function (frame) {
-                sessionLogger.upstreamLogger(frame.data);
+                if(frame.data.length > 0 && frame.data[0] == 123) {
+                    sessionLogger.upstreamLogger(frame.data.toString('utf-8'));
+                }
             });
 
             upgradingSessions.push(sessionLogger)
@@ -56,7 +58,9 @@ var getWsProxy = (srv) => {
 
             // Handle Downstream messages
             proxySocket.on('data', (data: Buffer) => {
-                sessionLogger.downstreamLogger(data);
+                if(data.length > 0 && data[0] == 123){
+                    sessionLogger.downstreamLogger(data.toString('utf-8'));
+                }
             });
 
             proxySocket.on('close', () => {
