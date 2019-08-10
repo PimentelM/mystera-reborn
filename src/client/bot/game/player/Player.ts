@@ -346,10 +346,25 @@ export class Player {
         return await this.serialStepTo(path);
     }
 
-    public async kite(p:Point, steps = 1, spear = true, distance = 2) {
+    public async kite(p:Point, steps = 1, spear = true,returnAfterPathFound = true,distance = 3, ) {
         let {x, y} = p;
 
-        let path = await this.game.kitting.findKitingPath(p,spear,distance);
+        let path = [];
+        if(spear){
+            if (distance >= 3){
+                path = await this.game.kitting.findKitingPath(p,spear,3);
+            }else {
+                path = await this.game.kitting.findKitingPath(p,spear,2);
+            }
+        } else {
+            path = await this.game.kitting.findKitingPath(p,spear,distance);
+        }
+        let safeDistance = 3;
+        while (safeDistance <=5){
+            if(path.length != 0 ) break;
+            console.log(`Walk away ${safeDistance} tiles`)
+            path = await this.game.kitting.findKitingPath(p,false,safeDistance++)
+        }
 
         if (path.length == 0) return false;
 
@@ -357,7 +372,11 @@ export class Player {
             path = path.slice(0, steps);
         }
 
-        return await this.serialStepTo(path);
+        let stepPromise = this.serialStepTo(path);
+
+        if(returnAfterPathFound) return true;
+
+        return await stepPromise;
     }
 
     public async walkAdjacentTo(p: Point, steps: number = 0) {

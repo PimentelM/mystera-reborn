@@ -149,7 +149,6 @@ export class PathFinder {
 
     public getWalkableTileMap(points : PointMap = {}): IWalkableTileMap {
         let grid = Create2DArray(MAP_WIDTH,MAP_HEIGH,0); // MAP_WIDTH x MAP_HEIGH map
-        let origin = {x: -1, y: -1};
         let translatedPoints = {};
         let mobs={};
         let players={};
@@ -159,6 +158,8 @@ export class PathFinder {
         let {x, y} = this.game.player.mob;
         let pX = x;
         let pY = y;
+
+        let origin = {x: pX - mx, y: pY - my};
 
         // Populate mobs and players map
         for (let [_, mob] of Object.entries(this.game.window.mob_ref)) {
@@ -183,8 +184,15 @@ export class PathFinder {
         }
 
         for(let [coordinates,tile] of Object.entries(this.game.window.map_index)){
-            let x = Number(coordinates.slice(0,coordinates.length - 4));
-            let y = Number(coordinates.slice(4));
+            let x,y;
+            if(coordinates.length <= 4){
+                x = 0;
+                y = Number(coordinates)
+            } else {
+                let xSize = coordinates.length - 4;
+                x = Number(coordinates.slice(0,xSize));
+                y = Number(coordinates.slice(xSize));
+            }
             let i = x - mx;
             let j = y - my;
 
