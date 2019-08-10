@@ -6,6 +6,15 @@ import {tileType} from "../Interfaces";
 import {Player} from "./player/Player";
 import {Creatures} from "./Creatures";
 
+let isTileWalkable = ( p : {x: number, y : number}, grid : number[][]) => {
+    let {x,y} = p;
+
+    return grid[y] && (grid[y][x] > 0 || grid[y][x] === tileType.self)
+};
+
+
+
+
 export class Kitting{
     game : Game;
     public constructor(game){
@@ -36,14 +45,34 @@ export class Kitting{
     }
 
 
-    private updateKitingGrid(grid: number[][]) {
+    private updateKitingGrid(grid: number[][],destination) {
 
         for(let y=0; y<grid.length; y++){
             for(let x=0; x<grid[y].length; x++) {
 
-
-                if (grid[y][x] == tileType.creature) {
-                    let a = 2;
+                if(destination && destination.x == x && destination.y == y){
+                    let a = 13;
+                    let b = 3;
+                    let c = 0;
+                    // 0 0 c 0 0
+                    // 0 b a b 0
+                    // c a x a c
+                    // 0 b a b 0
+                    // 0 0 c 0 0
+                    for (let i=-2; i <= 2; i++){
+                        for (let j=-2; j<=2;j++){
+                            // 2
+                            if((Math.abs(i) == 2 && j == 0) || (Math.abs(j) == 2 && i == 0)){
+                                this.incrementTileAtGridBy(grid,x+i,y+j,c)
+                            }
+                            // 3 & 4
+                            if(Math.abs(i) <= 1 && Math.abs(j) <= 1){
+                                this.incrementTileAtGridBy(grid,x+i,y+j,i === j ? b : a)
+                            }
+                        }
+                    }
+                } else if (grid[y][x] == tileType.creature) {
+                    let a = 8;
                     let b = 1;
                     let c = 1;
                     // 0 0 c 0 0
@@ -69,7 +98,7 @@ export class Kitting{
                 } else if (grid[y][x] == tileType.obstacle || grid[y][x] == tileType.player){
                     let a = 4;
                     let b = 2;
-                    let c = 2;
+                    let c = 1;
                     // 0 0 c 0 0
                     // 0 b a b 0
                     // c a x a c
@@ -116,7 +145,7 @@ export class Kitting{
         grid[destination.y][destination.x] = 1;
 
         // update grid with costs
-        this.updateKitingGrid(grid);
+        this.updateKitingGrid(grid,destination);
 
         pathFinder.setGrid(grid);
 
@@ -127,23 +156,46 @@ export class Kitting{
             pathFinder.avoidAdditionalPoint(origin.x,origin.y);
         }
 
-        if(spear){
-            pathFinder.setIsGoalFunction((cX,cY,tX,tY)=>{
-                let _dX = tX - cX;
-                let _dY = tY - cY;
-                let dX = Math.abs(_dX);
-                let dY = Math.abs(_dY);
+        let isSpearTile = (cX,cY,tX,tY)=>{
+            let dX = tX - cX;
+            let dY = tY - cY;
 
+            let adX = Math.abs( dX );
+            let adY = Math.abs( dY );
 
-                if((dX === 0 && dY === 2) || (dX === 2 && dY === 0)){
-                    let tile = grid[cY + (_dY/2)] && grid[cY + (_dY/2)][cX + (_dX/2)] || 0;
-                    let res = tile == tileType.self || tile >0;
-                    console.log(cX,cY,tX,tY,res);
-                    return res;
-                }
+            if(distance <= 2){
+                if(!(adY == 2 && adX == 0 || adX == 0 && adY == 2)) return false;
+            } else {
+                if(!(adY == 3 && adX == 0 || adX == 0 && adY == 3)) return false;
+            }
 
+            let tileBetween = { x: cX + ( adX > 0 ? (dX > 0 ? 1 : -1) : 0 ), y: cY + ( adY > 0 ? (dY > 0 ? 1 : -1) : 0 )};
+
+            if (!isTileWalkable(tileBetween,grid)) {
                 return false;
-            })
+            }
+
+            // @ts-ignore
+            if( adY === 3 || adX === 3){
+                let tileBetween = { x: cX + ( adX > 0 ? (dX > 0 ? 2 : -2) : 0 ), y: cY + ( adY > 0 ? (dY > 0 ? 2 : -2) : 0 )};
+
+                if (!isTileWalkable(tileBetween,grid)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+
+        if(spear){
+            // If is already spear tile, returns [];
+            if(isSpearTile(origin.x,origin.y,destination.x,destination.y))
+            {
+                return [];
+            }
+
+            pathFinder.setIsGoalFunction(isSpearTile)
         } else {
             pathFinder.setIsGoalFunction((cX,cY,tX,tY)=>{
                 let dX = Math.abs(cX - tX);
@@ -153,7 +205,7 @@ export class Kitting{
         }
 
 
-        let acceptableTiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+        let acceptableTiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
         pathFinder.setAcceptableTiles(acceptableTiles);
         acceptableTiles.forEach(tile=>pathFinder.setTileCost(tile,tile));
 
