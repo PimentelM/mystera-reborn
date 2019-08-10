@@ -161,7 +161,7 @@ export class Equip {
     }
 
     public getEquipables(itemName : string) : IventoryItem[]{
-        return this.game.iventory.findItem(itemName).filter(item=>{
+        return this.game.iventory.findItem(itemName + "\\s?\\+?\\d?").filter(item=>{
             return !this.game.iventory.equipLevels[item.n] || this.game.player.mob.level >= this.game.iventory.equipLevels[item.n]
         })
     }
