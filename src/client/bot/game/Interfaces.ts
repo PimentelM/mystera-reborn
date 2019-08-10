@@ -74,7 +74,8 @@ export interface IGameWindow {
 
     jv: { equip_sprite: number,
         upgrade_number: number,
-        map_title : { _text : string }
+        map_title : { _text : string },
+        update_map : (x) => undefined
     }
 }
 

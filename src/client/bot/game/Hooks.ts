@@ -6,7 +6,6 @@ export class Hooks {
 
     public constructor(game) {
         this.game = game;
-
         doWhen(() => this.installHooks(), () => !!this.game.player.mob, 1000)
     }
 
@@ -25,13 +24,14 @@ export class Hooks {
         if (this.areHooksInstalled) return true;
 
 
+        this.updateMapHook();
         this.showUpgradeDialog();
         this.gamePacketParserHook();
 
         this.areHooksInstalled = true;
     }
 
-    private updateReactiveDataHook() {
+    private updateReactiveDataHook = () => {
         let update = () => {
             this.game.window.hudData.x = this.game.player.x;
             this.game.window.hudData.y = this.game.player.y;
@@ -50,9 +50,29 @@ export class Hooks {
 
         this.game.player.mob.move = newMove;
 
-    }
+    };
 
-    private gamePacketParserHook() {
+    private updateMapHook = () => {
+        let action = () => {
+            if(!window.Game.map.wholemap[window.Game.map.name]) window.Game.map.wholemap[window.Game.map.name] = {};
+            for (let [key,value] of Object.entries(window.Game.window.map_index)){
+                window.Game.map.wholemap[window.Game.map.name][key] = value;
+            }
+        };
+
+        let originalUpdateMap = window.Game.window.jv.update_map;
+
+        let newUpdate = (mapData) => {
+            let res = originalUpdateMap(mapData);
+            action();
+            return res;
+        };
+
+        window.Game.window.jv.update_map = newUpdate;
+
+    };
+
+    private gamePacketParserHook = () => {
 
 
         let originalParser = this.game.window.parse;
@@ -65,9 +85,9 @@ export class Hooks {
 
         this.game.window.parse = newParser;
 
-    }
+    };
 
-    private showUpgradeDialog() {
+    private showUpgradeDialog = () => {
 
         // @ts-ignore
         let original = this.game.window.jv.upgrade_dialog.show;
@@ -81,7 +101,7 @@ export class Hooks {
                 original.apply(this.game.window.jv.upgrade_dialog, [a1, a2, a3])
             }
         }
-    }
+    };
 
 
 }

@@ -7,6 +7,8 @@ import {until} from "../../../Utils";
 export class Map {
     game: Game;
 
+    public wholemap : object = {};
+
     public constructor(game: Game) {
         this.game = game;
     }
