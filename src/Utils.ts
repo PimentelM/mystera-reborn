@@ -106,18 +106,23 @@ export class Cooldown {
     lastUse: number = 0;
     active: boolean;
 
-    public constructor(cooldown: number) {
+    public constructor(cooldown: number, active = true) {
         this.cooldown = cooldown;
+        this.active = active;
     }
 
 
     public canUse() {
-        return !this.active || new Date().valueOf() - this.lastUse > this.cooldown;
+        return !this.active || Date.now() - this.lastUse > this.cooldown;
     }
 
     public use() {
         if (!this.canUse()) throw new Error("Cooldown is not ready, can't use.");
-        this.lastUse = new Date().valueOf();
+        this.lastUse = Date.now();
+    }
+
+    public reset(){
+        this.lastUse = Date.now();
     }
 
     public setCooldown(coooldown: number) {

@@ -346,19 +346,16 @@ export class Player {
         return await this.serialStepTo(path);
     }
 
-    public async kite(p:Point, steps = 1, spear = true,returnAfterPathFound = true,distance = 2, ) {
+    public async kite(p:Point, steps = 1, spear = true,returnAfterPathFound = true,distance = 3, ) {
         let {x, y} = p;
 
         let path = [];
         if(spear){
-
-            path = await this.game.kitting.findKitingPath(p,spear,3);
-            if(path.length == 0){
+            if (distance >= 3){
+                path = await this.game.kitting.findKitingPath(p,spear,3);
+            }else {
                 path = await this.game.kitting.findKitingPath(p,spear,2);
-                console.log(`Walk two`);
             }
-
-
         } else {
             path = await this.game.kitting.findKitingPath(p,spear,distance);
         }

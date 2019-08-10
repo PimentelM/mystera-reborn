@@ -1,12 +1,18 @@
 import {StateUnitClass} from "../../../Interfaces";
 import {Game} from "../../../game/Game";
 import {Point} from "../../../game/Types";
+import {Cooldown} from "../../../../../Utils";
 
 export interface KiteState {
     steps: number,
 
-    target : Point;
-    kitePath : Point[];
+    target : Point,
+    kitePath : Point[],
+
+    approximateTarget : boolean,
+
+    approximationCooldown : Cooldown,
+
 }
 
 export class KiteSpear extends StateUnitClass{
@@ -14,7 +20,7 @@ export class KiteSpear extends StateUnitClass{
     public state: KiteState;
 
     readonly defaultParams: KiteState = {
-        steps: 2, kitePath : [], target: null,
+        steps: 2, kitePath : [], target: null, approximateTarget : true, approximationCooldown : new Cooldown(2000)
     };
 
     async isReached(): Promise<boolean> {
@@ -30,15 +36,33 @@ export class KiteSpear extends StateUnitClass{
     }
 
     async reach(): Promise<boolean> {
-        await this.game.player.kite(this.state.target,this.state.steps, true,true);
+        if(this.state.approximateTarget)
+        {
+            console.log("Walk Two");
+            await this.game.player.kite(this.state.target,this.state.steps, true,true,2);
+        } else {
+            await this.game.player.kite(this.state.target,this.state.steps, true,true,3);
+        }
         return true;
     }
 
     private isOk() {
+        let distanceToTarget = this.game.player.distanceTo(this.state.target);
+        if(distanceToTarget <= 2 || distanceToTarget > 4)
+        {
+            this.state.approximateTarget = false;
+            this.state.approximationCooldown.reset();
+            return false;
+        } else if (distanceToTarget == 3) {
+            if(this.state.approximationCooldown.canUse()){
+                this.state.approximateTarget = true;
+                this.state.approximationCooldown.use();
+            }
+        }
+
         let {x,y} = this.game.player.mob;
 
-        // 20% of the time, it will see 2 square distance as ok
-        let distance = 3;  //Date.now() % 10 > 8 ? 2 : 3;
+        let distance = this.state.approximateTarget ? 2 : 3;
 
         let dX = this.state.target.x - x;
         let dY = this.state.target.y - y;
