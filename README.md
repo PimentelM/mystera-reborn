@@ -13,4 +13,4 @@ The modified version of the game will be avaliable at `http://localhot:8000`
 
 ## Website
 
-- [Mystera Reborn](http://mystera-reborn.herokuapp.com)
+- [Mystera Reborn](https://pimentelm.github.io/mystera-reborn/)
