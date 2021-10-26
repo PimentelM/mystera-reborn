@@ -2,14 +2,7 @@
 
 ## General info
 
-- Setup:
-
-```
-npm install
-npm start
-```
-
-The modified version of the game will be avaliable at `http://localhot:8000`
+Mystera reborn is a mod project for the game Mystera Legacy.
 
 ## Website
 
