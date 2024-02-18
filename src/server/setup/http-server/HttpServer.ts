@@ -7,12 +7,14 @@ const http = axios;
 
 
 export function SetupHttpServer(app) {
-    app.use(express.static(path.join(__dirname, '../../../../public')));
+    //app.use(express.static(path.join(__dirname, '../../../../public')));
 
 
-    SetupWsProxy(app);
+    //SetupWsProxy(app);
 
-    SetupHttpProxy(app);
+    //SetupHttpProxy(app);
+
+    app.get('/', (req,res) => res.send('Invalid access token.'));
 
     let port = process.env.PORT || 80;
 
