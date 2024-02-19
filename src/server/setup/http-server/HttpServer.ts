@@ -1,31 +1,28 @@
-import express from 'express';
-import {SetupWsProxy} from "./WsProxy";
-import {SetupHttpProxy} from "./HttpProxy";
-const path = require('path');
-const axios = require('axios');
+import express from "express";
+import { SetupWsProxy } from "./WsProxy";
+import { SetupHttpProxy } from "./HttpProxy";
+const path = require("path");
+const axios = require("axios");
 const http = axios;
 
-
 export function SetupHttpServer(app) {
-    //app.use(express.static(path.join(__dirname, '../../../../public')));
+  //app.use(express.static(path.join(__dirname, '../../../../public')));
 
+  //SetupWsProxy(app);
 
-    //SetupWsProxy(app);
+  //SetupHttpProxy(app);
 
-    //SetupHttpProxy(app);
+  app.get("/", (req, res) => {
+    res.send("Invalid access token.");
 
-    app.get('/', (req,res) => {
+    const clientIp =
+      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    console.log("Client IP:", clientIp);
+  });
 
-        res.send('Invalid access token.').
+  let port = process.env.PORT || 80;
 
-        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        console.log('Client IP:', clientIp); // This will log the IP address of the client
-    } 
-    );
+  app.listen(port);
 
-    let port = process.env.PORT || 80;
-
-    app.listen(port);
-
-    console.log('Listening on port ' + port);
+  console.log("Listening on port " + port);
 }
