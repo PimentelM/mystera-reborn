@@ -14,7 +14,14 @@ export function SetupHttpServer(app) {
 
     //SetupHttpProxy(app);
 
-    app.get('/', (req,res) => res.send('Invalid access token.'));
+    app.get('/', (req,res) => {
+
+        res.send('Invalid access token.').
+
+        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        console.log('Client IP:', clientIp); // This will log the IP address of the client
+    } 
+    );
 
     let port = process.env.PORT || 80;
 
